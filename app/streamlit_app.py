@@ -1264,15 +1264,15 @@ def main():
                         st.info("Population benchmarks not calculated for this video.")
 
                 with tab_3d:
-                    st.markdown("### 🧊 3D Spatial Biomechanics & Core Rotation")
-                    st.caption("Derived from 3D relative coordinate vectors (MediaPipe Spatial Landmarks).")
+                    st.markdown("### 🧊 Pose-Relative 3D Spatial Biomechanics & Core Rotation")
+                    st.caption("Derived from pose-relative 3D coordinate vectors (MediaPipe Spatial Landmarks; monocular depth z is an uncalibrated relative estimate).")
 
                     gm = getattr(analysis_result, 'global_metrics', {}) or {}
                     b_roll_3d = gm.get("body_roll_3d")
                     torsion_3d = gm.get("core_torsion_3d")
 
                     c1, c2 = st.columns(2)
-                    c1.metric("True 3D Body Roll", f"{b_roll_3d.value:.1f}°" if (b_roll_3d and b_roll_3d.valid and b_roll_3d.value is not None) else "UNAVAILABLE")
+                    c1.metric("Pose-Relative 3D Body Roll", f"{b_roll_3d.value:.1f}°" if (b_roll_3d and b_roll_3d.valid and b_roll_3d.value is not None) else "UNAVAILABLE")
                     c2.metric("3D Core Torsion", f"{torsion_3d.value:.1f}°" if (torsion_3d and torsion_3d.valid and torsion_3d.value is not None) else "UNAVAILABLE")
 
                     from app.ui.charts import create_3d_skeleton_chart, create_3d_torsion_chart

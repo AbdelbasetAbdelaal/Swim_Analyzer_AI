@@ -51,9 +51,20 @@ class AuthService:
         return hmac.compare_digest(hash_bytes.hex(), stored_hash)
 
     @classmethod
-    def register_coach(cls, username: str, password: str, full_name: str, email: str = "", role: str = "coach") -> Tuple[bool, str, Optional[CoachProfile]]:
+    def register_coach(
+        cls, 
+        username: str, 
+        password: str, 
+        full_name: str = "", 
+        email: str = "", 
+        role: str = "coach",
+        creator_principal: Optional[Any] = None,
+        bootstrap_token: Optional[str] = None,
+        is_bootstrap: bool = False
+    ) -> Tuple[bool, str, Optional[CoachProfile]]:
         """
         Registers a new account.
+        If role='admin', requires an existing admin creator_principal or valid bootstrap authorization.
         Returns: (success: bool, message: str, coach_profile: Optional[CoachProfile])
         """
         if not HAS_ARGON2:
@@ -64,6 +75,26 @@ class AuthService:
         role = role.strip().lower() if role else "coach"
         if role not in {"coach", "user", "admin"}:
             return False, "Invalid account role.", None
+
+        # P1-12: Enforce authorization boundary for admin role creation
+        if role == "admin":
+            is_authorized = False
+            if is_bootstrap:
+                is_authorized = True
+            elif bootstrap_token:
+                expected_token = os.getenv("SWIM_ANALYZER_BOOTSTRAP_ADMIN_TOKEN", "").strip()
+                if expected_token and hmac.compare_digest(bootstrap_token.strip(), expected_token):
+                    is_authorized = True
+            elif creator_principal is not None:
+                creator_role = getattr(creator_principal, "role", None)
+                if not creator_role and isinstance(creator_principal, dict):
+                    creator_role = creator_principal.get("role")
+                if creator_role == "admin":
+                    is_authorized = True
+            
+            if not is_authorized:
+                logger.warning(f"Unauthorized attempt to register admin account: {username}")
+                return False, "Unauthorized: Administrator privileges or valid bootstrap credentials required to create an admin account.", None
 
         if not username or len(username) < 3:
             return False, "Username must be at least 3 characters long.", None
@@ -193,7 +224,7 @@ class AuthService:
 
             if admin_user and admin_pass:
                 if not repo.get_by_username(admin_user):
-                    cls.register_coach(admin_user, admin_pass, "System Administrator", role="admin")
+                    cls.register_coach(admin_user, admin_pass, "System Administrator", role="admin", is_bootstrap=True)
 
             if coach_user and coach_pass:
                 existing_coach = repo.get_by_username(coach_user)

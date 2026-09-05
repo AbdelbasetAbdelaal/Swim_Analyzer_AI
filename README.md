@@ -2,7 +2,7 @@
 
 **SwimAnalyzer AI** is a commercial-grade, peer-reviewed sports analytics and biomechanics platform built for competitive swimming coaches, biomechanists, and elite sports institutes.
 
-It transforms raw video of swimming technique into auditable, 3D kinematic measurements, reliability scores, consistency validations, population benchmark comparisons, and longitudinal progression tracking across all four competitive stroke styles (**Freestyle, Backstroke, Breaststroke, Butterfly**).
+It transforms raw video of swimming technique into auditable kinematic measurements (including pose-relative 3D estimates with explicit uncalibrated monocular depth caveats), reliability scores, consistency validations, population benchmark comparisons, and longitudinal progression tracking across all four competitive stroke styles (**Freestyle, Backstroke, Breaststroke, Butterfly**).
 
 ---
 
@@ -12,18 +12,19 @@ It transforms raw video of swimming technique into auditable, 3D kinematic measu
 - **Single Source of Truth (`selected_stroke`)**: The user MUST explicitly select the swimming stroke style (**Freestyle**, **Backstroke**, **Breaststroke**, or **Butterfly**) before starting analysis. The system default `-- Select Swimming Stroke --` blocks execution until a valid stroke is selected.
 - **Zero Inferencing / Overrides**: The system never overrides, infers, or recalculates the user-selected stroke.
 - **100% Full Natural Native FPS Processing**: Operates at native video resolution and 100% FPS (`selected_stride = 1`), analyzing every single frame.
-- **3D Pose & Kinematics**: Calculates 3D body roll rotation, core torsion, joint angles (elbow, knee, shoulder), stroke cycle phase segmentation, and time-in-phase breakdown.
+- **Pose-Relative 3D Kinematics**: Calculates pose-relative 3D body roll rotation, core torsion, joint angles (elbow, knee, shoulder), stroke cycle phase segmentation, and time-in-phase breakdown. Note: MediaPipe monocular depth ($z$-axis) represents an uncalibrated relative estimate, not physical 3D metric coordinate measurements.
 - **Key Metrics**:
   - **Stroke Rate (tempo)**: Cycles per minute (spm) and Hz.
-  - **Stroke Length (distance per stroke)**: Distance traveled per arm cycle. Represented in physical meters (m) if calibration is available, otherwise defaults to `relative_body_normalized` (uncalibrated) to prevent medical misinterpretations.
+  - **Stroke Length (distance per stroke)**: Distance traveled per arm cycle. Represented in physical meters (m) if calibration is available, otherwise strictly demarcated as `relative_body_normalized` (uncalibrated) to prevent domain-mismatch comparisons against metric literature.
   - **Kick Frequency**: Kick cycles per second / minute.
   - **Stroke Symmetry**: Bilateral force and velocity symmetry index (%).
-  - **3D Body Roll & Core Torsion**: Rotation angles relative to water plane.
+  - **Pose-Relative 3D Body Roll & Core Torsion**: Rotation angles relative to water plane derived from pose landmarks.
 
 ### 2. 🔬 Transparent Video Analysis Reliability Engine
-- **Decoupled Quality Model**: "Confidence" refers exclusively to empirical **Video Analysis Reliability** (pose tracking stability, landmark visibility, frame coverage, cycle quality), and NEVER to stroke classification probability.
+- **Decoupled Quality Model**: "Confidence" refers exclusively to empirical **Video Analysis Reliability** (pose tracking coverage, landmark visibility, temporal stability, cycle quality, measurement stability), and NEVER to stroke classification probability or physical truth.
 - **Reliability Formula**:
-  $$\text{Reliability} = 0.25 \cdot \text{FrameCoverage} + 0.25 \cdot \text{PoseValidity} + 0.20 \cdot \text{LandmarkVisibility} + 0.15 \cdot \text{TemporalStability} + 0.15 \cdot \text{CycleQuality}$$
+  $$\text{Reliability} = 0.30 \cdot \text{PoseTrackingCoverage} + 0.25 \cdot \text{LandmarkVisibility} + 0.20 \cdot \text{TemporalStability} + 0.15 \cdot \text{CycleQuality} + 0.10 \cdot \text{MeasurementStability}$$
+- **Decoupled Validation Boundary**: Video tracking reliability reflects algorithmic signal stability; it explicitly does NOT claim scientific validation (`scientific_validation_status = "NOT_VALIDATED — INSUFFICIENT GROUND TRUTH"`).
 - **Data Quality Warnings**: Automatically detects low-quality footage (insufficient valid frames, low landmark visibility, swimmer leaving frame) and logs explicit quality warnings.
 
 ### 3. 🛡️ Video Quality Assessment (VQA) & Safety Engine
@@ -68,7 +69,7 @@ It transforms raw video of swimming technique into auditable, 3D kinematic measu
 - **Mandatory Safety Rule**: Clear separation between *Mathematical Correctness*, *Implementation Correctness*, and *Empirical Scientific Validation*. No metric is claimed as "scientifically validated" without paired physical ground truth.
 - **Unestablished Thresholds Policy**: Whenever empirical literature or dataset evidence is missing, acceptance criteria are strictly marked `THRESHOLD NOT YET ESTABLISHED`.
 - **Ground Truth Specification**: Standardized specifications for collecting 24 calibrated high-speed video trials ($\ge 60\text{ fps}$) paired with double-blind manual landmark annotations and IMU telemetry ([`docs/ground_truth_dataset_specification.md`](docs/ground_truth_dataset_specification.md) and [`data/reference/ground_truth_dataset_schema.json`](data/reference/ground_truth_dataset_schema.json)).
-- **Current Empirical Status**: Rigorously held at **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`** until physical reference data is acquired ([`docs/scientific_validation_results.md`](docs/scientific_validation_results.md)).
+- **Current Empirical Status**: Rigorously held at **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`** until physical reference data is acquired ([`docs/scientific_validation_results.md`](docs/scientific_validation_results.md)). MediaPipe monocular depth ($z$) remains an uncalibrated relative estimate and is not accepted as physical 3D ground truth.
 
 ---
 
@@ -108,7 +109,7 @@ Swim_Analyzer_AI/
 │   ├── export_service.py            # JSON report exporter
 │   ├── pdf_report_service.py        # FPDF report generator
 │   └── scientific_evidence_service.py# Citation formatter
-└── tests/                           # Automated Pytest Suite (320 Passed / 100% Green)
+└── tests/                           # Automated Pytest Suite (350 Passed / 100% Green)
 ```
 
 ---
@@ -138,7 +139,7 @@ streamlit run app/streamlit_app.py
 ### 3. Running Automated Tests
 ```bash
 python -m pytest tests/ -v
-# 320 passed, 1 skipped, 0 failed (100% Pass Rate)
+# 350 passed, 1 skipped, 0 failed (100% Pass Rate)
 ```
 
 ```bash

@@ -50,7 +50,7 @@ class AnalysisSessionModel(Base):
     metadata_json_path = Column(String, nullable=False)
     report_json_path = Column(String, nullable=False)
     
-    performance_score = Column(Float, nullable=False)
+    performance_score = Column(Float, nullable=True)
     scientific_confidence = Column(String, nullable=False)
     completed_cycles = Column(Integer, nullable=False)
     stroke_type = Column(String, nullable=False)

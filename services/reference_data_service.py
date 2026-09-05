@@ -3,7 +3,7 @@ High-level service layer for the Reference Data Manager.
 Coordinates database access, validation, audit trail logging, and duplicate detection.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any
 from database import SessionLocal
 from database.reference_repository import ReferenceDataRepository
 from models.reference_data_models import (
@@ -13,14 +13,21 @@ from services.reference_data_validator import ReferenceDataValidator, Scientific
 from services.reference_resolver import ReferenceDataResolver, ResolvedReferenceMatch
 
 class ReferenceDataService:
-    def __init__(self, db_session=None):
+    def __init__(self, db_session=None, principal: Optional[Any] = None):
         self._owns_session = False
         if db_session is None:
             self.db = SessionLocal()
             self._owns_session = True
         else:
             self.db = db_session
+        self.principal = principal
         self.repo = ReferenceDataRepository(self.db)
+
+    def _check_admin(self, principal: Optional[Any] = None) -> str:
+        active_principal = principal if principal is not None else self.principal
+        if not active_principal or getattr(active_principal, "role", None) != "admin":
+            raise PermissionError("Global write access denied. Administrator privileges required to modify reference data.")
+        return getattr(active_principal, "username", None) or getattr(active_principal, "full_name", None) or "admin"
 
     def __del__(self):
         if hasattr(self, '_owns_session') and self._owns_session and self.db:
@@ -37,8 +44,11 @@ class ReferenceDataService:
         """Fetch single dataset by ID."""
         return self.repo.get_dataset(dataset_id)
 
-    def save_dataset(self, dataset: ReferenceDataset, user: str = "Coach/Admin") -> Tuple[bool, ScientificValidationResult]:
-        """Validate and save a reference dataset."""
+    def save_dataset(self, dataset: ReferenceDataset, user: Optional[str] = None, principal: Optional[Any] = None) -> Tuple[bool, ScientificValidationResult]:
+        """Validate and save a reference dataset with mandatory admin authorization."""
+        admin_user = self._check_admin(principal)
+        effective_user = user or admin_user
+
         val_res = ReferenceDataValidator.validate_dataset(dataset)
         if not val_res.is_valid:
             return False, val_res
@@ -47,11 +57,14 @@ class ReferenceDataService:
         if val_res.suggested_eligibility:
             dataset.benchmark_eligibility = val_res.suggested_eligibility
 
-        success = self.repo.save_dataset(dataset, user=user)
+        success = self.repo.save_dataset(dataset, user=effective_user)
         return success, val_res
 
-    def validate_and_update_status(self, dataset_id: str, new_status: str, notes: str, user: str = "Coach/Admin") -> bool:
-        """Update validation status (e.g., DRAFT -> SCIENTIFICALLY_VALIDATED) with audit logging."""
+    def validate_and_update_status(self, dataset_id: str, new_status: str, notes: str, user: Optional[str] = None, principal: Optional[Any] = None) -> bool:
+        """Update validation status (e.g., DRAFT -> SCIENTIFICALLY_VALIDATED) with audit logging and mandatory admin authorization."""
+        admin_user = self._check_admin(principal)
+        effective_user = user or admin_user
+
         ds = self.repo.get_dataset(dataset_id)
         if not ds:
             return False
@@ -66,15 +79,19 @@ class ReferenceDataService:
         elif new_status == ReferenceValidationStatus.REJECTED.value:
             ds.benchmark_eligibility = ReferenceBenchmarkEligibility.NOT_ELIGIBLE.value
 
-        return self.repo.add_validation_event(dataset_id, "VALIDATE", old_status, new_status, notes, user=user)
+        return self.repo.add_validation_event(dataset_id, "VALIDATE", old_status, new_status, notes, user=effective_user)
 
-    def archive_dataset(self, dataset_id: str, is_archived: bool = True, user: str = "Coach/Admin") -> bool:
-        """Archive or unarchive a dataset."""
-        return self.repo.archive_dataset(dataset_id, is_archived=is_archived, user=user)
+    def archive_dataset(self, dataset_id: str, is_archived: bool = True, user: Optional[str] = None, principal: Optional[Any] = None) -> bool:
+        """Archive or unarchive a dataset with mandatory admin authorization."""
+        admin_user = self._check_admin(principal)
+        effective_user = user or admin_user
+        return self.repo.archive_dataset(dataset_id, is_archived=is_archived, user=effective_user)
 
-    def delete_dataset(self, dataset_id: str, user: str = "Coach/Admin") -> bool:
-        """Hard delete a dataset."""
-        return self.repo.delete_dataset(dataset_id, user=user)
+    def delete_dataset(self, dataset_id: str, user: Optional[str] = None, principal: Optional[Any] = None) -> bool:
+        """Hard delete a dataset with mandatory admin authorization."""
+        admin_user = self._check_admin(principal)
+        effective_user = user or admin_user
+        return self.repo.delete_dataset(dataset_id, user=effective_user)
 
     def check_duplicates(self, dataset: ReferenceDataset) -> List[ReferenceDataset]:
         """Detect potential duplicate datasets."""
@@ -113,10 +130,12 @@ class ReferenceDataService:
         """Fetch all registered dataset versions."""
         return self.repo.get_dataset_versions()
 
-    def activate_dataset_version(self, version_name: str) -> bool:
-        """Activate a dataset version."""
+    def activate_dataset_version(self, version_name: str, principal: Optional[Any] = None) -> bool:
+        """Activate a dataset version with mandatory admin authorization."""
+        self._check_admin(principal)
         return self.repo.set_version_active(version_name, is_active=True)
 
-    def deactivate_dataset_version(self, version_name: str) -> bool:
-        """Deactivate a dataset version."""
+    def deactivate_dataset_version(self, version_name: str, principal: Optional[Any] = None) -> bool:
+        """Deactivate a dataset version with mandatory admin authorization."""
+        self._check_admin(principal)
         return self.repo.set_version_active(version_name, is_active=False)

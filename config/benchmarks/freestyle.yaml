@@ -7,7 +7,7 @@ populations:
     Male:
       stroke_rate:
         mean: 54.0
-        std: 0.11
+        std: 6.6
         unit: spm
         evidence:
           validation_status: VALIDATED

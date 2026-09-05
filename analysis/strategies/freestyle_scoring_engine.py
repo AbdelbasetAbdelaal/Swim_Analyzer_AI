@@ -45,31 +45,18 @@ class FreestyleScoringEngine(BaseScoringEngine):
         report.stroke_symmetry = global_metrics.get("stroke_symmetry")
         
         errors = []
-        score_components = []
-        
-        # Helper to get score out of 100
-        def calculate_component_score(value_list, ideal_min, ideal_max, error_name, error_desc):
-            if not value_list:
-                return 0, None
-            avg_val = np.mean(value_list)
-            if ideal_min <= avg_val <= ideal_max:
-                return MAX_SCORE, None
-            else:
-                err = MovementError(-1, 0, error_name, f"{error_desc} (Measured: {avg_val:.1f})", "Medium")
-                return DEFAULT_PENALTY_SCORE, err
+        available_components = []
 
         # 1. Stroke Symmetry
         sym_weight = self.weights.get("symmetry_weight", 0.20)
-        sym_score = None
         if report.stroke_symmetry and report.stroke_symmetry.valid and report.stroke_symmetry.value is not None:
-            sym_score = report.stroke_symmetry.value
-            score_components.append(sym_score * sym_weight)
+            sym_score = float(report.stroke_symmetry.value)
+            available_components.append((sym_score, sym_weight))
             if sym_score < SYMMETRY_SCORE_PENALTY_THRESHOLD:
                 errors.append(MovementError(-1, 0, "Asymmetrical Pull", "Left and right arms have significantly different mechanics.", "High", confidence=report.stroke_symmetry.confidence))
         else:
             # P0-7: Do NOT default to MAX_SCORE. Skip this component and note unavailability.
             logger.debug("Symmetry metric unavailable; component omitted from scoring.")
-
 
         # 2. Elbow Angle during Pull
         elb_weight = self.weights.get("elbow_weight", 0.25)
@@ -79,15 +66,20 @@ class FreestyleScoringEngine(BaseScoringEngine):
                 if f.angles.left_elbow and f.angles.left_elbow.valid: pull_elbows.append((f.angles.left_elbow.value, f.timestamp_ms))
                 if f.angles.right_elbow and f.angles.right_elbow.valid: pull_elbows.append((f.angles.right_elbow.value, f.timestamp_ms))
         
-        vals = [v[0] for v in pull_elbows]
-        ts = pull_elbows[0][1] if pull_elbows else 0
-        # Optimal high-elbow catch / mid-pull flexion is 90° to 120° (Maglischo, 2003)
-        elb_score, elb_err = calculate_component_score(vals, PULL_ELBOW_MIN_ANGLE, PULL_ELBOW_MAX_ANGLE, "Dropped Elbow", "Average elbow angle during pull is outside optimal range (90°-120°).")
-        score_components.append(elb_score * elb_weight)
-        if elb_err: 
-            elb_err.timestamp_ms = ts
-            errors.append(elb_err)
-        
+        if pull_elbows:
+            vals = [v[0] for v in pull_elbows]
+            ts = pull_elbows[0][1]
+            avg_val = float(np.mean(vals))
+            # Optimal high-elbow catch / mid-pull flexion is 90° to 120° (Maglischo, 2003)
+            if PULL_ELBOW_MIN_ANGLE <= avg_val <= PULL_ELBOW_MAX_ANGLE:
+                elb_score = float(MAX_SCORE)
+            else:
+                elb_score = float(DEFAULT_PENALTY_SCORE)
+                errors.append(MovementError(-1, ts, "Dropped Elbow", f"Average elbow angle during pull is outside optimal range (90°-120°) (Measured: {avg_val:.1f}).", "Medium"))
+            available_components.append((elb_score, elb_weight))
+        else:
+            logger.debug("Pull elbow angles unavailable; component omitted from scoring.")
+
         # 3. Shoulder Angle (Recovery/Reach)
         shoulder_weight = self.weights.get("shoulder_weight", 0.20)
         reach_shoulders = []
@@ -96,14 +88,19 @@ class FreestyleScoringEngine(BaseScoringEngine):
                 if f.angles.left_shoulder and f.angles.left_shoulder.valid: reach_shoulders.append((f.angles.left_shoulder.value, f.timestamp_ms))
                 if f.angles.right_shoulder and f.angles.right_shoulder.valid: reach_shoulders.append((f.angles.right_shoulder.value, f.timestamp_ms))
                 
-        vals = [v[0] for v in reach_shoulders]
-        ts = reach_shoulders[0][1] if reach_shoulders else 0
-        sh_score, sh_err = calculate_component_score(vals, RECOVERY_SHOULDER_MIN_ANGLE, RECOVERY_SHOULDER_MAX_ANGLE, "Limited Shoulder Extension", "Shoulder extension during recovery is restricted.")
-        score_components.append(sh_score * shoulder_weight)
-        if sh_err: 
-            sh_err.timestamp_ms = ts
-            errors.append(sh_err)
-        
+        if reach_shoulders:
+            vals = [v[0] for v in reach_shoulders]
+            ts = reach_shoulders[0][1]
+            avg_val = float(np.mean(vals))
+            if RECOVERY_SHOULDER_MIN_ANGLE <= avg_val <= RECOVERY_SHOULDER_MAX_ANGLE:
+                sh_score = float(MAX_SCORE)
+            else:
+                sh_score = float(DEFAULT_PENALTY_SCORE)
+                errors.append(MovementError(-1, ts, "Limited Shoulder Extension", f"Shoulder extension during recovery is restricted (Measured: {avg_val:.1f}).", "Medium"))
+            available_components.append((sh_score, shoulder_weight))
+        else:
+            logger.debug("Recovery shoulder angles unavailable; component omitted from scoring.")
+
         # 4. Hip Angle
         # P0-7: Hip angle not yet calculated; do NOT inject MAX_SCORE as a placeholder.
         # This component is explicitly omitted until hip angle is added to JointAngles.
@@ -117,15 +114,20 @@ class FreestyleScoringEngine(BaseScoringEngine):
                 if f.angles.left_knee and f.angles.left_knee.valid: knees.append((f.angles.left_knee.value, f.timestamp_ms))
                 if f.angles.right_knee and f.angles.right_knee.valid: knees.append((f.angles.right_knee.value, f.timestamp_ms))
         
-        vals = [v[0] for v in knees]
-        ts = knees[0][1] if knees else 0
-        kn_score, kn_err = calculate_component_score(vals, KNEE_BEND_MIN_ANGLE, KNEE_BEND_MAX_ANGLE, "Excessive Knee Bend", "Knees are bending too much during kicking.")
-        score_components.append(kn_score * knee_weight)
-        if kn_err: 
-            kn_err.timestamp_ms = ts
-            errors.append(kn_err)
+        if knees:
+            vals = [v[0] for v in knees]
+            ts = knees[0][1]
+            avg_val = float(np.mean(vals))
+            if KNEE_BEND_MIN_ANGLE <= avg_val <= KNEE_BEND_MAX_ANGLE:
+                kn_score = float(MAX_SCORE)
+            else:
+                kn_score = float(DEFAULT_PENALTY_SCORE)
+                errors.append(MovementError(-1, ts, "Excessive Knee Bend", f"Knees are bending too much during kicking (Measured: {avg_val:.1f}).", "Medium"))
+            available_components.append((kn_score, knee_weight))
+        else:
+            logger.debug("Knee angles unavailable; component omitted from scoring.")
 
-        # P0-8: Downstream propagation — score is only valid when upstream dependencies are met
+        # Downstream propagation — score is only valid when upstream dependencies are met
         cycles = analysis_result.stroke_statistics.completed_cycles if analysis_result.stroke_statistics else 0
         reliability_score = analysis_result.reliability.analysis_reliability_score if analysis_result.reliability else 0.0
 
@@ -143,15 +145,16 @@ class FreestyleScoringEngine(BaseScoringEngine):
             report.errors = errors
             return report
 
-        if not score_components:
+        total_weight = sum(w for _, w in available_components)
+        if total_weight <= 0.0:
             report.overall_score = None
             report.feedback_summary = "METRIC_UNAVAILABLE: No scoreable metrics available. Ensure pose detection is working correctly."
             report.errors = errors
             return report
 
-        raw_score = sum(score_components)
-        # Normalize to available components (not total weight which may have missing items)
-        report.overall_score = max(0.0, min(MAX_SCORE, raw_score))
+        weighted_sum = sum(score * weight for score, weight in available_components)
+        final_score = weighted_sum / total_weight
+        report.overall_score = float(round(max(0.0, min(MAX_SCORE, final_score)), 1))
         report.errors = errors
         report.feedback_summary = self._generate_feedback_summary(report.overall_score, len(errors))
         

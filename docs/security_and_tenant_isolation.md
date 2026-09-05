@@ -32,6 +32,14 @@ This document defines the security architecture and multi-tenant isolation guara
 - SQLAlchemy database connections utilize deterministic context managers (`__enter__`, `__exit__`) and explicit `.close()` disposals to eliminate connection pooling leaks.
 - SQLite is tuned with Write-Ahead Logging (`PRAGMA journal_mode=WAL;`) and `PRAGMA synchronous=NORMAL;` for high concurrency without database lockups.
 
+### 2.6 Reference Data RBAC Boundary (P0-1)
+- Modification of reference datasets (`save_dataset`, `validate_and_update_status`, `archive_dataset`, `delete_dataset`, `activate_dataset_version`, `deactivate_dataset_version`) strictly requires an authenticated administrator principal (`role="admin"`).
+- Non-admin coaches are restricted to read-only access.
+
+### 2.7 Admin Account Creation Boundary (P1-12)
+- Registration of accounts with `role="admin"` is forbidden to unauthenticated callers.
+- Elevation to administrator requires either an existing administrator `creator_principal`, an explicit environment bootstrap token (`SWIM_ANALYZER_BOOTSTRAP_ADMIN_TOKEN`), or internal system bootstrap (`is_bootstrap=True`).
+
 ---
 
 ## 3. Verification & Test Evidence
@@ -39,6 +47,8 @@ This document defines the security architecture and multi-tenant isolation guara
 | Security Boundary Test | Target | Status |
 | :--- | :--- | :--- |
 | `tests/test_tenant_isolation.py` | Orphaned athlete deny-by-default, cross-tenant query attack protection | ✅ **PASSED** |
+| `tests/test_reference_authorization.py` | Reference data modification RBAC enforcement (admin only) | ✅ **PASSED** |
+| `tests/test_auth_boundary.py` | Admin account registration boundary and bootstrap authentication | ✅ **PASSED** |
 | `tests/test_models_regression.py` | Required domain model ownership fields (`coach_id`, `account_id`) | ✅ **PASSED** |
 | `tests/test_dashboard_regression.py` | Principal propagation in UI / Dashboard session queries & N+1 fix | ✅ **PASSED** |
 | `tests/test_auth_migration.py` | Argon2id verification and fallback prevention | ✅ **PASSED** |

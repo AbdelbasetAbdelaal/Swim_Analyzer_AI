@@ -28,7 +28,12 @@ def render_reference_data_manager_page():
         "Coach-entered or unvalidated imported datasets default to `CONTEXT_ONLY` and cannot automatically become universal scientific benchmarks."
     )
 
-    service = ReferenceDataService()
+    current_coach = st.session_state.get("current_coach")
+    is_admin = bool(current_coach and getattr(current_coach, "role", None) == "admin")
+    if not is_admin:
+        st.warning("🔒 **Read-Only Access:** Administrator privileges are required to create, edit, archive, or delete reference datasets. You may inspect and export existing records.")
+
+    service = ReferenceDataService(principal=current_coach)
 
     tab_list, tab_create, tab_import, tab_export, tab_simulator = st.tabs([
         "📋 Dataset Directory",

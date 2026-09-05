@@ -595,11 +595,31 @@ class ScientificUpdaterService:
             if age_cohort not in updates[stroke]: updates[stroke][age_cohort] = {}
             if gender not in updates[stroke][age_cohort]: updates[stroke][age_cohort][gender] = {}
             
-            # Simple aggregation (first found for demo)
+            # Simple aggregation with proper dispersion scale conversion (P0-4)
             if metric not in updates[stroke][age_cohort][gender]:
+                rep_mean = r.get("reported_mean")
+                conv_val = r.get("converted_value")
+                rep_std = r.get("reported_std")
+                conv_std = r.get("converted_std")
+                rep_unit = str(r.get("measurement_units", "")).lower()
+                conv_unit = str(r.get("converted_unit", "")).lower()
+
+                if conv_std is not None:
+                    final_std = float(conv_std)
+                elif rep_std is not None:
+                    if rep_unit in ["hz", "1/s", "s^-1"] and conv_unit in ["spm", "str/min", "strokes/min"]:
+                        final_std = round(float(rep_std) * 60.0, 3)
+                    elif rep_mean and conv_val and float(rep_mean) > 0:
+                        scale = float(conv_val) / float(rep_mean)
+                        final_std = round(float(rep_std) * scale, 3)
+                    else:
+                        final_std = float(rep_std)
+                else:
+                    final_std = 2.0
+
                 updates[stroke][age_cohort][gender][metric] = {
-                    "mean": r.get("converted_value"),
-                    "std": r.get("reported_std") or 2.0,
+                    "mean": conv_val,
+                    "std": final_std,
                     "unit": r.get("converted_unit"),
                     "evidence": {
                         "validation_status": "VALIDATED",
@@ -709,18 +729,54 @@ class ScientificUpdaterService:
     def _run_scientific_safety_tests(self) -> bool:
         source_reg_path = self.staging_dir / "sources" / "source_registry.yaml"
         evidence_reg_path = self.staging_dir / "evidence" / "evidence_registry.yaml"
-        
+        benchmarks_dir = self.staging_dir / "benchmarks"
+
         try:
+            # 1. Source reference integrity
             if source_reg_path.exists() and evidence_reg_path.exists():
                 with open(source_reg_path, "r", encoding="utf-8") as f:
                     s_data = yaml.safe_load(f).get("sources", {})
                 with open(evidence_reg_path, "r", encoding="utf-8") as f:
                     e_data = yaml.safe_load(f).get("evidence_records", {})
-                    
+
                 for eid, rec in e_data.items():
                     sid = rec.get("source_id")
                     if rec.get("scientific_status") == "SCIENTIFICALLY_ACCEPTED":
                         assert sid in s_data, f"Evidence {eid} references unverified source {sid}"
+
+            # 2. Benchmark files integrity and statistical sanity
+            if benchmarks_dir.exists():
+                for bm_file in benchmarks_dir.glob("*.yaml"):
+                    with open(bm_file, "r", encoding="utf-8") as f:
+                        bm_content = yaml.safe_load(f)
+                    assert bm_content is not None, f"Benchmark file {bm_file.name} is empty or invalid YAML"
+                    assert "populations" in bm_content, f"Benchmark file {bm_file.name} missing 'populations'"
+
+                    pops = bm_content.get("populations", {})
+                    for cohort, cohort_data in pops.items():
+                        if not isinstance(cohort_data, dict):
+                            continue
+                        is_youth = cohort in ["U10", "11-12", "11-13", "13-14", "14-17", "8-10"]
+                        for gender, gen_data in cohort_data.items():
+                            if not isinstance(gen_data, dict):
+                                continue
+                            for metric, mdata in gen_data.items():
+                                if not isinstance(mdata, dict) or "mean" not in mdata:
+                                    continue
+                                mean = mdata.get("mean")
+                                std = mdata.get("std")
+                                unit = mdata.get("unit")
+                                assert mean is not None and mean > 0, f"Invalid mean {mean} in {bm_file.name}"
+                                assert std is not None and std > 0, f"Invalid std {std} in {bm_file.name}"
+
+                                # P0-4 dispersion check: spm stroke rate std cannot be in unconverted Hz
+                                if metric == "stroke_rate" and unit == "spm" and mean >= 30.0:
+                                    assert std >= 1.0, f"Suspiciously low std {std} spm for mean {mean} in {bm_file.name}; check unit conversion"
+
+                                # P0-5 youth check: youth cohort cannot use adult default mean
+                                if is_youth:
+                                    assert mdata.get("evidence", {}).get("population_compatibility") != "POPULATION_MISMATCH"
+
             return True
         except Exception as e:
             logger.error(f"Scientific safety tests failed: {e}")

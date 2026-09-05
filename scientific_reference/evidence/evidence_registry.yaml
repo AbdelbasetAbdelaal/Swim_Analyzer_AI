@@ -40,8 +40,9 @@ evidence_records:
     unit_compatibility: true
     scientific_status: SCIENTIFICALLY_ACCEPTED
     audit_decision: ACCEPT_AS_DERIVED
-    conversion_formula: 0.90 Hz * 60 = 54.0 spm
+    conversion_formula: 0.90 Hz * 60 = 54.0 spm; 0.11 Hz * 60 = 6.6 spm
     converted_value: 54.0
+    converted_std: 6.6
     converted_unit: spm
   EVID-FREE-FEM-001:
     evidence_id: EVID-FREE-FEM-001

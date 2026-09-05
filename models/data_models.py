@@ -230,7 +230,13 @@ class ReliabilityResult:
     scientific_confidence: str = "High"  # High, Medium, Low
     confidence_status: str = "High Reliability"  # High Reliability, Moderate Reliability, Low Reliability
     
-    # Detailed transparent breakdown components
+    # Decoupled measurement reliability & scientific validation status (P1-6)
+    measurement_reliability_score: float = 100.0
+    measurement_reliability_level: str = "High"
+    scientific_validation_status: str = "NOT_VALIDATED — INSUFFICIENT GROUND TRUTH"
+
+    # Detailed transparent breakdown components (P1-7)
+    pose_tracking_coverage_pct: float = 100.0
     frame_coverage_pct: float = 100.0
     pose_validity_pct: float = 100.0
     landmark_visibility_pct: float = 100.0

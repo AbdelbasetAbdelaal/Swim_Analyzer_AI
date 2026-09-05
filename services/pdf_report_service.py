@@ -244,7 +244,7 @@ class PDFReportService:
             ("Stroke Length", f"{sl:.2f} m" if sl is not None else "N/A"),
             ("Kick Frequency", f"{kf:.1f} Hz" if kf is not None else "N/A"),
             ("Stroke Symmetry", f"{sym:.1f}%" if sym is not None else "N/A"),
-            ("True 3D Body Roll", f"{b_roll:.1f}°" if b_roll is not None else "N/A"),
+            ("Pose-Relative 3D Body Roll", f"{b_roll:.1f}°" if b_roll is not None else "N/A"),
             ("3D Core Torsion", f"{torsion:.1f}°" if torsion is not None else "N/A"),
         ]
 

@@ -40,16 +40,33 @@ class PoseDetector:
         logger.info(f"Initializing PoseDetector with model: {config.pose_model_path}")
         
         base_options = python.BaseOptions(model_asset_path=str(config.pose_model_path))
-        options = vision.PoseLandmarkerOptions(
+        self._options = vision.PoseLandmarkerOptions(
             base_options=base_options,
             running_mode=vision.RunningMode.VIDEO,
             min_pose_detection_confidence=config.pose_min_detection_confidence,
             min_pose_presence_confidence=config.pose_min_tracking_confidence,
             output_segmentation_masks=False
         )
-        self.detector = vision.PoseLandmarker.create_from_options(options)
+        self.detector = vision.PoseLandmarker.create_from_options(self._options)
         self.smoother = LandmarkSmoother(alpha=0.4)
         self._frame_timestamp_ms = 0
+        self._last_timestamp_ms = -1
+
+    def reset(self):
+        """
+        Resets internal timestamp tracker, smoothing state, and recreates
+        the MediaPipe PoseLandmarker graph to safely start a new video stream.
+        """
+        self._frame_timestamp_ms = 0
+        self._last_timestamp_ms = -1
+        self.smoother = LandmarkSmoother(alpha=0.4)
+        if self.detector:
+            try:
+                self.detector.close()
+            except Exception:
+                pass
+        self.detector = vision.PoseLandmarker.create_from_options(self._options)
+        logger.info("PoseDetector reset: timestamp tracker and graph reinitialized.")
         
     def detect_pose(self, frame: np.ndarray, timestamp_ms: Optional[int] = None) -> Tuple[Any, bool]:
         """
@@ -67,14 +84,25 @@ class PoseDetector:
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
         
         if timestamp_ms is not None:
-            ts = timestamp_ms
+            raw_ts = int(timestamp_ms)
         else:
-            ts = self._frame_timestamp_ms
+            raw_ts = self._frame_timestamp_ms
             self._frame_timestamp_ms += 33  # ~30 FPS default step
+
+        # Strict monotonic timestamp enforcement: ts must be > _last_timestamp_ms
+        if raw_ts <= self._last_timestamp_ms:
+            ts = self._last_timestamp_ms + 1
+        else:
+            ts = raw_ts
+        self._last_timestamp_ms = ts
             
         try:
             result = self.detector.detect_for_video(mp_image, ts)
         except Exception as exc:
+            err_msg = str(exc)
+            if "timestamp" in err_msg.lower():
+                logger.error(f"MediaPipe Tasks timestamp lifecycle error at {ts}ms: {exc}")
+                raise RuntimeError(f"MediaPipe timestamp violation: {exc}") from exc
             logger.warning(f"Pose detection failed on frame: {exc}")
             return None, False
         

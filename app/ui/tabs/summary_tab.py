@@ -156,13 +156,16 @@ def render_summary(analysis_result):
 
     if rel:
         with st.expander("🔬 Analysis Data Reliability & Pose Tracking Quality Breakdown", expanded=False):
+            sci_status = getattr(rel, 'scientific_validation_status', 'NOT_VALIDATED — INSUFFICIENT GROUND TRUTH')
+            st.info(f"**Empirical Scientific Validation Status:** `{sci_status}`\n\n*(Pose tracking reliability reflects video signal quality; physical accuracy is currently unvalidated pending empirical Ground Truth).*")
             st.caption("ℹ️ These metrics measure video tracking stability, landmark visibility, and frame completeness for the requested stroke analysis — NOT stroke style classification.")
             rcol1, rcol2, rcol3, rcol4, rcol5 = st.columns(5)
-            rcol1.metric("Frame Coverage", f"{rel.frame_coverage_pct:.1f}%")
-            rcol2.metric("Pose Validity", f"{rel.pose_validity_pct:.1f}%")
-            rcol3.metric("Landmark Visibility", f"{rel.landmark_visibility_pct:.1f}%")
-            rcol4.metric("Temporal Stability", f"{rel.temporal_stability_pct:.1f}%")
-            rcol5.metric("Cycle Quality", f"{rel.cycle_quality_pct:.1f}%")
+            cov = getattr(rel, 'pose_tracking_coverage_pct', getattr(rel, 'frame_coverage_pct', 0.0))
+            rcol1.metric("Tracking Coverage", f"{cov:.1f}%")
+            rcol2.metric("Landmark Visibility", f"{rel.landmark_visibility_pct:.1f}%")
+            rcol3.metric("Temporal Stability", f"{rel.temporal_stability_pct:.1f}%")
+            rcol4.metric("Cycle Quality", f"{rel.cycle_quality_pct:.1f}%")
+            rcol5.metric("Pose Validity", f"{rel.pose_validity_pct:.1f}%")
             if rel.reasons:
                 st.markdown("**Data Quality Notes / Limitations:**")
                 for r in rel.reasons:

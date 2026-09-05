@@ -218,11 +218,11 @@ def create_3d_torsion_chart(frames: list) -> go.Figure:
     ))
     fig.add_trace(go.Scatter(
         x=timestamps, y=rolls_3d,
-        mode='lines', name='True 3D Body Roll (°)',
+        mode='lines', name='Pose-Relative 3D Body Roll (°)',
         line=dict(color=PRIMARY_CYAN, width=3)
     ))
 
-    fig = apply_premium_layout(fig, "🧊 3D Core Torsion & Spatial Roll Timeline")
+    fig = apply_premium_layout(fig, "🧊 Pose-Relative 3D Core Torsion & Roll Timeline")
     fig.update_yaxes(title="Angle (°)", range=[0, 90])
     fig.update_xaxes(title="Time (seconds)")
     return fig

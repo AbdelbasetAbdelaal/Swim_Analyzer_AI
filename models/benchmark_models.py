@@ -67,6 +67,8 @@ class MetricBenchmarkComparison:
     population_confidence: float = 0.95
     benchmark_confidence: float = 0.95
     evidence: MetricEvidenceMetadata = field(default_factory=MetricEvidenceMetadata)
+    comparison_status: str = "available"
+    reason: str = ""
 
 @dataclass
 class BenchmarkConfidence:

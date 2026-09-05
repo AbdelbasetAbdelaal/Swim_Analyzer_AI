@@ -79,6 +79,10 @@ class AnalysisService:
         if not processor.rewind():
             logger.warning("Could not rewind video capture after VQA precheck.")
 
+        # Reset pose_detector so timestamp tracking and smoother restart clean for the main video stream
+        if pose_detector and hasattr(pose_detector, "reset"):
+            pose_detector.reset()
+
         return vqa_precheck.get_current_result()
 
     def _process_frames_loop(self, processor: VideoProcessor, vqa: Any, pose_detector: Any, annotator: Any, 
@@ -127,8 +131,9 @@ class AnalysisService:
                     clahe_clip_limit=config.preprocess_clahe_clip_limit
                 )
 
-            # 1. Detect Pose
-            landmarks, is_valid = pose_detector.detect_pose(frame)
+            # 1. Detect Pose with frame-accurate timestamp
+            frame_ts_ms = int(frames_processed * 1000.0 / max(1.0, effective_fps))
+            landmarks, is_valid = pose_detector.detect_pose(frame, timestamp_ms=frame_ts_ms)
             if is_valid:
                 valid_frames_count += 1
             

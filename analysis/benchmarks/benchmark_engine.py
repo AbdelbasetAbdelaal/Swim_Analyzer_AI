@@ -7,7 +7,7 @@ from models.benchmark_models import (
     AgeGroup, SkillLevel, PopulationStats,
     MetricBenchmarkComparison, BenchmarkResult
 )
-from models.data_models import AnalysisResult
+from models.data_models import AnalysisResult, ValidatedMetric
 from models.athlete_profile import AthleteProfile
 from models.scientific_evidence_models import (
     MetricEvidenceMetadata, ValidationStatus, EvidenceLevel,
@@ -66,6 +66,7 @@ class BenchmarkEngine:
             )
 
         pops = ds.get("populations", {})
+        is_youth = age_group in [AgeGroup.U10.value, AgeGroup.U13.value, AgeGroup.U17.value, "8-10", "11-13", "14-17", "U10", "U13", "U17"]
         raw_age_pop = pops.get(age_group)
         if isinstance(raw_age_pop, dict) and raw_age_pop.get("status") == "INSUFFICIENT_EVIDENCE":
             return PopulationStats(
@@ -79,15 +80,35 @@ class BenchmarkEngine:
                 )
             )
 
-        age_pop = raw_age_pop if isinstance(raw_age_pop, dict) else pops.get("default", {})
+        if isinstance(raw_age_pop, dict):
+            age_pop = raw_age_pop
+        elif is_youth:
+            # Youth cohorts MUST NOT fall back to adult or mixed populations
+            return PopulationStats(
+                mean=None, std=None, elite_mean=None, unit="",
+                evidence=MetricEvidenceMetadata(
+                    validation_status=ValidationStatus.INSUFFICIENT_EVIDENCE,
+                    evidence_level=EvidenceLevel.LEVEL_E,
+                    source_relationship=SourceRelationship.UNVERIFIED,
+                    population_compatibility=PopulationCompatibility.POPULATION_MISMATCH,
+                    definition_compatibility=DefinitionCompatibility.DEFINITION_MISMATCH
+                )
+            )
+        else:
+            # For non-youth, only look at default if explicitly provided
+            age_pop = pops.get("default", {})
+
         gender_pop = age_pop.get(gender) if isinstance(age_pop, dict) else None
         if not isinstance(gender_pop, dict):
-            gender_pop = pops.get("default", {}).get(gender) if isinstance(pops.get("default"), dict) else None
-            if not isinstance(gender_pop, dict):
-                gender_pop = pops.get("default", {})
+            # Check for explicitly unisex or mixed population within this cohort, NEVER cross-sex
+            gender_pop = age_pop.get("Mixed") if isinstance(age_pop, dict) else None
+            if not isinstance(gender_pop, dict) and not is_youth:
+                default_pop = pops.get("default", {})
+                if isinstance(default_pop, dict):
+                    gender_pop = default_pop.get(gender)
 
         metric_cfg = gender_pop.get(metric_name) if isinstance(gender_pop, dict) else None
-        default_cfg = pops.get("default", {}).get(gender, {}).get(metric_name, {}) if isinstance(pops.get("default"), dict) and isinstance(pops.get("default").get(gender), dict) else {}
+        default_cfg = pops.get("default", {}).get(gender, {}).get(metric_name, {}) if isinstance(pops.get("default"), dict) and isinstance(pops.get("default").get(gender), dict) and not is_youth else {}
         
         if not metric_cfg:
             metric_cfg = default_cfg
@@ -314,22 +335,56 @@ class BenchmarkEngine:
             return bm_res
 
         # Core biomechanical metrics
-        metric_map = {
-            "stroke_rate": (result.report.stroke_rate.value if result.report.stroke_rate else None, "spm"),
-            "stroke_length": (result.report.stroke_length.value if result.report.stroke_length else None, "m"),
-            "kick_frequency": (result.report.kick_frequency.value if result.report.kick_frequency else None, "Hz"),
-            "stroke_symmetry": (result.report.stroke_symmetry.value if result.report.stroke_symmetry else None, "%"),
-            "performance_score": (overall_score, "pts")
+        metric_sources = {
+            "stroke_rate": result.report.stroke_rate if result.report else None,
+            "stroke_length": result.report.stroke_length if result.report else None,
+            "kick_frequency": result.report.kick_frequency if result.report else None,
+            "stroke_symmetry": result.report.stroke_symmetry if result.report else None,
+            "performance_score": ValidatedMetric(name="performance_score", value=overall_score, unit="pts") if overall_score is not None else None
         }
 
-        for m_name, (val, unit) in metric_map.items():
-            if val is None:
+        for m_name, m_obj in metric_sources.items():
+            if m_obj is None or m_obj.value is None or not getattr(m_obj, 'valid', True):
                 continue
 
+            val = m_obj.value
+            metric_unit = getattr(m_obj, 'unit', None)
+            domain = getattr(m_obj, 'measurement_domain', None)
+
             pop_stats = self._get_population_stats(stroke, age_grp, gender, m_name)
+            expected_unit = pop_stats.unit or ("spm" if m_name == "stroke_rate" else ("m" if m_name == "stroke_length" else ""))
+
+            # Domain & unit compatibility verification (P0-3)
+            # Uncalibrated stroke length produces relative_body_normalized / body_length, NOT meters.
+            is_domain_incompatible = False
+            domain_reason = ""
+            if m_name == "stroke_length":
+                if domain in ["relative_body_normalized", "image_space", "unavailable"] or metric_unit in ["body_length", "pixels", "unavailable"]:
+                    if expected_unit in ["m", "meters"]:
+                        is_domain_incompatible = True
+                        domain_reason = "Cannot compare relative body length to physical meter benchmark without camera calibration."
+
+            if is_domain_incompatible:
+                comp = MetricBenchmarkComparison(
+                    metric_name=m_name,
+                    raw_value=val,
+                    population_mean=None,
+                    population_std=None,
+                    z_score=None,
+                    percentile=None,
+                    elite_mean=None,
+                    elite_delta=None,
+                    skill_level="N/A",
+                    unit=metric_unit or "body_length",
+                    evidence=pop_stats.evidence,
+                    comparison_status="incompatible_domain",
+                    reason=domain_reason
+                )
+                bm_res.comparisons[m_name] = comp
+                continue
+
             z = self.calculate_z_score(val, pop_stats.mean, pop_stats.std)
             pct = self.calculate_percentile(z, pop_stats.higher_is_better)
-
             e_delta = (val - pop_stats.elite_mean) if pop_stats.elite_mean is not None else None
 
             # Suppress percentiles and Z-scores if demographic cohort is unvalidated
@@ -343,8 +398,10 @@ class BenchmarkEngine:
                 elite_mean=pop_stats.elite_mean if is_pop_compat else None,
                 elite_delta=e_delta if is_pop_compat else None,
                 skill_level=self.get_skill_level(val, stroke) if is_pop_compat else "N/A",
-                unit=unit,
-                evidence=pop_stats.evidence
+                unit=metric_unit or expected_unit,
+                evidence=pop_stats.evidence,
+                comparison_status="available" if is_pop_compat else "unvalidated_cohort",
+                reason="" if is_pop_compat else "Unvalidated demographic cohort"
             )
 
             bm_res.comparisons[m_name] = comp

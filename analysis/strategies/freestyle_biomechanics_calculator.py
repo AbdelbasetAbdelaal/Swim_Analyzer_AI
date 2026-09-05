@@ -114,7 +114,7 @@ class FreestyleBiomechanicsCalculator(BaseBiomechanicsCalculator):
 
     @classmethod
     def _calculate_3d_metrics(cls, landmarks: Any, angles: JointAngles):
-        """Calculates 3D spatial metrics (True 3D Body Roll, Core Torsion, and 3D Hand Depths)."""
+        """Calculates pose-relative 3D spatial metrics (Pose-Relative 3D Body Roll, Core Torsion, and Relative Hand Depths)."""
         try:
             l_sh, r_sh = landmarks[cls.L_SHOULDER], landmarks[cls.R_SHOULDER]
             l_hp, r_hp = landmarks[cls.L_HIP], landmarks[cls.R_HIP]
@@ -288,7 +288,7 @@ class FreestyleBiomechanicsCalculator(BaseBiomechanicsCalculator):
             diff = abs(np.mean(l_pull) - np.mean(r_pull))
             sym = max(0.0, 100.0 - diff)
             return ValidatedMetric(value=sym, valid=True)
-        return ValidatedMetric(value=100.0, valid=False, reason_if_invalid="Missing arms data for symmetry comparison.")
+        return ValidatedMetric(value=None, valid=False, reason_if_invalid="Missing arms data for symmetry comparison.")
 
     @classmethod
     def _calculate_kick_frequency(cls, frames: List[FrameData], effective_fps: float) -> ValidatedMetric:

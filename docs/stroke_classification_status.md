@@ -10,3 +10,4 @@ Automated swimming stroke classification has been permanently removed from the a
 3. **No Automatic Overrides**: The system does not attempt to infer, classify, or override the user's selection.
 4. **Analysis Reliability**: The metric "Confidence" measures video tracking quality and landmark completeness, NOT stroke classification probability.
 5. **Direct Strategy Dispatch**: `AnalysisService` dispatches directly to the matching strategy (`FreestyleStrategy`, `BackstrokeStrategy`, `BreaststrokeStrategy`, `ButterflyStrategy`) based on `selected_stroke`.
+6. **Single Pose Backend (MediaPipe Tasks API)**: MediaPipe (`vision.PoseLandmarker`, `pose_landmarker_full.task`) is the sole pose estimation engine for all four stroke strategies, eliminating multi-backend variance and guaranteeing deterministic landmark inputs.

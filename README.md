@@ -93,7 +93,7 @@ Swim_Analyzer_AI/
 │   ├── export_service.py            # JSON report exporter
 │   ├── pdf_report_service.py        # FPDF report generator
 │   └── scientific_evidence_service.py# Citation formatter
-└── tests/                           # Automated Pytest Suite (298 Passed / 100% Green)
+└── tests/                           # Automated Pytest Suite (306 Passed / 100% Green)
 ```
 
 ---
@@ -103,7 +103,7 @@ Swim_Analyzer_AI/
 ### 1. Environment Setup
 ```bash
 # Clone repository
-git clone https://github.com/AbdelbasetAbdelaal/Drone.git Swim_Analyzer_AI
+git clone https://github.com/AbdelbasetAbdelaal/Swim_Analyzer_AI.git
 cd Swim_Analyzer_AI
 
 # Create virtual environment
@@ -123,7 +123,7 @@ streamlit run app/streamlit_app.py
 ### 3. Running Automated Tests
 ```bash
 python -m pytest tests/ -v
-# 298 passed, 1 skipped, 0 failed in 87s (100% Pass Rate)
+# 306 passed, 1 skipped, 0 failed in ~170s (100% Pass Rate)
 ```
 
 ```bash

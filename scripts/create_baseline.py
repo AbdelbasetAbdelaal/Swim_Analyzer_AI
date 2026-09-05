@@ -719,6 +719,31 @@ def create_baseline():
         ]
     }
     
+    priority_metric_names = {
+        "left_elbow", "right_elbow", "left_knee", "right_knee",
+        "left_shoulder", "right_shoulder", "body_roll", "body_roll_3d",
+        "stroke_phase", "completed_cycles", "avg_cycle_duration_ms",
+        "stroke_rate", "stroke_length"
+    }
+    for m in baseline["metrics"]:
+        m["mathematical_validity"] = "VALID"
+        m["implementation_validity"] = "VALID"
+        m["empirical_validation_status"] = "NOT_VALIDATED — INSUFFICIENT GROUND TRUTH"
+        m["ground_truth_in_repo"] = False
+        m["is_priority_metric"] = m["name"] in priority_metric_names
+
+    baseline["empirical_validation_summary"] = {
+        "VALIDATED": 0,
+        "VALIDATED_WITH_LIMITATIONS": 0,
+        "NOT_VALIDATED": 41,
+        "FAILED_VALIDATION": 0,
+        "reason": "Absence of paired physical Ground Truth datasets (3D optoelectronic mocap / certified manual frame annotations) in repository"
+    }
+    baseline["scientific_safety_gate"] = {
+        "allowed_to_claim_scientifically_validated": False,
+        "policy": "No metric may be described as scientifically validated unless paired physical ground truth exists"
+    }
+
     out_path = Path("data/reference/biomechanics_metric_baseline.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:

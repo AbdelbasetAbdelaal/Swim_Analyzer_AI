@@ -35,7 +35,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003); Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Planar projection on camera sensor plane; in non-square aspect ratios (e.g. 16:9), normalized coordinates introduce minor aspect ratio scaling unless corrected by W/H."
+      "audit_notes": "Planar projection on camera sensor plane; in non-square aspect ratios (e.g. 16:9), normalized coordinates introduce minor aspect ratio scaling unless corrected by W/H.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "right_elbow",
@@ -61,7 +66,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003); Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Planar projection on camera sensor plane; sensitive to foreshortening during body roll."
+      "audit_notes": "Planar projection on camera sensor plane; sensitive to foreshortening during body roll.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "left_knee",
@@ -87,7 +97,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Subsurface splash/bubbles can intermittently degrade ankle landmark confidence."
+      "audit_notes": "Subsurface splash/bubbles can intermittently degrade ankle landmark confidence.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "right_knee",
@@ -113,7 +128,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Planar projection; used for kick cycle detection and whip kick angle."
+      "audit_notes": "Planar projection; used for kick cycle detection and whip kick angle.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "left_shoulder",
@@ -139,7 +159,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Represents arm elevation relative to torso in 2D projection."
+      "audit_notes": "Represents arm elevation relative to torso in 2D projection.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "right_shoulder",
@@ -165,7 +190,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Evaluated during recovery and entry phases."
+      "audit_notes": "Evaluated during recovery and entry phases.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "left_hip",
@@ -191,7 +221,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Indicates trunk-to-thigh flexion / piking in water."
+      "audit_notes": "Indicates trunk-to-thigh flexion / piking in water.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "right_hip",
@@ -217,7 +252,12 @@
       "confidence_handling": "flagged invalid if outside [0, 180]",
       "scientific_reference": "Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Indicates trunk-to-thigh flexion."
+      "audit_notes": "Indicates trunk-to-thigh flexion.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "body_roll",
@@ -240,7 +280,12 @@
       "confidence_handling": "range clamped to [0, 90]",
       "scientific_reference": "Cappaert et al. (1995); Psycharakis & Sanders (2010)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Planar proxy for shoulder tilt; does not disentangle true body roll from yaw or pitch."
+      "audit_notes": "Planar proxy for shoulder tilt; does not disentangle true body roll from yaw or pitch.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "body_roll_3d",
@@ -267,7 +312,12 @@
       "confidence_handling": "domain marked pose_relative_3d; clamped to [0, 90]",
       "scientific_reference": "Psycharakis & Sanders (2010); Gonjo et al. (2020)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Rigorous 3D cross-product calculation; accuracy bounded by monocular pseudo-depth estimation of Z."
+      "audit_notes": "Rigorous 3D cross-product calculation; accuracy bounded by monocular pseudo-depth estimation of Z.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "core_torsion_3d",
@@ -294,7 +344,12 @@
       "confidence_handling": "clamped to [0, 90]",
       "scientific_reference": "Cappaert et al. (1995); Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Direct angular separation between shoulder transverse axis and pelvic transverse axis."
+      "audit_notes": "Direct angular separation between shoulder transverse axis and pelvic transverse axis.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "hand_depth_left_3d",
@@ -320,7 +375,12 @@
       "confidence_handling": "status marked available/unavailable",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Relative depth indicator showing whether hand is placed deeper or shallower than torso plane."
+      "audit_notes": "Relative depth indicator showing whether hand is placed deeper or shallower than torso plane.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "hand_depth_right_3d",
@@ -346,7 +406,12 @@
       "confidence_handling": "status marked available/unavailable",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Relative depth indicator showing whether hand is placed deeper or shallower than torso plane."
+      "audit_notes": "Relative depth indicator showing whether hand is placed deeper or shallower than torso plane.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "stroke_phase",
@@ -375,7 +440,12 @@
       "confidence_handling": "outputs phase_confidence float (0.0 - 1.0)",
       "scientific_reference": "Maglischo (2003); Chollet et al. (2000)",
       "classification": "VALID",
-      "audit_notes": "Deterministic state machine prevents rapid jitter transitions between discrete phases."
+      "audit_notes": "Deterministic state machine prevents rapid jitter transitions between discrete phases.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "phase_confidence",
@@ -402,7 +472,12 @@
       "confidence_handling": "used by consistency validator (Rule 1)",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Currently constant 1.0 upon valid transition, fallback 0.4 when invalid."
+      "audit_notes": "Currently constant 1.0 upon valid transition, fallback 0.4 when invalid.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "time_in_phases",
@@ -429,7 +504,12 @@
       "confidence_handling": "accumulates only when current_phase is known",
       "scientific_reference": "Chollet et al. (2000) Index of Coordination",
       "classification": "VALID",
-      "audit_notes": "Accurately segments stroke phases (Entry, Catch, Pull, Push, Recovery)."
+      "audit_notes": "Accurately segments stroke phases (Entry, Catch, Pull, Push, Recovery).",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "completed_cycles",
@@ -454,7 +534,12 @@
       "confidence_handling": "checked by zero-fallback policy; 0 cycles = INSUFFICIENT_EVIDENCE",
       "scientific_reference": "Craig & Pendergast (1979); Maglischo (2003)",
       "classification": "VALID",
-      "audit_notes": "Key gating metric for overall session score validity."
+      "audit_notes": "Key gating metric for overall session score validity.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "average_cycle_duration_ms",
@@ -479,7 +564,12 @@
       "confidence_handling": "defaults to 0.0 if completed_cycles == 0",
       "scientific_reference": "Craig & Pendergast (1979)",
       "classification": "VALID",
-      "audit_notes": "Direct reciprocal of cycle stroke rate in seconds * 1000."
+      "audit_notes": "Direct reciprocal of cycle stroke rate in seconds * 1000.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "average_phase_confidence",
@@ -504,7 +594,12 @@
       "confidence_handling": "triggers Consistency Rule 1 if < 0.50",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Used as internal safety gate for scoring confidence."
+      "audit_notes": "Used as internal safety gate for scoring confidence.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "stroke_rate",
@@ -529,7 +624,12 @@
       "confidence_handling": "returns value=None, status=unavailable if 0 cycles detected",
       "scientific_reference": "Craig & Pendergast (1979); Psycharakis & Sanders (2008)",
       "classification": "VALID",
-      "audit_notes": "Primary swimming kinematic metric; verified against peer-reviewed population benchmarks."
+      "audit_notes": "Primary swimming kinematic metric; verified against peer-reviewed population benchmarks.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "stroke_length",
@@ -557,7 +657,12 @@
       "confidence_handling": "domain strictly gated; uncalibrated setups return body_length, never meters",
       "scientific_reference": "Craig & Pendergast (1979); Smith et al. (2002)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Measures hand reach-to-finish excursion distance per cycle; serves as relative DPS proxy."
+      "audit_notes": "Measures hand reach-to-finish excursion distance per cycle; serves as relative DPS proxy.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": true
     },
     {
       "name": "kick_frequency",
@@ -583,7 +688,12 @@
       "confidence_handling": "validated within range [0.2, 8.0] Hz",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Unilateral right leg kick rate; does not measure bilateral 6-beat phase coordination."
+      "audit_notes": "Unilateral right leg kick rate; does not measure bilateral 6-beat phase coordination.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "stroke_symmetry",
@@ -610,7 +720,12 @@
       "confidence_handling": "returns None/unavailable if unilateral data missing",
       "scientific_reference": "Seifert et al. (2005); Psycharakis & Sanders (2008)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Kinematic angular/spatial symmetry index rather than Robinson kinetic symmetry index."
+      "audit_notes": "Kinematic angular/spatial symmetry index rather than Robinson kinetic symmetry index.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "average_body_roll",
@@ -632,7 +747,12 @@
       "confidence_handling": "valid if avg_roll > 0",
       "scientific_reference": "Psycharakis & Sanders (2010); Gonjo et al. (2020)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Planar projection of backstroke shoulder roll."
+      "audit_notes": "Planar projection of backstroke shoulder roll.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "glide_ratio",
@@ -656,7 +776,12 @@
       "confidence_handling": "status marked available",
       "scientific_reference": "Leblanc et al. (2005); Seifert et al. (2007)",
       "classification": "VALID",
-      "audit_notes": "Directly reflects breaststroke streamline efficiency and stroke cadence."
+      "audit_notes": "Directly reflects breaststroke streamline efficiency and stroke cadence.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "max_knee_bend_deg",
@@ -679,7 +804,12 @@
       "confidence_handling": "valid if max_bend > 0",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Measures peak whip kick preparation angle relative to anatomical extension."
+      "audit_notes": "Measures peak whip kick preparation angle relative to anatomical extension.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "hip_undulation_amplitude",
@@ -701,7 +831,12 @@
       "confidence_handling": "status unavailable if frames <= 10",
       "scientific_reference": "Sanders et al. (1995); Alves et al. (2006)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Measures dolphin kick pelvic displacement; assumes stationary vertical camera framing."
+      "audit_notes": "Measures dolphin kick pelvic displacement; assumes stationary vertical camera framing.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "avg_wrist_asymmetry",
@@ -723,7 +858,12 @@
       "confidence_handling": "status unavailable if no wrist data",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Indicates bilateral hand clearance disparity during butterfly recovery."
+      "audit_notes": "Indicates bilateral hand clearance disparity during butterfly recovery.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "overall_score",
@@ -756,7 +896,12 @@
       "confidence_handling": "strictly returns None (INSUFFICIENT_EVIDENCE) if 0 cycles detected",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Heuristic composite score configured for coaching feedback; zero-fallback prevents fabrication."
+      "audit_notes": "Heuristic composite score configured for coaching feedback; zero-fallback prevents fabrication.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "dropped_elbow_error",
@@ -782,7 +927,12 @@
       "confidence_handling": "Medium severity error",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID",
-      "audit_notes": "Standard high-elbow catch biomechanical principle."
+      "audit_notes": "Standard high-elbow catch biomechanical principle.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "recovery_reach_error",
@@ -808,7 +958,12 @@
       "confidence_handling": "Medium severity error",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID",
-      "audit_notes": "Identifies collapsed recovery or truncated extension."
+      "audit_notes": "Identifies collapsed recovery or truncated extension.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "knee_bend_error",
@@ -834,7 +989,12 @@
       "confidence_handling": "Medium severity error",
       "scientific_reference": "Maglischo (2003)",
       "classification": "VALID",
-      "audit_notes": "Bicycle kicking detection in freestyle flutter kick."
+      "audit_notes": "Bicycle kicking detection in freestyle flutter kick.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "asymmetrical_pull_error",
@@ -858,7 +1018,12 @@
       "confidence_handling": "High severity error",
       "scientific_reference": "Seifert et al. (2005)",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Coaching threshold for significant bilateral asymmetry."
+      "audit_notes": "Coaching threshold for significant bilateral asymmetry.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "analysis_reliability_score",
@@ -894,7 +1059,12 @@
       "confidence_handling": "gates report confidence level (High >= 70, Medium >= 40, Low < 40)",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID",
-      "audit_notes": "Transparent, mathematically bounded empirical reliability formulation."
+      "audit_notes": "Transparent, mathematically bounded empirical reliability formulation.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "frame_coverage_pct",
@@ -916,7 +1086,12 @@
       "confidence_handling": "component of reliability formula",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID",
-      "audit_notes": "Quantifies completeness of video tracking."
+      "audit_notes": "Quantifies completeness of video tracking.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "pose_validity_pct",
@@ -943,7 +1118,12 @@
       "confidence_handling": "component of reliability formula",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID",
-      "audit_notes": "Reflects anatomical validity of detected keypoints."
+      "audit_notes": "Reflects anatomical validity of detected keypoints.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "landmark_visibility_pct",
@@ -979,7 +1159,12 @@
       "confidence_handling": "component of reliability formula",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID",
-      "audit_notes": "Direct measure of occlusion and water splash interference."
+      "audit_notes": "Direct measure of occlusion and water splash interference.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "temporal_stability_pct",
@@ -1006,7 +1191,12 @@
       "confidence_handling": "component of reliability formula",
       "scientific_reference": "UNVERIFIED",
       "classification": "NEEDS_VALIDATION",
-      "audit_notes": "Empirical heuristic for kinematic trajectory jitter."
+      "audit_notes": "Empirical heuristic for kinematic trajectory jitter.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "cycle_quality_pct",
@@ -1031,7 +1221,12 @@
       "confidence_handling": "penalizes sessions with < 2 cycles",
       "scientific_reference": "UNVERIFIED",
       "classification": "VALID_WITH_LIMITATIONS",
-      "audit_notes": "Rewards longer session observation with representative repetitive cycles."
+      "audit_notes": "Rewards longer session observation with representative repetitive cycles.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "measurement_stability_pct",
@@ -1062,7 +1257,12 @@
       "confidence_handling": "included in measurement breakdown",
       "scientific_reference": "UNVERIFIED",
       "classification": "NEEDS_VALIDATION",
-      "audit_notes": "Heuristic stability indicator based on inter-frame angle variance."
+      "audit_notes": "Heuristic stability indicator based on inter-frame angle variance.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     },
     {
       "name": "butterfly_symmetry_normalization_factor",
@@ -1084,7 +1284,23 @@
       "confidence_handling": "returns score [0, 100]",
       "scientific_reference": "UNVERIFIED",
       "classification": "UNVERIFIED",
-      "audit_notes": "The 0.3 divisor is an unverified empirical scaling constant representing 30% of normalized image height. While functional as a heuristic coaching penalty, it lacks a formal published biomechanical derivation."
+      "audit_notes": "The 0.3 divisor is an unverified empirical scaling constant representing 30% of normalized image height. While functional as a heuristic coaching penalty, it lacks a formal published biomechanical derivation.",
+      "mathematical_validity": "VALID",
+      "implementation_validity": "VALID",
+      "empirical_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+      "ground_truth_in_repo": false,
+      "is_priority_metric": false
     }
-  ]
+  ],
+  "empirical_validation_summary": {
+    "VALIDATED": 0,
+    "VALIDATED_WITH_LIMITATIONS": 0,
+    "NOT_VALIDATED": 41,
+    "FAILED_VALIDATION": 0,
+    "reason": "Absence of paired physical Ground Truth datasets (3D optoelectronic mocap / certified manual frame annotations) in repository"
+  },
+  "scientific_safety_gate": {
+    "allowed_to_claim_scientifically_validated": false,
+    "policy": "No metric may be described as scientifically validated unless paired physical ground truth exists"
+  }
 }

@@ -55,6 +55,21 @@ It transforms raw video of swimming technique into auditable, 3D kinematic measu
 ### 9. ⚡ Asynchronous Video Processing Engine
 - **Non-Blocking Background Worker**: Runs long-duration video processing jobs in independent background threads with real-time status and progress callbacks.
 
+### 10. 🎯 Single-Source MediaPipe Pose Architecture (Step 63)
+- **Single Source of Pose Truth**: The production pipeline exclusively employs the **MediaPipe Tasks API (`vision.PoseLandmarker`)** with `pose_landmarker_full.task`.
+- **Zero Incompatible Multi-Backends**: Secondary pose backends (RTMPose, MMPose, YOLO Pose) have been eliminated to ensure predictable deterministic execution, native contiguous memory alignment, and zero multi-backend drift.
+
+### 11. 📐 Audited Biomechanics Metric Engine & Baseline (Step 64)
+- **41 Inventoried Biomechanical Metrics**: Complete audit across all 4 competitive strokes (Freestyle, Backstroke, Breaststroke, Butterfly), joint angles (elbow, knee, shoulder, hip), 3D spatial roll/torsion, and state-machine phase timing.
+- **Machine-Readable Baseline**: Standardized catalog recorded in [`data/reference/biomechanics_metric_baseline.json`](data/reference/biomechanics_metric_baseline.json) and detailed in [`docs/biomechanics_metric_audit.md`](docs/biomechanics_metric_audit.md).
+- **0 Broken Formulas**: All mathematical vector operations, state machines, and angle derivations verified with zero crashes or NaN edge-cases.
+
+### 12. 🛡️ Scientific Validation Protocol & Safety Gate (Steps 65 & 66)
+- **Mandatory Safety Rule**: Clear separation between *Mathematical Correctness*, *Implementation Correctness*, and *Empirical Scientific Validation*. No metric is claimed as "scientifically validated" without paired physical ground truth.
+- **Unestablished Thresholds Policy**: Whenever empirical literature or dataset evidence is missing, acceptance criteria are strictly marked `THRESHOLD NOT YET ESTABLISHED`.
+- **Ground Truth Specification**: Standardized specifications for collecting 24 calibrated high-speed video trials ($\ge 60\text{ fps}$) paired with double-blind manual landmark annotations and IMU telemetry ([`docs/ground_truth_dataset_specification.md`](docs/ground_truth_dataset_specification.md) and [`data/reference/ground_truth_dataset_schema.json`](data/reference/ground_truth_dataset_schema.json)).
+- **Current Empirical Status**: Rigorously held at **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`** until physical reference data is acquired ([`docs/scientific_validation_results.md`](docs/scientific_validation_results.md)).
+
 ---
 
 ## 🛠️ System Architecture
@@ -93,7 +108,7 @@ Swim_Analyzer_AI/
 │   ├── export_service.py            # JSON report exporter
 │   ├── pdf_report_service.py        # FPDF report generator
 │   └── scientific_evidence_service.py# Citation formatter
-└── tests/                           # Automated Pytest Suite (306 Passed / 100% Green)
+└── tests/                           # Automated Pytest Suite (320 Passed / 100% Green)
 ```
 
 ---
@@ -123,7 +138,7 @@ streamlit run app/streamlit_app.py
 ### 3. Running Automated Tests
 ```bash
 python -m pytest tests/ -v
-# 306 passed, 1 skipped, 0 failed in ~170s (100% Pass Rate)
+# 320 passed, 1 skipped, 0 failed (100% Pass Rate)
 ```
 
 ```bash
@@ -145,6 +160,18 @@ Use these credentials to log in for the first time.
 Run the full test suite:
 ```bash
 venv\Scripts\python -m pytest tests/ -v
+```
+Run biomechanics baseline tests:
+```bash
+venv\Scripts\python -m pytest tests/test_biomechanics_baseline.py -v
+```
+Run scientific validation protocol & safety gate tests:
+```bash
+venv\Scripts\python -m pytest tests/test_scientific_validation_protocol.py -v
+```
+Run ground truth dataset & validation infrastructure tests:
+```bash
+venv\Scripts\python -m pytest tests/test_validation_experiment_infrastructure.py -v
 ```
 Run user stroke selection and reliability tests:
 ```bash

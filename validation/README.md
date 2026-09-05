@@ -1,6 +1,15 @@
 # Biomechanics Validation Framework
 
-This framework compares computed biomechanical metrics against manually labeled ground truth data. It is completely independent from Streamlit and designed for determinism, regression testing, and scientific validation.
+This framework provides CLI validation tooling for comparing computed biomechanical metrics against labeled ground truth data.
+
+> [!IMPORTANT]
+> **Scientific Validation Protocol & Ground Truth Specification (Steps 65 & 66)**:  
+> - For the formal scientific validation protocol governing priority metrics, see [`docs/scientific_validation_protocol.md`](../docs/scientific_validation_protocol.md).
+> - For the empirical Ground Truth dataset requirements and 24-trial specification, see [`docs/ground_truth_dataset_specification.md`](../docs/ground_truth_dataset_specification.md).
+> - For the formal machine-readable annotation schema, see [`data/reference/ground_truth_dataset_schema.json`](../data/reference/ground_truth_dataset_schema.json).
+> - For experiment design and empirical status, see [`docs/scientific_validation_results.md`](../docs/scientific_validation_results.md).
+> 
+> *Note:* The local `test_data/test_video_labels.json` fixture in this directory is a 17-line synthetic mock used exclusively for unit testing arithmetic calculations (`tests/test_validation_math.py`). It is not an empirical swimming dataset.
 
 ## Workflow
 

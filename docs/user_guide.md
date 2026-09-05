@@ -1,6 +1,6 @@
 # SwimAnalyzer AI — Complete User Guide & Feature Manual
 
-Welcome to **SwimAnalyzer AI**, an advanced sports analytics platform designed to provide evidence-based, scientifically validated swimming technique analysis.
+Welcome to **SwimAnalyzer AI**, an advanced sports analytics platform designed to provide evidence-based, peer-reviewed swimming technique analysis.
 
 ---
 
@@ -14,6 +14,7 @@ Welcome to **SwimAnalyzer AI**, an advanced sports analytics platform designed t
 7. [Session-to-Session Comparison](#7-session-to-session-comparison)
 8. [Downloading PDF Reports & Data](#8-downloading-pdf-reports--data)
 9. [Scientific Trustworthiness & Safety Rules](#9-scientific-trustworthiness--safety-rules)
+10. [Scientific Validation Protocol & Ground Truth Status](#10-scientific-validation-protocol--ground-truth-status)
 
 ---
 
@@ -120,3 +121,15 @@ In the **📥 Downloads** tab:
 - **Deterministic Pipeline**: 100% local Python execution. No LLM hallucinations or uncalibrated scores.
 - **Single Source of Truth**: User selected stroke is preserved throughout the entire processing pipeline.
 - **No Fabricated Fallbacks**: Values remain `INSUFFICIENT_EVIDENCE` when data is missing or low quality.
+
+---
+
+## 10. Scientific Validation Protocol & Ground Truth Status
+
+SwimAnalyzer AI adheres to the highest standards of scientific and academic honesty:
+
+- **Mathematical Correctness**: All 41 audited biomechanical metrics execute verified mathematical algorithms (vector dot/cross products, trigonometry, discrete state machines).
+- **Single Pose Architecture**: Uses the MediaPipe Tasks API exclusively for pose landmark estimation (`vision.PoseLandmarker`).
+- **Empirical Status**: Empirical validation against physical ground truth is in progress. The current status across all priority metrics is held strictly at **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`** pending collection of the 24-trial empirical dataset specified in `docs/ground_truth_dataset_specification.md`.
+- **Zero Fabrication Policy**: The system never manufactures ground truth data, never converts mathematical plausibility into claimed empirical validity, and marks unestablished acceptance margins explicitly as `THRESHOLD NOT YET ESTABLISHED`.
+

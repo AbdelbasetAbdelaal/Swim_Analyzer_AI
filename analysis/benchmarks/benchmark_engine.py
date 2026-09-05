@@ -65,9 +65,39 @@ class BenchmarkEngine:
                 )
             )
 
+        # Normalize age group representation (P0-7)
+        norm_age = age_group
+        if age_group in ("Adult", "adult"): norm_age = "18-25"
+        elif age_group in ("Senior", "senior"): norm_age = "26-35"
+        elif age_group in ("U10", "u10"): norm_age = "8-10"
+        elif age_group in ("U13", "u13"): norm_age = "11-13"
+        elif age_group in ("U17", "u17"): norm_age = "14-17"
+        elif age_group in ("Masters", "masters"): norm_age = "Masters"
+
         pops = ds.get("populations", {})
-        is_youth = age_group in [AgeGroup.U10.value, AgeGroup.U13.value, AgeGroup.U17.value, "8-10", "11-13", "14-17", "U10", "U13", "U17"]
-        raw_age_pop = pops.get(age_group)
+        raw_age_pop = pops.get(norm_age)
+        if raw_age_pop is None and norm_age != age_group:
+            raw_age_pop = pops.get(age_group)
+
+        # Strict cohort isolation: if requested age cohort does not exist in dataset,
+        # never fall back to another cohort or default (P0-7).
+        if not isinstance(raw_age_pop, dict):
+            if age_group in ("default", "Mixed"):
+                raw_age_pop = pops.get("default", {})
+                if not isinstance(raw_age_pop, dict):
+                    raw_age_pop = pops.get("Mixed", {})
+            else:
+                return PopulationStats(
+                    mean=None, std=None, elite_mean=None, unit="",
+                    evidence=MetricEvidenceMetadata(
+                        validation_status=ValidationStatus.INSUFFICIENT_EVIDENCE,
+                        evidence_level=EvidenceLevel.LEVEL_E,
+                        source_relationship=SourceRelationship.UNVERIFIED,
+                        population_compatibility=PopulationCompatibility.POPULATION_MISMATCH,
+                        definition_compatibility=DefinitionCompatibility.DEFINITION_MISMATCH
+                    )
+                )
+
         if isinstance(raw_age_pop, dict) and raw_age_pop.get("status") == "INSUFFICIENT_EVIDENCE":
             return PopulationStats(
                 mean=None, std=None, elite_mean=None, unit="",
@@ -80,32 +110,23 @@ class BenchmarkEngine:
                 )
             )
 
-        if isinstance(raw_age_pop, dict):
-            age_pop = raw_age_pop
-        elif is_youth:
-            # Youth cohorts MUST NOT fall back to adult or mixed populations
-            return PopulationStats(
-                mean=None, std=None, elite_mean=None, unit="",
-                evidence=MetricEvidenceMetadata(
-                    validation_status=ValidationStatus.INSUFFICIENT_EVIDENCE,
-                    evidence_level=EvidenceLevel.LEVEL_E,
-                    source_relationship=SourceRelationship.UNVERIFIED,
-                    population_compatibility=PopulationCompatibility.POPULATION_MISMATCH,
-                    definition_compatibility=DefinitionCompatibility.DEFINITION_MISMATCH
-                )
-            )
-        else:
-            # For non-youth, only look at default if explicitly provided
-            age_pop = pops.get("default", {})
-
-        gender_pop = age_pop.get(gender) if isinstance(age_pop, dict) else None
+        age_pop = raw_age_pop if isinstance(raw_age_pop, dict) else {}
+        gender_pop = age_pop.get(gender)
         if not isinstance(gender_pop, dict):
-            # Check for explicitly unisex or mixed population within this cohort, NEVER cross-sex
-            gender_pop = age_pop.get("Mixed") if isinstance(age_pop, dict) else None
-            if not isinstance(gender_pop, dict) and not is_youth:
-                default_pop = pops.get("default", {})
-                if isinstance(default_pop, dict):
-                    gender_pop = default_pop.get(gender)
+            # Only allow unisex/mixed if explicitly declared within this cohort; NEVER cross-sex
+            if gender in ("Mixed", "Unisex"):
+                gender_pop = age_pop.get("Mixed")
+            if not isinstance(gender_pop, dict):
+                return PopulationStats(
+                    mean=None, std=None, elite_mean=None, unit="",
+                    evidence=MetricEvidenceMetadata(
+                        validation_status=ValidationStatus.INSUFFICIENT_EVIDENCE,
+                        evidence_level=EvidenceLevel.LEVEL_E,
+                        source_relationship=SourceRelationship.UNVERIFIED,
+                        population_compatibility=PopulationCompatibility.POPULATION_MISMATCH,
+                        definition_compatibility=DefinitionCompatibility.DEFINITION_MISMATCH
+                    )
+                )
 
         metric_cfg = gender_pop.get(metric_name) if isinstance(gender_pop, dict) else None
         default_cfg = pops.get("default", {}).get(gender, {}).get(metric_name, {}) if isinstance(pops.get("default"), dict) and isinstance(pops.get("default").get(gender), dict) and not is_youth else {}

@@ -40,6 +40,7 @@ class ExportService:
                 "average_stroke_rate": analysis_result.average_stroke_rate,
                 "report": dataclasses.asdict(analysis_result.report) if analysis_result.report else None,
                 "consistency": dataclasses.asdict(analysis_result.consistency) if getattr(analysis_result, 'consistency', None) else None,
+                "reliability": dataclasses.asdict(analysis_result.reliability) if getattr(analysis_result, 'reliability', None) else None,
                 "benchmark_result": dataclasses.asdict(bm_res) if bm_res and dataclasses.is_dataclass(bm_res) else None,
                 "frames": []
             }

@@ -279,7 +279,7 @@ def render_athlete_profile_page():
                 if report.confidence_delta:
                     color = "normal" if report.confidence_delta.is_improvement else "inverse"
                     if report.confidence_delta.delta == 0: color = "off"
-                    col_m2.metric("Scientific Confidence", 
+                    col_m2.metric("Analysis Reliability", 
                                   report.confidence_delta.new_label, 
                                   f"{report.confidence_delta.delta} levels", delta_color=color)
                                   
@@ -458,7 +458,7 @@ def render_history_page():
             if report.overall_score_delta:
                 col_m1.metric("Overall Score Delta", f"{report.overall_score_delta.new_value:.1f}", f"{report.overall_score_delta.delta:+.1f}")
             if report.confidence_delta:
-                col_m2.metric("Scientific Confidence", report.confidence_delta.new_label, f"{report.confidence_delta.delta:+} levels")
+                col_m2.metric("Analysis Reliability", report.confidence_delta.new_label, f"{report.confidence_delta.delta:+} levels")
             if report.cycles_delta:
                 col_m3.metric("Completed Cycles", f"{int(report.cycles_delta.new_value)}", f"{int(report.cycles_delta.delta):+d}")
             if report.cycle_duration_delta:

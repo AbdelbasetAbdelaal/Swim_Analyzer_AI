@@ -21,22 +21,34 @@ def safe_log(msg: str):
 def render_executive_summary_card(analysis_result):
     """
     Renders an Executive Summary Hero Card at the top of analysis results.
+    P0-1 / P0-10: Evidence-aware presentation separating available technique score,
+    evidence sufficiency, analysis reliability, scientific validation, and population benchmarks.
     """
     report = getattr(analysis_result, 'report', None)
     score = report.overall_score if report else None
 
-    if score is None:
+    evidence_suf = getattr(report, 'evidence_sufficiency', 'INSUFFICIENT') if report else 'INSUFFICIENT'
+    tech_assessment = getattr(report, 'technique_assessment', 'INSUFFICIENT EVIDENCE') if report else 'INSUFFICIENT EVIDENCE'
+    available_comps = getattr(report, 'available_components', []) if report else []
+    unavailable_comps = getattr(report, 'unavailable_components', []) if report else []
+    total_comps = getattr(report, 'total_components_count', len(available_comps) + len(unavailable_comps)) if report else 0
+
+    if evidence_suf == "INSUFFICIENT" or score is None:
         status_tier = "Insufficient Evidence"
-        status_color = "#888888"
-        badge_bg = "rgba(136, 136, 136, 0.15)"
+        status_color = "#AAAAAA"
+        badge_bg = "rgba(170, 170, 170, 0.15)"
+    elif evidence_suf == "LIMITED":
+        status_tier = "Limited Evidence"
+        status_color = "#FF8C00"
+        badge_bg = "rgba(255, 140, 0, 0.15)"
     elif score >= 85.0:
         status_tier = "Excellent"
         status_color = "#00F0FF"
         badge_bg = "rgba(0, 240, 255, 0.15)"
     elif score >= 70.0:
         status_tier = "Good"
-        status_color = "#FF8C00"
-        badge_bg = "rgba(255, 140, 0, 0.15)"
+        status_color = "#00D26A"
+        badge_bg = "rgba(0, 210, 106, 0.15)"
     else:
         status_tier = "Needs Improvement"
         status_color = "#FF007F"
@@ -47,53 +59,78 @@ def render_executive_summary_card(analysis_result):
 
     reliability = getattr(analysis_result, 'reliability', None)
     rel_score = reliability.analysis_reliability_score if reliability else None
+    rel_level = getattr(reliability, 'analysis_reliability_level', 'Medium') if reliability else 'Medium'
 
     bm_res = getattr(analysis_result, 'benchmark_result', None)
     overall_pct = None
     if bm_res and getattr(bm_res, 'comparisons', None) and "stroke_rate" in bm_res.comparisons:
         overall_pct = bm_res.comparisons["stroke_rate"].percentile
 
-    pct_header_str = f"{overall_pct:.1f}th percentile" if overall_pct is not None else "N/A (Unvalidated Cohort)"
-    pct_metric_str = f"{overall_pct:.1f}%" if overall_pct is not None else "N/A"
+    pct_header_str = f"{overall_pct:.1f}th percentile" if overall_pct is not None else "N/A — Unvalidated Cohort"
+    pct_metric_str = f"{overall_pct:.1f}%" if overall_pct is not None else "N/A — Unvalidated Cohort"
 
     with st.container(border=True):
         st.markdown(
             f"""<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:12px;">
             <div>
-                <span style="font-size:1.5rem; font-weight:bold;">🏆 Overall Performance: {f'{score:.1f} / 100' if score is not None else '⚠ INSUFFICIENT_EVIDENCE'}</span>
-                <span style="background:{badge_bg}; color:{status_color}; border:1px solid {status_color}; padding:4px 12px; border-radius:16px; font-weight:bold; font-size:0.9rem; margin-left:12px;">
+                <span style="font-size:1.3rem; font-weight:bold;">Technique Assessment:</span>
+                <span style="background:{badge_bg}; color:{status_color}; border:1px solid {status_color}; padding:4px 14px; border-radius:16px; font-weight:bold; font-size:0.95rem; margin-left:10px;">
                     {status_tier}
                 </span>
             </div>
             <div style="font-size:0.9rem; color:#A0A0A0;">
-                Percentile Rank: <b style="color:#00F0FF;">{pct_header_str}</b>
+                Population Benchmark: <b style="color:#00F0FF;">{pct_header_str}</b>
             </div>
             </div>""",
             unsafe_allow_html=True
         )
 
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Technique Score", f"{score:.1f}/100" if score is not None else "⚠ INSUFFICIENT_EVIDENCE")
-        c2.metric("Scientific Confidence", conf_str)
-        c3.metric("Analysis Reliability", f"{rel_score:.1f}/100" if rel_score is not None else "UNAVAILABLE")
-        c4.metric("Population Rank", pct_metric_str)
+        caption_fn = getattr(st, 'caption', st.markdown)
+        caption_fn(
+            f"ℹ️ The available technique score is calculated only from measurable components supported by this video "
+            f"({len(available_comps)} of {total_comps} components). It is not a validated overall performance score."
+        )
+
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric("Available Technique Score", f"{score:.1f}/100" if score is not None else "INSUFFICIENT_EVIDENCE")
+        c2.metric("Technique Assessment", status_tier)
+        c3.metric(
+            "Analysis Reliability", 
+            f"{rel_score:.1f} / 100 — {rel_level}" if rel_score is not None else "UNAVAILABLE",
+            help="Analysis Reliability measures video signal quality, pose tracking stability, landmark visibility, temporal completeness, and measurement stability. It does not establish physical or scientific accuracy."
+        )
+        c4.metric(
+            "Scientific Validation", 
+            "NOT VALIDATED", 
+            help="Empirical scientific status is strictly NOT_VALIDATED — INSUFFICIENT GROUND TRUTH. MediaPipe monocular depth is an uncalibrated relative estimate."
+        )
+        c5.metric(
+            "Population Benchmark", 
+            pct_metric_str, 
+            help="Comparison is restricted strictly to the athlete's validated demographic cohort without cross-cohort fallbacks."
+        )
+
+        if total_comps > 0 and hasattr(st, 'expander'):
+            with st.expander(f"📋 Technique Evidence Coverage: {len(available_comps)} of {total_comps} components available", expanded=False):
+                st.markdown(f"**Available Components ({len(available_comps)}):** {', '.join(available_comps) if available_comps else 'None'}")
+                st.markdown(f"**Unavailable Components ({len(unavailable_comps)}):** {', '.join(unavailable_comps) if unavailable_comps else 'None'}")
 
         st.markdown("---")
         str_col, weak_col = st.columns(2)
 
         with str_col:
-            st.markdown("##### 🟢 Top Strengths")
+            st.markdown("##### 🟢 Observed Strengths")
             strengths = []
             if report:
                 sym_v = getattr(report.stroke_symmetry, 'value', None) if report.stroke_symmetry else None
                 sl_v = getattr(report.stroke_length, 'value', None) if report.stroke_length else None
                 sr_v = getattr(report.stroke_rate, 'value', None) if report.stroke_rate else None
                 if sym_v is not None and sym_v > 85:
-                    strengths.append(f"High Stroke Symmetry ({sym_v:.1f}%)")
+                    strengths.append(f"Observed Strength: Stroke Symmetry ({sym_v:.1f}%) — Based on available symmetry evidence")
                 if sl_v is not None and sl_v > 1.8:
-                    strengths.append(f"Strong Distance Per Stroke ({sl_v:.2f} m)")
+                    strengths.append(f"Observed Strength: Distance Per Stroke ({sl_v:.2f} m) — Based on calibrated trajectory")
                 if sr_v is not None and sr_v > 45:
-                    strengths.append(f"Consistent Stroke Tempo ({sr_v:.1f} spm)")
+                    strengths.append(f"Observed Strength: Consistent Stroke Tempo ({sr_v:.1f} spm) — Based on cycle cadence")
             if not strengths:
                 strengths = ["No reliable strength assessment is available from this evidence."]
             for s in strengths[:3]:
@@ -106,7 +143,7 @@ def render_executive_summary_card(analysis_result):
                 for e in report.errors:
                     flaws.append(f"{e.error_type} ({e.severity} Severity)")
             if not flaws:
-                flaws = ["No reliable technique-flaw assessment is available from this evidence."]
+                flaws = ["Insufficient evidence for reliable technique-flaw assessment."]
             for f in flaws[:3]:
                 st.markdown(f"- ⚠️ {f}")
 
@@ -146,13 +183,25 @@ def render_summary(analysis_result):
         tech_score_str = "⚠ INSUFFICIENT_EVIDENCE"
     
     with summary_col1:
-        st.metric("Overall Technique Score", tech_score_str)
+        st.metric("Available Technique Score", tech_score_str)
     with summary_col2:
         st.metric("Video Quality", f"{vqa_score}/100" if vqa_score is not None else "UNAVAILABLE", delta=vqa_class, delta_color="off")
     with summary_col3:
-        st.metric("Analysis Reliability", f"{rel.analysis_reliability_score:.1f}%" if rel is not None and getattr(rel, 'analysis_reliability_score', None) is not None else "UNAVAILABLE", delta=getattr(rel, 'analysis_reliability_level', 'Medium'), delta_color="normal")
+        st.metric(
+            "Analysis Reliability", 
+            f"{rel.analysis_reliability_score:.1f}%" if rel is not None and getattr(rel, 'analysis_reliability_score', None) is not None else "UNAVAILABLE", 
+            delta=getattr(rel, 'analysis_reliability_level', 'Medium'), 
+            delta_color="normal",
+            help="Analysis Reliability measures video signal quality, pose tracking stability, landmark visibility, temporal completeness, and measurement stability. It does not establish physical or scientific accuracy."
+        )
     with summary_col4:
-        st.metric("Scientific Confidence", getattr(rel, 'scientific_confidence', 'Medium') if rel else "Medium", delta="User Selected", delta_color="off")
+        st.metric(
+            "Reliability Level", 
+            getattr(rel, 'analysis_reliability_level', 'Medium') if rel else "Medium", 
+            delta="Video Tracking", 
+            delta_color="off",
+            help="Reflects algorithm tracking quality across video frames, not empirical scientific ground truth."
+        )
 
     if rel:
         with st.expander("🔬 Analysis Data Reliability & Pose Tracking Quality Breakdown", expanded=False):
@@ -177,12 +226,13 @@ def render_consistency(analysis_result):
     safe_log("[TRACE] ENTER render_consistency")
     if getattr(analysis_result, 'consistency', None):
         cons = analysis_result.consistency
-        with st.expander("Analysis Consistency & Scientific Trustworthiness", expanded=(cons.validation_status != "Passed")):
+        with st.expander("Analysis Consistency & Signal Integrity", expanded=(cons.validation_status != "Passed")):
+            st.caption("ℹ️ Measures internal mathematical consistency of the extracted analysis signals. It does not validate measurements against physical Ground Truth.")
             cons_col1, cons_col2, cons_col3 = st.columns(3)
             cons_col1.metric("Validation Status", cons.validation_status)
-            cons_col2.metric("Scientific Confidence", cons.scientific_confidence)
+            cons_col2.metric("Analysis Reliability", getattr(cons, 'scientific_confidence', 'Medium'))
             cons_score_str = f"{cons.overall_score:.1f}/100" if cons.overall_score is not None else "⚠ INSUFFICIENT_EVIDENCE"
-            cons_col3.metric("Consistency Score", cons_score_str)
+            cons_col3.metric("Internal Consistency Score", cons_score_str)
             
             if cons.warnings:
                 for w in cons.warnings:

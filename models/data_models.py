@@ -208,6 +208,12 @@ class PerformanceReport:
     stroke_symmetry: ValidatedMetric = field(default_factory=ValidatedMetric)
     errors: List[MovementError] = field(default_factory=list)
     feedback_summary: str = ""
+    # Evidence sufficiency & component coverage (P0-2, P0-3, P0-12)
+    evidence_sufficiency: str = "INSUFFICIENT"  # "INSUFFICIENT", "LIMITED", "SUFFICIENT"
+    technique_assessment: str = "INSUFFICIENT EVIDENCE"  # "INSUFFICIENT EVIDENCE", "LIMITED EVIDENCE", or evaluated tier
+    available_components: List[str] = field(default_factory=list)
+    unavailable_components: List[str] = field(default_factory=list)
+    total_components_count: int = 0
 
 @dataclass
 class StrokeSelection:

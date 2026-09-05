@@ -18,7 +18,7 @@ def test_freestyle_yaml_stroke_rate_dispersion():
     with open(bm_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
-    male_sr = data["populations"]["Mixed"]["Male"]["stroke_rate"]
+    male_sr = (data["populations"].get("18-25") or data["populations"].get("Mixed"))["Male"]["stroke_rate"]
     assert male_sr["unit"] == "spm"
     assert male_sr["mean"] == 54.0
     # Must be 6.6 spm (0.11 Hz * 60 = 6.6), NOT unconverted 0.11

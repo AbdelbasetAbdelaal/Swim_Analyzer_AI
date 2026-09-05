@@ -28,6 +28,26 @@ class ButterflyScoringEngine(BaseScoringEngine):
         undulation = _val("hip_undulation_amplitude")
         asymmetry = _val("avg_wrist_asymmetry")
 
+        available_components = []
+        unavailable_components = []
+
+        if sr_value is not None:
+            available_components.append("Stroke Rate")
+        else:
+            unavailable_components.append("Stroke Rate")
+
+        if undulation is not None:
+            available_components.append("Hip Undulation")
+        else:
+            unavailable_components.append("Hip Undulation")
+
+        if asymmetry is not None:
+            available_components.append("Arm Symmetry")
+        else:
+            unavailable_components.append("Arm Symmetry")
+
+        total_components_count = len(available_components) + len(unavailable_components)
+
         # P0-8: Check upstream cycle count
         cycles = 0
         if analysis_result and analysis_result.stroke_statistics:
@@ -36,6 +56,11 @@ class ButterflyScoringEngine(BaseScoringEngine):
         if cycles == 0:
             return PerformanceReport(
                 overall_score=None,
+                evidence_sufficiency="INSUFFICIENT",
+                technique_assessment="INSUFFICIENT EVIDENCE",
+                available_components=available_components,
+                unavailable_components=unavailable_components,
+                total_components_count=total_components_count,
                 stroke_rate=stroke_rate_m,
                 stroke_length=stroke_length_m,
                 kick_frequency=_metric("kick_frequency"),
@@ -66,10 +91,36 @@ class ButterflyScoringEngine(BaseScoringEngine):
             logger.debug("Wrist asymmetry unavailable; skipping asymmetry penalty (P0-7).")
 
         final_score = max(0.0, min(100.0, score))
-        feedback = "\n".join(feedback_lines) if feedback_lines else "No critical technique issues detected this session."
+
+        if len(available_components) <= 1:
+            evidence_sufficiency = "INSUFFICIENT"
+            technique_assessment = "INSUFFICIENT EVIDENCE"
+            feedback = f"Technique score {final_score:.1f}/100 is based only on {len(available_components)} of {total_components_count} measurable components. Evidence is insufficient for overall technique evaluation."
+        elif len(available_components) == 2:
+            evidence_sufficiency = "LIMITED"
+            technique_assessment = "LIMITED EVIDENCE"
+            feedback = f"Limited evidence ({len(available_components)} of {total_components_count} components available). Measured technique score is {final_score:.1f}/100."
+            if feedback_lines:
+                feedback += " " + " ".join(feedback_lines)
+        else:
+            evidence_sufficiency = "SUFFICIENT"
+            if final_score >= 85.0:
+                technique_assessment = "Excellent"
+            elif final_score >= 70.0:
+                technique_assessment = "Good"
+            elif final_score >= 50.0:
+                technique_assessment = "Fair"
+            else:
+                technique_assessment = "Needs Improvement"
+            feedback = "\n".join(feedback_lines) if feedback_lines else "No critical technique issues detected this session."
 
         return PerformanceReport(
             overall_score=final_score,
+            evidence_sufficiency=evidence_sufficiency,
+            technique_assessment=technique_assessment,
+            available_components=available_components,
+            unavailable_components=unavailable_components,
+            total_components_count=total_components_count,
             stroke_rate=stroke_rate_m,
             stroke_length=stroke_length_m,
             kick_frequency=_metric("kick_frequency"),

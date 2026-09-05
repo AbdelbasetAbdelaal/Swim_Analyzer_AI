@@ -18,8 +18,11 @@ env/
 
 # Local Database (CRITICAL SECURITY)
 data/*.db
+data/*.db-*
 data/*.sqlite3
 swim_analyzer.db
+*.db-shm
+*.db-wal
 
 # User Data & Uploads
 data/input_videos/*

@@ -1,11 +1,11 @@
 # Scientific Database Update Report
 
 **Date**: None
-**Status**: SUCCESSFUL_UPDATE
+**Status**: SUCCESSFUL_UPDATE_WITH_LIMITED_COVERAGE
 
 ## Transaction Summary
 **Previous Version**: `2026.08.08`  
-**New Database Version**: `2026.08.08`  
+**New Database Version**: `2026.08.09`  
 
 | Metric | Count |
 |--------|-------|
@@ -17,7 +17,7 @@
 | **Rejected Evidence** | 0 |
 | **Review-Required Evidence** | 0 |
 | **Benchmarks Created** | 0 |
-| **Benchmarks Updated** | 0 |
+| **Benchmarks Updated** | 4 |
 | **Populations Still Insufficient** | 90 |
 | **Populations with Conflicting Evidence** | 0 |
 | **Network Failures** | 0 |

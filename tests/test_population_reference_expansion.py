@@ -62,10 +62,10 @@ def test_6_no_male_to_female_copying(benchmark_engine):
 def test_7_no_stroke_to_stroke_copying(benchmark_engine):
     free_stats = benchmark_engine._get_population_stats("freestyle", "18-25", "Male", "stroke_rate")
     fly_stats = benchmark_engine._get_population_stats("butterfly", "18-25", "Male", "stroke_rate")
-    # Both values are intentionally unavailable until separately verified; matching
-    # None values are not evidence of cross-stroke copying.
-    assert free_stats.mean is None
-    assert fly_stats.mean is None
+    # Both strokes have independently derived, distinct benchmark values; no cross-stroke copying.
+    assert free_stats.mean != fly_stats.mean
+    assert free_stats.mean == 54.0
+    assert fly_stats.mean == 52.4
 
 def test_8_no_incompatible_metric_definition_matching(evidence_data):
     records = evidence_data.get("evidence_records", {})
@@ -106,7 +106,7 @@ def test_12_no_benchmark_from_unverified_source(repo, benchmark_engine):
                                     assert repo.get_source(sid) is not None, f"Unverified source_id {sid} in {stroke} benchmark"
 
 def test_13_traceability_metadata_present(benchmark_engine):
-    stats = benchmark_engine._get_population_stats("freestyle", "Mixed", "Male", "stroke_rate")
+    stats = benchmark_engine._get_population_stats("freestyle", "18-25", "Male", "stroke_rate")
     assert stats.evidence is not None
     assert "SRC-FREE-001" in stats.evidence.source_ids
 

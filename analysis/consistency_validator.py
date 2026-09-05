@@ -186,7 +186,7 @@ class AnalysisConsistencyValidator:
             result.report.overall_score = report.overall_score
             
         report.passed_rules.append("Rule_8_Score_Scaled")
-        
-        logger.info(f"Consistency Validation complete. Status: {report.validation_status}. Scientific Confidence: {report.scientific_confidence}")
+        rel_lvl = getattr(result.reliability, 'analysis_reliability_level', report.scientific_confidence) if getattr(result, 'reliability', None) else report.scientific_confidence
+        logger.info(f"Consistency Validation complete. Status: {report.validation_status}. Analysis Reliability: {rel_lvl}. Internal Consistency Score: {report.overall_score}. Scientific Validation: NOT_VALIDATED — INSUFFICIENT GROUND TRUTH")
         
         return report

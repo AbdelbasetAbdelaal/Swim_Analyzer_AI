@@ -218,7 +218,7 @@ def test_youth_cohort_never_falls_back_to_adult():
 def test_validated_cohort_evaluates_normally():
     """9. Explicitly supported population cohort evaluates normally with genuine Z-score and percentile."""
     engine = BenchmarkEngine()
-    stats = engine._get_population_stats("Freestyle", "Mixed", "Male", "stroke_rate")
+    stats = engine._get_population_stats("Freestyle", "18-25", "Male", "stroke_rate")
     assert stats.mean == 54.0
     assert stats.std is not None
     z = engine.calculate_z_score(54.0, stats.mean, stats.std)
@@ -232,8 +232,8 @@ def test_validated_cohort_evaluates_normally():
 def test_cross_gender_fallback_rejected():
     """10. Male looking up Female-only cohort or vice versa returns None."""
     engine = BenchmarkEngine()
-    # Backstroke has Mixed Male but NO Mixed Female
-    stats = engine._get_population_stats("Backstroke", "Mixed", "Female", "stroke_rate")
+    # Backstroke has 18-25 Male but NO 18-25 Female
+    stats = engine._get_population_stats("Backstroke", "18-25", "Female", "stroke_rate")
     assert stats.mean is None
     assert stats.std is None
 
@@ -282,3 +282,104 @@ def test_pdf_and_export_interpretation_consistency(tmp_path):
     pdf_service = PDFReportService(output_dir=str(tmp_path))
     pdf_path = pdf_service.generate_session_analysis_pdf(ar)
     assert pdf_path and os.path.exists(pdf_path)
+
+
+def test_age_group_normalization():
+    """13. Age normalization maps Adult->18-25, U13->11-13, Masters->Masters."""
+    engine = BenchmarkEngine()
+    # "Adult" maps to "18-25" Male in Freestyle
+    stats_adult = engine._get_population_stats("Freestyle", "Adult", "Male", "stroke_rate")
+    assert stats_adult.mean == 54.0
+
+    # "Adult" maps to "18-25" Male in Backstroke
+    stats_back_adult = engine._get_population_stats("Backstroke", "Adult", "Male", "stroke_rate")
+    assert stats_back_adult.mean == 48.0
+
+    # "U13" maps to "11-13" which is protected as INSUFFICIENT_EVIDENCE
+    stats_u13 = engine._get_population_stats("Backstroke", "U13", "Male", "stroke_rate")
+    assert stats_u13.mean is None
+    assert stats_u13.evidence.validation_status.value == "INSUFFICIENT_EVIDENCE"
+
+    # "Masters" has no representation in Freestyle -> returns None
+    stats_masters = engine._get_population_stats("Freestyle", "Masters", "Male", "stroke_rate")
+    assert stats_masters.mean is None
+
+
+def test_is_youth_execution_without_name_error():
+    """14. Calling _get_population_stats with youth or adult cohorts executes cleanly without NameError."""
+    engine = BenchmarkEngine()
+    # Test multiple cohorts to verify no NameError: name 'is_youth' is not defined
+    for cohort in ["8-10", "11-13", "14-17", "18-25", "26-35", "Masters", "U10", "Adult", "default"]:
+        stats = engine._get_population_stats("Freestyle", cohort, "Male", "stroke_rate")
+        assert stats is not None
+
+
+def test_all_four_scoring_engines_unified_gates():
+    """15. All 4 scoring engines fail gracefully with overall_score=None on insufficient evidence."""
+    engines = [
+        FreestyleScoringEngine(),
+        BackstrokeScoringEngine(),
+        BreaststrokeScoringEngine(),
+        ButterflyScoringEngine()
+    ]
+    for eng in engines:
+        # Case A: 0 cycles
+        ar_0 = make_analysis([], cycles=0, reliability=85.0)
+        rep_0 = eng.generate_report(ar_0, {})
+        assert rep_0.overall_score is None
+        assert rep_0.evidence_sufficiency == "INSUFFICIENT"
+        assert rep_0.technique_assessment == "INSUFFICIENT EVIDENCE"
+
+        # Case B: low reliability (< 50.0)
+        ar_low = make_analysis([], cycles=3, reliability=40.0)
+        rep_low = eng.generate_report(ar_low, {})
+        assert rep_low.overall_score is None
+        assert rep_low.evidence_sufficiency == "INSUFFICIENT"
+        assert rep_low.technique_assessment == "INSUFFICIENT EVIDENCE"
+
+        # Case C: 0 available components
+        ar_no_comp = make_analysis([], cycles=3, reliability=85.0)
+        rep_no_comp = eng.generate_report(ar_no_comp, {})
+        assert rep_no_comp.overall_score is None
+        assert rep_no_comp.evidence_sufficiency == "INSUFFICIENT"
+        assert rep_no_comp.technique_assessment == "INSUFFICIENT EVIDENCE"
+
+
+def test_p1_16_realistic_case_end_to_end():
+    """16. Realistic Case: Medium reliability, 1-2 components available, unvalidated cohort.
+    Ensures: Available Technique Score numeric, Technique Assessment LIMITED/INSUFFICIENT,
+    Scientific Validation NOT VALIDATED, Benchmark N/A.
+    """
+    engine = FreestyleScoringEngine()
+    benchmark_engine = BenchmarkEngine()
+
+    frames = [
+        make_frame(0, "Pull", left_elbow=105.0, right_elbow=105.0),
+        make_frame(1, "Pull", left_elbow=105.0, right_elbow=105.0),
+    ]
+    ar = make_analysis(frames, cycles=2, reliability=65.0)
+    global_metrics = {
+        "stroke_symmetry": ValidatedMetric(value=92.0, valid=True),
+        "stroke_rate": ValidatedMetric(value=50.0, valid=True)
+    }
+    report = engine.generate_report(ar, global_metrics)
+    ar.report = report
+
+    # 2 components -> LIMITED EVIDENCE
+    assert report.overall_score is not None
+    assert report.evidence_sufficiency == "LIMITED"
+    assert report.technique_assessment == "LIMITED EVIDENCE"
+
+    # Evaluation with unvalidated cohort (Masters Male)
+    masters_profile = AthleteProfile(
+        coach_id="c1", full_name="Master Swimmer", age=45, gender="Male",
+        height_cm=180.0, weight_kg=78.0, swimming_level="Advanced", preferred_stroke="Freestyle"
+    )
+    b_res = benchmark_engine.evaluate_analysis(ar, masters_profile)
+    assert b_res.is_population_compatible is False
+    assert b_res.validation_status == "unvalidated_cohort"
+    assert b_res.overall_skill_level == "N/A (Unvalidated Cohort)"
+
+    # Scientific validation status remains strictly unvalidated
+    assert ar.reliability.scientific_validation_status == "NOT_VALIDATED — INSUFFICIENT GROUND TRUTH"
+

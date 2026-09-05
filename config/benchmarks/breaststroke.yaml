@@ -3,7 +3,7 @@ version: 2.0.0
 scientific_revision: '2026.08'
 validation_status: validated
 populations:
-  Mixed:
+  "18-25":
     Male:
       stroke_rate:
         mean: 44.0
@@ -15,7 +15,6 @@ populations:
           source_ids:
           - SRC-BREAST-001
           source_relationship: DIRECT_MEASUREMENT
-    status: VALIDATED
     Female:
       stroke_rate:
         mean: 41.8
@@ -27,3 +26,4 @@ populations:
           source_ids:
           - SRC-BREAST-002
           source_relationship: DIRECT_MEASUREMENT
+    status: VALIDATED

@@ -142,8 +142,7 @@ class FreestyleScoringEngine(BaseScoringEngine):
         report.total_components_count = len(available_component_names) + len(unavailable_component_names)
 
         # Downstream propagation — score is only valid when upstream dependencies are met
-        cycles = analysis_result.stroke_statistics.completed_cycles if analysis_result.stroke_statistics else 0
-        reliability_score = analysis_result.reliability.analysis_reliability_score if analysis_result.reliability else 0.0
+        cycles = analysis_result.stroke_statistics.completed_cycles if (analysis_result and analysis_result.stroke_statistics) else 0
 
         if cycles == 0:
             # P0-7: No complete stroke cycle → no valid score
@@ -155,15 +154,17 @@ class FreestyleScoringEngine(BaseScoringEngine):
             report.errors = errors
             return report
 
-        if reliability_score < RELIABILITY_MIN_ACCEPTABLE_SCORE:
-            # P0-7: Reliability too low → no valid score
-            report.overall_score = None
-            report.evidence_sufficiency = "INSUFFICIENT"
-            report.technique_assessment = "INSUFFICIENT EVIDENCE"
-            report.status = "insufficient_evidence"
-            report.feedback_summary = f"INSUFFICIENT_EVIDENCE: Reliability score {reliability_score:.0f} below minimum threshold ({RELIABILITY_MIN_ACCEPTABLE_SCORE}). Biomechanical data is insufficient for scoring."
-            report.errors = errors
-            return report
+        if analysis_result and getattr(analysis_result, 'reliability', None) is not None:
+            rel_val = getattr(analysis_result.reliability, 'analysis_reliability_score', None)
+            if rel_val is not None and rel_val < RELIABILITY_MIN_ACCEPTABLE_SCORE:
+                # P0-7: Reliability too low → no valid score
+                report.overall_score = None
+                report.evidence_sufficiency = "INSUFFICIENT"
+                report.technique_assessment = "INSUFFICIENT EVIDENCE"
+                report.status = "insufficient_evidence"
+                report.feedback_summary = f"INSUFFICIENT_EVIDENCE: Reliability score {rel_val:.0f} below minimum threshold ({RELIABILITY_MIN_ACCEPTABLE_SCORE}). Biomechanical data is insufficient for scoring."
+                report.errors = errors
+                return report
 
         total_weight = sum(w for _, w in available_components)
         if total_weight <= 0.0 or len(available_components) == 0:

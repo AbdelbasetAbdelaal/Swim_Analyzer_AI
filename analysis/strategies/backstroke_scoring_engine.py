@@ -5,6 +5,7 @@ P0-7 / P0-8: No fabricated default scores. overall_score=None when upstream data
 from typing import Any, Optional
 from analysis.strategies.base_strategy import BaseScoringEngine
 from models.data_models import PerformanceReport, ValidatedMetric
+from core.constants import RELIABILITY_MIN_ACCEPTABLE_SCORE
 from core.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -50,7 +51,7 @@ class BackstrokeScoringEngine(BaseScoringEngine):
 
         total_components_count = len(available_components) + len(unavailable_components)
 
-        # P0-8: Check upstream cycle count
+        # Unified Evidence Gate (P1-4): completed_cycles == 0 OR reliability < threshold OR no metrics
         cycles = 0
         if analysis_result and analysis_result.stroke_statistics:
             cycles = analysis_result.stroke_statistics.completed_cycles
@@ -58,6 +59,7 @@ class BackstrokeScoringEngine(BaseScoringEngine):
         if cycles == 0:
             return PerformanceReport(
                 overall_score=None,
+                status="insufficient_evidence",
                 evidence_sufficiency="INSUFFICIENT",
                 technique_assessment="INSUFFICIENT EVIDENCE",
                 available_components=available_components,
@@ -68,6 +70,42 @@ class BackstrokeScoringEngine(BaseScoringEngine):
                 kick_frequency=_metric("kick_frequency"),
                 stroke_symmetry=_metric("stroke_symmetry"),
                 feedback_summary="INSUFFICIENT_EVIDENCE: No complete backstroke cycle detected. Scoring requires at least one full cycle.",
+                errors=[]
+            )
+
+        if analysis_result and getattr(analysis_result, 'reliability', None) is not None:
+            rel_val = getattr(analysis_result.reliability, 'analysis_reliability_score', None)
+            if rel_val is not None and rel_val < RELIABILITY_MIN_ACCEPTABLE_SCORE:
+                return PerformanceReport(
+                    overall_score=None,
+                    status="insufficient_evidence",
+                    evidence_sufficiency="INSUFFICIENT",
+                    technique_assessment="INSUFFICIENT EVIDENCE",
+                    available_components=available_components,
+                    unavailable_components=unavailable_components,
+                    total_components_count=total_components_count,
+                    stroke_rate=stroke_rate_m,
+                    stroke_length=stroke_length_m,
+                    kick_frequency=_metric("kick_frequency"),
+                    stroke_symmetry=_metric("stroke_symmetry"),
+                    feedback_summary=f"INSUFFICIENT_EVIDENCE: Reliability score {rel_val:.0f} below minimum threshold ({RELIABILITY_MIN_ACCEPTABLE_SCORE}). Biomechanical data is insufficient for scoring.",
+                    errors=[]
+                )
+
+        if len(available_components) == 0:
+            return PerformanceReport(
+                overall_score=None,
+                status="metric_unavailable",
+                evidence_sufficiency="INSUFFICIENT",
+                technique_assessment="INSUFFICIENT EVIDENCE",
+                available_components=available_components,
+                unavailable_components=unavailable_components,
+                total_components_count=total_components_count,
+                stroke_rate=stroke_rate_m,
+                stroke_length=stroke_length_m,
+                kick_frequency=_metric("kick_frequency"),
+                stroke_symmetry=_metric("stroke_symmetry"),
+                feedback_summary="METRIC_UNAVAILABLE: No scoreable metrics available. Ensure pose detection is working correctly.",
                 errors=[]
             )
 

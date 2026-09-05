@@ -17,6 +17,11 @@ from core.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+def is_youth_cohort(cohort: str) -> bool:
+    """Returns True if the cohort string represents a youth age bracket (P0-1)."""
+    s = str(cohort).strip().lower()
+    return s in ("8-10", "11-13", "14-17", "u10", "u11", "u12", "u13", "u14", "u15", "u16", "u17", "youth")
+
 class BenchmarkEngine:
     """
     Scientific Population Benchmark Engine.
@@ -73,6 +78,9 @@ class BenchmarkEngine:
         elif age_group in ("U13", "u13"): norm_age = "11-13"
         elif age_group in ("U17", "u17"): norm_age = "14-17"
         elif age_group in ("Masters", "masters"): norm_age = "Masters"
+
+        # Explicit youth state definition (P0-1)
+        is_youth = is_youth_cohort(norm_age) or is_youth_cohort(age_group)
 
         pops = ds.get("populations", {})
         raw_age_pop = pops.get(norm_age)

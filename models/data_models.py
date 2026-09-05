@@ -78,6 +78,28 @@ class ValidatedMetric:
     method: str = "computed"
     dependencies: List[str] = field(default_factory=list)
 
+    def format_display_value(self) -> str:
+        """Returns domain-aware formatted representation (P1-8)."""
+        if getattr(self, 'is_insufficient_data', False) or not self.valid or self.value is None:
+            return "N/A"
+        domain = getattr(self, 'measurement_domain', 'unavailable')
+        val = self.value
+        unit = getattr(self, 'unit', '')
+        if domain == "calibrated_physical":
+            unit_str = f" {unit}" if unit else " m"
+            return f"{val:.2f}{unit_str}"
+        elif domain == "relative_body_normalized":
+            return f"{val:.2f} body-length units"
+        elif domain == "image_space":
+            unit_str = f" {unit}" if unit else " px"
+            return f"{val:.1f}{unit_str}"
+        elif domain == "pose_relative" or domain == "pose_relative_3d":
+            return f"{val:.1f}°" if "deg" in unit.lower() or "°" in unit else f"{val:.2f} (rel)"
+        else:
+            if unit:
+                return f"{val:.1f} {unit}"
+            return f"{val:.1f}"
+
 @dataclass
 class StrokeEvent:
     """Canonical stroke phase event."""

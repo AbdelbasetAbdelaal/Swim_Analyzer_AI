@@ -127,8 +127,12 @@ def render_executive_summary_card(analysis_result):
                 sr_v = getattr(report.stroke_rate, 'value', None) if report.stroke_rate else None
                 if sym_v is not None and sym_v > 85:
                     strengths.append(f"Observed Strength: Stroke Symmetry ({sym_v:.1f}%) — Based on available symmetry evidence")
-                if sl_v is not None and sl_v > 1.8:
-                    strengths.append(f"Observed Strength: Distance Per Stroke ({sl_v:.2f} m) — Based on calibrated trajectory")
+                if sl_v is not None:
+                    sl_dom = getattr(report.stroke_length, 'measurement_domain', '')
+                    if sl_dom == 'calibrated_physical':
+                        strengths.append(f"Observed Strength: Distance Per Stroke ({sl_v:.2f} m) — Based on calibrated trajectory")
+                    elif sl_dom == 'relative_body_normalized':
+                        strengths.append(f"Observed Strength: Relative Stroke Length ({sl_v:.2f} body-length units) — Normalized trajectory")
                 if sr_v is not None and sr_v > 45:
                     strengths.append(f"Observed Strength: Consistent Stroke Tempo ({sr_v:.1f} spm) — Based on cycle cadence")
             if not strengths:
@@ -269,9 +273,15 @@ def render_report_tab(analysis_result):
             st.metric("Stroke Rate", f"{sr_str}" + (" spm" if sr_str not in {"N/A", "UNAVAILABLE", "Insufficient Data"} else ""))
             st.metric("Stroke Symmetry", f"{sym_str}" + ("%" if sym_str not in {"N/A", "UNAVAILABLE", "Insufficient Data"} else ""))
         with m_col2:
-            sl_str = format_metric(analysis_result.report.stroke_length, is_length=True)
+            sl_val_obj = analysis_result.report.stroke_length
+            if sl_val_obj and hasattr(sl_val_obj, 'format_display_value'):
+                sl_str = sl_val_obj.format_display_value()
+            else:
+                sl_str = format_metric(sl_val_obj, is_length=True)
+                if sl_str not in {"N/A", "UNAVAILABLE", "Insufficient Data"}:
+                    sl_str = f"{sl_str} (rel)"
             kf_str = format_metric(analysis_result.report.kick_frequency)
-            st.metric("Stroke Length", f"{sl_str}" + (" (rel)" if sl_str not in {"N/A", "UNAVAILABLE", "Insufficient Data"} else ""))
+            st.metric("Stroke Length", sl_str)
             st.metric("Kick Frequency", f"{kf_str}" + (" Hz" if kf_str not in {"N/A", "UNAVAILABLE", "Insufficient Data"} else ""))
         
         st.caption("*Legend: (est) = Estimated Value. N/A = Unavailable Value.*")

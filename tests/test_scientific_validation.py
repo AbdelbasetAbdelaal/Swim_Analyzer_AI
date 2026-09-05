@@ -70,7 +70,7 @@ def test_benchmark_datasets_have_evidence_metadata():
                         assert repo.get_source(sid) is not None, f"Metric {metric_name} in {yfile.name} cites non-existent source_id {sid}"
 
 def test_benchmark_engine_unmatched_age_cohort_is_insufficient_evidence():
-    """Adult profiles must not consume the YAML dataset's age-unspecified Mixed cohort."""
+    """Unmatched age cohort profiles must return INSUFFICIENT_EVIDENCE without fallback."""
     engine = BenchmarkEngine()
     ar = AnalysisResult()
     ar.report = PerformanceReport(
@@ -78,7 +78,8 @@ def test_benchmark_engine_unmatched_age_cohort_is_insufficient_evidence():
         stroke_rate=ValidatedMetric(value=54.0, valid=True),
         stroke_length=ValidatedMetric(value=1.90, valid=True)
     )
-    prof = AthleteProfile(coach_id="test_coach", full_name="John Doe", age=22, gender="Male", height_cm=180.0, weight_kg=75.0, swimming_level="Advanced", preferred_stroke="Freestyle")
+    # Age 45 (Masters) is not supported in Freestyle benchmarks
+    prof = AthleteProfile(coach_id="test_coach", full_name="John Doe", age=45, gender="Male", height_cm=180.0, weight_kg=75.0, swimming_level="Advanced", preferred_stroke="Freestyle")
     
     res = engine.evaluate_analysis(ar, prof)
     assert res.dataset_id != "", "dataset_id missing from BenchmarkResult"

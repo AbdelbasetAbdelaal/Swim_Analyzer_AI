@@ -248,9 +248,25 @@ class PDFReportService:
         b_roll = (sum(rolls_3d) / len(rolls_3d)) if rolls_3d else None
         torsion = (sum(torsions) / len(torsions)) if torsions else None
 
+        sl_obj = getattr(report, 'stroke_length', None)
+        if sl_obj and hasattr(sl_obj, 'format_display_value'):
+            sl_display = sl_obj.format_display_value()
+        elif sl is not None:
+            sl_domain = getattr(sl_obj, 'measurement_domain', 'unspecified')
+            if sl_domain == 'calibrated_physical':
+                sl_display = f"{sl:.2f} m"
+            elif sl_domain == 'relative_body_normalized':
+                sl_display = f"{sl:.2f} body-length units"
+            elif sl_domain == 'image_space':
+                sl_display = f"{sl:.1f} px"
+            else:
+                sl_display = f"{sl:.2f} (rel)"
+        else:
+            sl_display = "N/A"
+
         metrics_data = [
             ("Stroke Rate", f"{sr:.1f} spm" if sr is not None else "N/A"),
-            ("Stroke Length", f"{sl:.2f} m" if sl is not None else "N/A"),
+            ("Stroke Length", sl_display),
             ("Kick Frequency", f"{kf:.1f} Hz" if kf is not None else "N/A"),
             ("Stroke Symmetry", f"{sym:.1f}%" if sym is not None else "N/A"),
             ("Pose-Relative 3D Body Roll", f"{b_roll:.1f}°" if b_roll is not None else "N/A"),

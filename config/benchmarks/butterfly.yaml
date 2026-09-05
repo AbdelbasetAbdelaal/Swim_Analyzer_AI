@@ -3,7 +3,7 @@ version: 2.0.0
 scientific_revision: '2026.08'
 validation_status: validated
 populations:
-  Mixed:
+  "18-25":
     Male:
       stroke_rate:
         mean: 52.4

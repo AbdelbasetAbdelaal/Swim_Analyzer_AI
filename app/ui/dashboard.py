@@ -59,7 +59,7 @@ def render_dashboard_page():
             "Athlete Name": p.full_name,
             "Level": p.swimming_level,
             "Stroke": p.preferred_stroke,
-            "Latest Score": round(latest_score, 1) if latest_score is not None else None,
+            "Latest Technique Score": round(latest_score, 1) if latest_score is not None else None,
             "Sessions Count": len(sessions),
             "Last Analysis": last_analysis_date
         })
@@ -71,33 +71,34 @@ def render_dashboard_page():
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Athletes", total_athletes)
     c2.metric("Total Analyses", total_sessions)
-    c3.metric("Avg Team Score", f"{avg_team_score:.1f}")
+    c3.metric("Avg Team Technique Score", f"{avg_team_score:.1f}" if avg_team_score is not None else "N/A")
     
     st.markdown("---")
     
     # --- Leaderboard Chart ---
-    st.markdown("### 🏆 Performance Leaderboard (Latest Scores)")
+    st.markdown("### 🏆 Available Technique Leaderboard (Latest Measured Sessions)")
+    st.caption("ℹ️ Scores represent available technique measurements from completed analyses, not validated overall athletic rankings.")
     
     # Filter only athletes with scores for the chart
-    chart_data = [stat for stat in athlete_stats if stat["Latest Score"] is not None]
+    chart_data = [stat for stat in athlete_stats if stat["Latest Technique Score"] is not None]
     
     if chart_data:
         df_chart = pd.DataFrame(chart_data)
-        df_chart = df_chart.sort_values(by="Latest Score", ascending=True) # Ascending for horizontal bar
+        df_chart = df_chart.sort_values(by="Latest Technique Score", ascending=True) # Ascending for horizontal bar
         
         fig = px.bar(
             df_chart, 
-            x="Latest Score", 
+            x="Latest Technique Score", 
             y="Athlete Name",
             orientation='h',
-            color="Latest Score",
+            color="Latest Technique Score",
             color_continuous_scale="Viridis",
-            text="Latest Score"
+            text="Latest Technique Score"
         )
         fig.update_layout(
             height=400,
             margin=dict(l=0, r=0, t=30, b=0),
-            xaxis_title="Performance Score (0-100)",
+            xaxis_title="Available Technique Score (0-100)",
             yaxis_title="",
             plot_bgcolor="rgba(0,0,0,0)",
             coloraxis_showscale=False
@@ -117,9 +118,9 @@ def render_dashboard_page():
         df_table,
         width="stretch",
         column_config={
-            "Latest Score": st.column_config.ProgressColumn(
-                "Latest Score",
-                help="The score from the most recent analysis session",
+            "Latest Technique Score": st.column_config.ProgressColumn(
+                "Latest Technique Score",
+                help="The available technique score from the most recent analysis session",
                 format="%.1f",
                 min_value=0,
                 max_value=100,

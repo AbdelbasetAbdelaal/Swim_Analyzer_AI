@@ -2,7 +2,7 @@ import hashlib
 import os
 import hmac
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 from database.database import SessionLocal, engine, Base, init_db
 from database.repository import CoachRepository
 from models.coach_profile import CoachProfile

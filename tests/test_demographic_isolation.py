@@ -41,8 +41,8 @@ def test_youth_athlete_never_receives_adult_benchmarks():
 def test_cross_sex_fallback_rejected():
     engine = BenchmarkEngine()
     # Query Backstroke for Female when backstroke.yaml only has Male
-    stats = engine._get_population_stats("Backstroke", "Mixed", "Female", "stroke_rate")
-    # Female should NOT receive Male's benchmark (mean=45.2)
+    stats = engine._get_population_stats("Backstroke", "18-25", "Female", "stroke_rate")
+    # Female should NOT receive Male's benchmark (mean=48.0)
     assert stats.mean is None
     assert stats.evidence.validation_status == ValidationStatus.INSUFFICIENT_EVIDENCE
 

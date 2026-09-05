@@ -1,0 +1,114 @@
+schema_version: "1.0.0"
+updated_at: "2026-08-09"
+description: "Curated Scientific Seed & Discovery Registry for Swimming Biomechanics"
+
+seeds:
+  SR_BACKSTROKE_2025:
+    source_id: "SR_BACKSTROKE_2025"
+    title: "Backstroke 2025 systematic review"
+    verified_title: "Biomechanical, Physiological and Anthropometric Determinants of Backstroke Swimming Performance: A Systematic Review"
+    stroke: "backstroke"
+    study_type: "systematic_review"
+    priority: 3
+    evidence_role:
+      - "benchmark discovery"
+      - "context"
+      - "discovery"
+    benchmark_policy: "PRIMARY_STUDY_TRACE_REQUIRED"
+    population_policy: "Preserve reported primary study demographics strictly. Do not extrapolate to other age/sex cohorts."
+    pmid: "40483624"
+    doi: "10.1186/s40798-025-00868-z"
+    journal: "Sports Medicine - Open"
+    publication_year: 2025
+    verification_status: "VERIFIED_CORRECT"
+    notes: "Systematic review synthesizing 35 observational studies on backstroke biomechanics and kinematics."
+
+  SR_BREASTSTROKE_2022:
+    source_id: "SR_BREASTSTROKE_2022"
+    title: "Breaststroke 2022 systematic review"
+    verified_title: "Stroke Kinematics, Temporal Patterns, Neuromuscular Activity, Pacing and Kinetics in Elite Breaststroke Swimming: A Systematic Review"
+    stroke: "breaststroke"
+    study_type: "systematic_review"
+    priority: 3
+    evidence_role:
+      - "benchmark discovery"
+      - "context"
+      - "discovery"
+    benchmark_policy: "PRIMARY_STUDY_TRACE_REQUIRED"
+    population_policy: "Preserve reported primary study demographics strictly. Do not extrapolate to other age/sex cohorts."
+    pmid: "35674996"
+    doi: "10.1186/s40798-022-00467-2"
+    journal: "Sports Medicine - Open"
+    publication_year: 2022
+    verification_status: "VERIFIED_CORRECT"
+    notes: "Systematic review analyzing 38 peer-reviewed articles on elite breaststroke stroke kinematics and pacing."
+
+  SR_FRONT_CRAWL_COORDINATION:
+    source_id: "SR_FRONT_CRAWL_COORDINATION"
+    title: "Front Crawl coordination systematic review"
+    verified_title: "Front crawl swimming coordination: a systematic review"
+    stroke: "freestyle"
+    study_type: "systematic_review"
+    priority: 2
+    evidence_role:
+      - "conditional benchmark"
+      - "context"
+      - "discovery"
+      - "interpretation"
+    benchmark_policy: "CONDITIONAL_PRIMARY_STUDY_TRACE"
+    population_policy: "Preserve reported primary study demographics strictly. Qualitative motor coordination models must not become numerical benchmarks directly."
+    pmid: "36223481"
+    doi: "10.1080/14763141.2022.2125428"
+    journal: "Sports Biomechanics"
+    publication_year: 2022
+    verification_status: "VERIFIED_CORRECT"
+    notes: "Systematic review examining upper-limb Index of Coordination (IdC) models and motor solutions across skill levels."
+
+  MA_400M_FRONT_CRAWL:
+    source_id: "MA_400M_FRONT_CRAWL"
+    title: "400m Front Crawl meta-analysis"
+    verified_title: "Kinematic, arm-stroke efficiency, coordination, and energetic parameters of the 400-m front-crawl test: A meta-analysis"
+    stroke: "freestyle"
+    study_type: "meta_analysis"
+    priority: 2
+    evidence_role:
+      - "conditional benchmark"
+      - "context"
+      - "discovery"
+    benchmark_policy: "TEST_SPECIFIC_ONLY"
+    test_context:
+      stroke: "freestyle"
+      distance_m: 400
+    population_policy: "Restricted to 400m front crawl test context. Must not generalize to 50m, 100m, 200m, 800m, 1500m."
+    pmid: "36778096"
+    pmcid: "PMC9909090"
+    doi: "10.3389/fspor.2023.977739"
+    journal: "Frontiers in Sports and Active Living"
+    publication_year: 2023
+    verification_status: "VERIFIED_CORRECT"
+    notes: "Meta-analysis quantifying kinematics, arm-stroke efficiency, and IdC specifically for the 400m front crawl test."
+
+  SR_YOUNG_ADOLESCENT_FOUR_STROKE:
+    source_id: "SR_YOUNG_ADOLESCENT_FOUR_STROKE"
+    title: "Young/adolescent four-stroke systematic review"
+    verified_title: "How Anthropometrics of Young and Adolescent Swimmers Influence Stroking Parameters and Performance? A Systematic Review"
+    strokes:
+      - "freestyle"
+      - "backstroke"
+      - "breaststroke"
+      - "butterfly"
+    study_type: "systematic_review"
+    priority: 2
+    evidence_role:
+      - "conditional benchmark"
+      - "context"
+      - "discovery"
+      - "population layer"
+    benchmark_policy: "AGE_STRATIFIED_PRIMARY_STUDY_REQUIRED"
+    population_policy: "Strict age stratification required. Young/adolescent findings cannot populate adult benchmarks or vice-versa."
+    pmid: "35270236"
+    doi: "10.3390/ijerph19052543"
+    journal: "International Journal of Environmental Research and Public Health"
+    publication_year: 2022
+    verification_status: "VERIFIED_CORRECT"
+    notes: "Systematic review analyzing body dimensions and stroking parameters across young/adolescent swimmers."

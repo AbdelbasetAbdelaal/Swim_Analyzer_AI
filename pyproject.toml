@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["venv", ".pytest_cache", "data", "logs"]
+
+[tool.ruff.lint]
+select = ["F401", "F541", "F821"]
+
+[tool.ruff.lint.per-file-ignores]
+"database/__init__.py" = ["F401"]

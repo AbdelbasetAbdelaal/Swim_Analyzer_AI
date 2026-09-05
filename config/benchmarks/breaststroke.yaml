@@ -1,0 +1,29 @@
+dataset_id: BM-BREASTSTROKE-2026-V2
+version: 2.0.0
+scientific_revision: '2026.08'
+validation_status: validated
+populations:
+  Mixed:
+    Male:
+      stroke_rate:
+        mean: 44.0
+        std: 4.5
+        unit: spm
+        evidence:
+          validation_status: VALIDATED
+          evidence_level: LEVEL_A
+          source_ids:
+          - SRC-BREAST-001
+          source_relationship: DIRECT_MEASUREMENT
+    status: VALIDATED
+    Female:
+      stroke_rate:
+        mean: 41.8
+        std: 3.9
+        unit: spm
+        evidence:
+          validation_status: VALIDATED
+          evidence_level: LEVEL_A
+          source_ids:
+          - SRC-BREAST-002
+          source_relationship: DIRECT_MEASUREMENT

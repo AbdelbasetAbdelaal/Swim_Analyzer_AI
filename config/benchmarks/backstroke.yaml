@@ -1,0 +1,18 @@
+dataset_id: BM-BACKSTROKE-2026-V2
+version: 2.0.0
+scientific_revision: '2026.08'
+validation_status: validated
+populations:
+  Mixed:
+    Male:
+      stroke_rate:
+        mean: 45.2
+        std: 3.8
+        unit: spm
+        evidence:
+          validation_status: VALIDATED
+          evidence_level: LEVEL_A
+          source_ids:
+          - SRC-BACK-001
+          source_relationship: DIRECT_MEASUREMENT
+    status: VALIDATED

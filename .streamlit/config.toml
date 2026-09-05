@@ -1,0 +1,15 @@
+[server]
+# Disable file watcher entirely — prevents any file-change triggered reloads
+fileWatcherType = "none"
+
+# Increase max upload size for larger swimming videos
+maxUploadSize = 500
+
+# headless=true: server stays running indefinitely regardless of browser state
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[logger]
+level = "warning"

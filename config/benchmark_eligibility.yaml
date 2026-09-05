@@ -1,0 +1,104 @@
+schema_version: "1.0.0"
+updated_at: "2026-08-09"
+policy_name: "SwimAnalyzer Scientific Benchmark Eligibility Policy"
+
+statuses:
+  SCIENTIFICALLY_ACCEPTED:
+    description: "Fully validated primary evidence matching stroke, population, metric definition, and direct numerical reporting with verified provenance."
+    benchmark_eligible: true
+    requires_primary_study_trace: true
+  REVIEW_REQUIRED:
+    description: "Candidate requiring expert review, systematic review extraction lacking verified primary study trace, or ambiguous metadata."
+    benchmark_eligible: false
+    requires_primary_study_trace: true
+  REJECTED:
+    description: "Failed deterministic validation due to demographic leakage, stroke leakage, quote mismatch, invalid statistics, or N < 8."
+    benchmark_eligible: false
+  INSUFFICIENT_EVIDENCE:
+    description: "No verified literature exists for the target demographic, stroke, or metric combination."
+    benchmark_eligible: false
+    produces_explicit_status: true
+
+benchmark_policies:
+  PRIMARY_STUDY_TRACE_REQUIRED:
+    description: "Systematic reviews must trace to an eligible primary study meeting all 10 deterministic criteria before generating benchmarks."
+    requires_primary_trace: true
+  CONDITIONAL_PRIMARY_STUDY_TRACE:
+    description: "Qualitative findings or coordination models require primary study numeric extraction before becoming benchmarks."
+    requires_primary_trace: true
+  TEST_SPECIFIC_ONLY:
+    description: "Evidence is strictly restricted to its exact test context (e.g., distance_m=400) and cannot generalize."
+    test_context_bound: true
+  AGE_STRATIFIED_PRIMARY_STUDY_REQUIRED:
+    description: "Requires primary study evidence matching exact age group bounds. No adult/youth cross-extrapolation."
+    age_stratified: true
+
+systematic_review_rules:
+  default_role: "CONTEXT_AND_DISCOVERY"
+  primary_study_criteria:
+    1: "Primary study identifier explicitly stated."
+    2: "Primary study source is retrievable."
+    3: "Primary study explicitly reports numerical metric."
+    4: "Primary study population matches target demographic."
+    5: "Primary study stroke matches target stroke."
+    6: "Metric definition is compatible with SwimAnalyzer."
+    7: "Measurement units are verified."
+    8: "Statistical definition (Mean ± SD) is verified."
+    9: "Numerical value is directly reported in table/results."
+    10: "Provenance quote is verified verbatim."
+
+meta_analysis_rules:
+  MA_400M_FRONT_CRAWL:
+    allowed_stroke: "freestyle"
+    allowed_distance_m: 400
+    allow_generalization_to_other_distances: false
+    allow_generalization_to_all_skill_levels: false
+
+leakage_rules:
+  prohibit_sex_leakage:
+    - "male -> female"
+    - "female -> male"
+    - "mixed -> sex_specific"
+  prohibit_age_leakage:
+    - "adult -> adolescent"
+    - "adolescent -> adult"
+    - "adult -> masters"
+  prohibit_skill_leakage:
+    - "elite -> recreational"
+    - "national -> elite_international"
+  prohibit_stroke_leakage:
+    - "freestyle -> backstroke"
+    - "backstroke -> breaststroke"
+    - "breaststroke -> butterfly"
+    - "butterfly -> freestyle"
+
+metric_requirements:
+  stroke_rate:
+    required_fields: ["metric_definition", "numeric_value", "unit", "stroke", "population"]
+    allowed_units: ["spm", "hz", "cycles/min"]
+  stroke_length:
+    required_fields: ["metric_definition", "numeric_value", "unit", "stroke", "population"]
+    allowed_units: ["m", "m/stroke", "dps"]
+  velocity:
+    required_fields: ["metric_definition", "numeric_value", "unit", "stroke", "test_context", "population"]
+    allowed_units: ["m/s", "km/h"]
+  coordination:
+    numeric_conversion_allowed: false
+    qualitative_only: true
+  joint_kinematics:
+    required_fields: ["anatomical_definition", "joint", "measurement_convention", "stroke_phase", "units", "population", "source_provenance"]
+
+gemini_agent_rules:
+  role: "UNTRUSTED_CANDIDATE_EXTRACTOR"
+  can_approve_benchmarks: false
+  pipeline:
+    - "Literature Discovery"
+    - "Primary Study Trace"
+    - "Gemini Candidate Extraction"
+    - "Population Validator"
+    - "Stroke Validator"
+    - "Metric Validator"
+    - "Unit Validator"
+    - "Provenance Validator"
+    - "Scientific Status Assignment"
+    - "Benchmark Engine Compilation"

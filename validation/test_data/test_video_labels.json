@@ -1,0 +1,17 @@
+{
+    "stroke_rate": 40.0,
+    "stroke_length": 1.5,
+    "body_roll": 35.0,
+    "kick_frequency": 2.0,
+    "stroke_cycles": 10,
+    "events": [
+        {"frame": 10, "phase": "Entry"},
+        {"frame": 20, "phase": "Catch"},
+        {"frame": 30, "phase": "Pull"},
+        {"frame": 40, "phase": "Push"},
+        {"frame": 50, "phase": "Recovery"},
+        {"frame": 60, "phase": "Entry"},
+        {"frame": 70, "phase": "Catch"},
+        {"frame": 80, "phase": "Pull"}
+    ]
+}

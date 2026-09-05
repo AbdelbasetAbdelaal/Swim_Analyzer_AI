@@ -1,0 +1,67 @@
+{
+  "manifest_version": "1.0.0",
+  "created_at": "2026-08-08T18:05:00Z",
+  "description": "Validation Dataset Manifest for SwimAnalyzer AI Stroke Classification Layer",
+  "target_counts": {
+    "Freestyle": 30,
+    "Backstroke": 30,
+    "Breaststroke": 30,
+    "Butterfly": 30,
+    "UNKNOWN": 10
+  },
+  "unique_videos_registered": 3,
+  "unique_athletes_registered": 2,
+  "videos": [
+    {
+      "video_id": "VAL-FREE-001",
+      "filename": "upload_00678737d10a46338b45c3394ee4a07c.mp4",
+      "relative_path": "data/validation_dataset/freestyle/upload_00678737d10a46338b45c3394ee4a07c.mp4",
+      "stroke": "Freestyle",
+      "athlete_id": "ATHLETE-001",
+      "camera_view": "Side-Pool",
+      "side_front_underwater": "side",
+      "video_duration": 6.93,
+      "fps": 30.0,
+      "resolution": "720x1280",
+      "visibility_occlusion": "Low Occlusion",
+      "source_id": "SRC-LOCAL-ATHLETE-001",
+      "sha256_hash": "18174f35086b97aa23ff6058d88e0018d451eb8538efee571d07ec6891eb2943",
+      "ground_truth": "Freestyle",
+      "is_duplicate": false
+    },
+    {
+      "video_id": "VAL-FREE-002",
+      "filename": "upload_28d4466e02a44a6191e13be023e9a757.mp4",
+      "relative_path": "data/validation_dataset/freestyle/upload_28d4466e02a44a6191e13be023e9a757.mp4",
+      "stroke": "Freestyle",
+      "athlete_id": "ATHLETE-001",
+      "camera_view": "Side-Pool",
+      "side_front_underwater": "side",
+      "video_duration": 14.2,
+      "fps": 30.0,
+      "resolution": "720x1280",
+      "visibility_occlusion": "Medium Occlusion (Water Splash)",
+      "source_id": "SRC-LOCAL-ATHLETE-002",
+      "sha256_hash": "916b168bc6c06a386ea892aa8bd2bfb7ed8fe334ddbbd1e7c5ecbcbbdd4d77d7",
+      "ground_truth": "Freestyle",
+      "is_duplicate": false
+    },
+    {
+      "video_id": "VAL-FREE-003",
+      "filename": "WhatsApp_Video_2026-07-31_at_11.50.14_AM.mp4",
+      "relative_path": "data/validation_dataset/freestyle/WhatsApp_Video_2026-07-31_at_11.50.14_AM.mp4",
+      "stroke": "Freestyle",
+      "athlete_id": "ATHLETE-002",
+      "camera_view": "Elevated Deck",
+      "side_front_underwater": "side",
+      "video_duration": 4.5,
+      "fps": 30.0,
+      "resolution": "480x848",
+      "visibility_occlusion": "Low Occlusion",
+      "source_id": "SRC-LOCAL-ATHLETE-003",
+      "sha256_hash": "9f4047d6bb983057e0b571166ea203eaec8a3d6f1a8c9bfae7e6e5a6bfcf81a2",
+      "ground_truth": "Freestyle",
+      "is_duplicate": false
+    }
+  ]
+}

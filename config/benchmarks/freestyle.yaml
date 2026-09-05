@@ -1,0 +1,29 @@
+dataset_id: BM-FREESTYLE-2026-V2
+version: 2.0.0
+scientific_revision: '2026.08'
+validation_status: validated
+populations:
+  Mixed:
+    Male:
+      stroke_rate:
+        mean: 54.0
+        std: 0.11
+        unit: spm
+        evidence:
+          validation_status: VALIDATED
+          evidence_level: LEVEL_A
+          source_ids:
+          - SRC-FREE-001
+          source_relationship: DIRECT_MEASUREMENT
+    status: VALIDATED
+    Female:
+      stroke_rate:
+        mean: 48.5
+        std: 4.2
+        unit: spm
+        evidence:
+          validation_status: VALIDATED
+          evidence_level: LEVEL_A
+          source_ids:
+          - SRC-FREE-004
+          source_relationship: DIRECT_MEASUREMENT

@@ -1,0 +1,49 @@
+# ==============================================================================
+# SWIMANALYZER AI — DATASET SOURCES & LEGAL PROVENANCE REGISTRY
+# ==============================================================================
+# Protocol: Every video included in validation or training datasets MUST be registered
+# here with explicitly verified usage permissions, licenses, and stroke labels.
+# Videos with unverified licenses or unconfirmed ground-truth MUST NOT be included.
+
+sources:
+  - source_id: "SRC-LOCAL-ATHLETE-001"
+    url: "local://data/input_videos/upload_00678737d10a46338b45c3394ee4a07c.mp4"
+    publisher_owner: "SwimAnalyzer AI In-House Athlete Session"
+    license_permission: "Authorized User Upload (Proprietary Internal License)"
+    stroke: "Freestyle"
+    source_type: "In-House Camera Capture"
+    date_accessed: "2026-07-31"
+    usage_permitted: true
+    sha256_hash: "18174f35086b97aa23ff6058d88e0018d451eb8538efee571d07ec6891eb2943"
+    notes: "Primary freestyle side-view baseline recording"
+
+  - source_id: "SRC-LOCAL-ATHLETE-002"
+    url: "local://data/input_videos/upload_28d4466e02a44a6191e13be023e9a757.mp4"
+    publisher_owner: "SwimAnalyzer AI In-House Athlete Session"
+    license_permission: "Authorized User Upload (Proprietary Internal License)"
+    stroke: "Freestyle"
+    source_type: "In-House Camera Capture"
+    date_accessed: "2026-07-31"
+    usage_permitted: true
+    sha256_hash: "916b168bc6c06a386ea892aa8bd2bfb7ed8fe334ddbbd1e7c5ecbcbbdd4d77d7"
+    notes: "Full length freestyle trial"
+
+  - source_id: "SRC-LOCAL-ATHLETE-003"
+    url: "local://data/input_videos/WhatsApp_Video_2026-07-31_at_11.50.14_AM.mp4"
+    publisher_owner: "Coach Session Share"
+    license_permission: "Authorized Coach Partner License"
+    stroke: "Freestyle"
+    source_type: "Mobile Camera Capture"
+    date_accessed: "2026-07-31"
+    usage_permitted: true
+    sha256_hash: "9f4047d6bb983057e0b571166ea203eaec8a3d6f1a8c9bfae7e6e5a6bfcf81a2"
+    notes: "Short freestyle mobile video clip"
+
+# Requirements for future dataset expansion:
+# Any external open dataset (e.g. Kinetics-400, UCF101, Sports-1M, Kaggle Swim) must be logged below:
+pending_acquisitions:
+  - dataset_name: "OpenSwim Multi-Stroke Benchmark Candidate"
+    required_strokes: ["Backstroke", "Breaststroke", "Butterfly"]
+    min_clips_per_stroke: 30
+    required_license: "CC-BY 4.0 / Open Academic Research License"
+    status: "REQUIRED FOR STAGE 3 VALIDATION"

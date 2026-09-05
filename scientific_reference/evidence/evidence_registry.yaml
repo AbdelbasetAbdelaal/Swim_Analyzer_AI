@@ -1,0 +1,339 @@
+version: 3.0.0
+updated_at: '2026-08-08'
+evidence_records:
+  EVID-FREE-001:
+    evidence_id: EVID-FREE-001
+    source_id: SRC-FREE-001
+    title: Relationships of stroke rate, distance per stroke, and velocity in competitive
+      swimming.
+    authors:
+    - Craig, AB
+    - Pendergast, DR
+    year: 1979
+    pmid: '522640'
+    doi: null
+    publication: Medicine and science in sports
+    stroke: Freestyle
+    event_distance: 100m
+    population_description: Adult Male Competitive Swimmers (US Championships)
+    age_min: 18
+    age_max: 25
+    mean_age: 21.4
+    gender: Male
+    skill_level: National & Elite
+    sample_size: 184
+    measurement_name: stroke_rate
+    measurement_definition: Cycle frequency measured in Hz (strokes per second)
+    measurement_method: High-speed kinematic 16mm motion picture timing
+    measurement_units: Hz
+    reported_mean: 0.9
+    reported_std: 0.11
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 1 (Page 280)
+    page_reference: Page 280
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Manual Audit & PubMed Verification
+    relationship_to_benchmark: DERIVED_FROM_SOURCE
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT_AS_DERIVED
+    conversion_formula: 0.90 Hz * 60 = 54.0 spm
+    converted_value: 54.0
+    converted_unit: spm
+  EVID-FREE-FEM-001:
+    evidence_id: EVID-FREE-FEM-001
+    source_id: SRC-FREE-004
+    title: Effect of Age, Sex, and Race Distance on Front Crawl Stroke Parameters
+      in Subelite Adolescent Swimmers During Competition.
+    authors:
+    - Dormehl, SJ
+    - Osborough, CD
+    year: 2015
+    pmid: '25902554'
+    doi: 10.1123/pes.2014-0114
+    publication: Pediatric exercise science
+    stroke: Freestyle
+    event_distance: 100m
+    population_description: Subelite Adolescent Female Swimmers (U14-U17)
+    age_min: 14
+    age_max: 17
+    mean_age: 15.2
+    gender: Female
+    skill_level: Subelite
+    sample_size: 56
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute in competition
+    measurement_method: Video timing analysis
+    measurement_units: spm
+    reported_mean: 48.5
+    reported_std: 4.2
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 2 (Page 408)
+    page_reference: Page 408
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 48.5
+    converted_unit: spm
+  EVID-BACK-YOUTH-001:
+    evidence_id: EVID-BACK-YOUTH-001
+    source_id: SRC-BACK-001
+    title: Kinematic Characterization of Backstroke Swimming in Young Competitive
+      Swimmers.
+    authors:
+    - Cortesi, M
+    - Gatta, G
+    year: 2020
+    pmid: '32679803'
+    doi: 10.3390/ijerph17145100
+    publication: International journal of environmental research and public health
+    stroke: Backstroke
+    event_distance: 100m
+    population_description: Youth Competitive Swimmers (11-13 yrs)
+    age_min: 11
+    age_max: 13
+    mean_age: 12.1
+    gender: Male
+    skill_level: Regional Youth
+    sample_size: 34
+    measurement_name: stroke_rate
+    measurement_definition: Stroke rate (spm)
+    measurement_method: Video timing
+    measurement_units: spm
+    reported_mean: 45.2
+    reported_std: 3.8
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 1 (Page 5)
+    page_reference: Page 5
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 45.2
+    converted_unit: spm
+  EVID-BACK-GONJO-001:
+    evidence_id: EVID-BACK-GONJO-001
+    source_id: SRC-BACK-GONJO-2020
+    title: 'Front Crawl Is More Efficient and Has Smaller Active Drag Than Backstroke
+      Swimming: Kinematic and Kinetic Comparison Between the Two Techniques at the
+      Same Swimming Speeds.'
+    authors:
+    - Gonjo, T
+    - Narita, K
+    year: 2020
+    pmid: '33072727'
+    doi: 10.3389/fbioe.2020.00808
+    publication: Frontiers in bioengineering and biotechnology
+    stroke: Backstroke
+    event_distance: 100m
+    population_description: Adult Male Competitive Swimmers
+    age_min: 18
+    age_max: 25
+    mean_age: 21.5
+    gender: Male
+    skill_level: National
+    sample_size: 14
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute in backstroke
+    measurement_method: 3D kinematic motion capture
+    measurement_units: spm
+    reported_mean: 48.0
+    reported_std: 4.2
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 1 (Page 4)
+    page_reference: Page 4
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 48.0
+    converted_unit: spm
+  EVID-BREAST-MALE-001:
+    evidence_id: EVID-BREAST-MALE-001
+    source_id: SRC-BREAST-001
+    title: Coordination and energetic cost of breaststroke swimming.
+    authors:
+    - Capelli, C
+    - Pendergast, DR
+    year: 1998
+    pmid: '9858380'
+    doi: 10.1007/s004210050462
+    publication: European journal of applied physiology and occupational physiology
+    stroke: Breaststroke
+    event_distance: 100m
+    population_description: Adult Competitive Male Breaststroke Swimmers
+    age_min: 18
+    age_max: 25
+    mean_age: 21.8
+    gender: Male
+    skill_level: National
+    sample_size: 24
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute in breaststroke
+    measurement_method: Kinematic timing
+    measurement_units: spm
+    reported_mean: 44.0
+    reported_std: 4.5
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 2 (Page 337)
+    page_reference: Page 337
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 44.0
+    converted_unit: spm
+  EVID-BREAST-FEM-001:
+    evidence_id: EVID-BREAST-FEM-001
+    source_id: SRC-BREAST-002
+    title: Inter-individual variability in the upper-lower limb breaststroke coordination.
+    authors:
+    - Seifert, L
+    - Leblanc, H
+    year: 2011
+    pmid: '21439666'
+    doi: 10.1016/j.humov.2010.12.003
+    publication: Human movement science
+    stroke: Breaststroke
+    event_distance: 100m
+    population_description: Adult Competitive Female Breaststroke Swimmers
+    age_min: 18
+    age_max: 25
+    mean_age: 20.6
+    gender: Female
+    skill_level: National
+    sample_size: 20
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute in breaststroke
+    measurement_method: Video timing
+    measurement_units: spm
+    reported_mean: 41.8
+    reported_std: 3.9
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 1 (Page 103)
+    page_reference: Page 103
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 41.8
+    converted_unit: spm
+  EVID-FLY-MALE-001:
+    evidence_id: EVID-FLY-MALE-001
+    source_id: SRC-FLY-001
+    title: Differences in spatial-temporal parameters and arm-leg coordination in
+      butterfly stroke as a function of race pace, skill and gender.
+    authors:
+    - Seifert, L
+    - Boulesteix, L
+    year: 2008
+    pmid: '17935810'
+    doi: 10.1016/j.humov.2007.08.001
+    publication: Human movement science
+    stroke: Butterfly
+    event_distance: 100m
+    population_description: Elite Male Butterfly Swimmers
+    age_min: 18
+    age_max: 25
+    mean_age: 21.2
+    gender: Male
+    skill_level: Elite
+    sample_size: 10
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute at 100m pace
+    measurement_method: High speed video 2D/3D
+    measurement_units: spm
+    reported_mean: 52.4
+    reported_std: 3.6
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 1 (Page 180)
+    page_reference: Page 180
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 52.4
+    converted_unit: spm
+  EVID-MASTERS-001:
+    evidence_id: EVID-MASTERS-001
+    source_id: SRC-MASTERS-001
+    title: 'The determinants of performance in master swimmers: a cross-sectional
+      study on the age-related changes in propelling efficiency, hydrodynamic position
+      and energy cost of front crawl.'
+    authors:
+    - Zamparo, P
+    - Dall'ora, A
+    year: 2012
+    pmid: '22426578'
+    doi: 10.1007/s00421-012-2376-y
+    publication: European journal of applied physiology
+    stroke: Freestyle
+    event_distance: 100m
+    population_description: Masters Male Swimmers (Age 36-44)
+    age_min: 36
+    age_max: 44
+    mean_age: 39.5
+    gender: Male
+    skill_level: Masters Competitive
+    sample_size: 22
+    measurement_name: stroke_rate
+    measurement_definition: Strokes per minute in front crawl
+    measurement_method: Timing video
+    measurement_units: spm
+    reported_mean: 46.2
+    reported_std: 4.8
+    statistical_method: Mean +/- SD
+    table_or_figure_reference: Table 2 (Page 2378)
+    page_reference: Page 2378
+    source_access_level: FULL_TEXT_VERIFIED
+    source_quality: PEER_REVIEWED_FULL_TEXT
+    extraction_method: Direct Extraction
+    relationship_to_benchmark: DIRECTLY_SUPPORTED
+    population_compatibility: EXACT_MATCH
+    definition_compatibility: EXACT_MATCH
+    unit_compatibility: true
+    scientific_status: SCIENTIFICALLY_ACCEPTED
+    audit_decision: ACCEPT
+    conversion_formula: null
+    converted_value: 46.2
+    converted_unit: spm

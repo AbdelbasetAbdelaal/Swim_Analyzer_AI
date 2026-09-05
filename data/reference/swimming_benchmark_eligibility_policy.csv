@@ -1,0 +1,6 @@
+﻿eligibility_class,eligibility_rule,allowed_use,example
+PRIMARY_BENCHMARK,"Adult elite/validated homogeneous cohort; matching stroke, sex, event and course.",Numeric values may be used for direct benchmark comparison.,Born et al. 2022 European finalists
+CONTEXT_ONLY,Systematic review with heterogeneous cohorts/protocols and no single homogeneous reference cohort.,May guide interpretation/metric selection; must not create fabricated numeric benchmark.,Backstroke 2025; Breaststroke 2022; Front crawl coordination 2025
+TEST_SPECIFIC,Validated meta-analysis tied to a named standardized test.,Only eligible when athlete/test protocol matches.,400m front-crawl meta-analysis 2023
+AGE_LAYER_ONLY,Youth/adolescent evidence without a homogeneous universal reference cohort.,Used to prevent adult-to-youth benchmark leakage.,Youth/adolescent systematic review 2022
+INSUFFICIENT_EVIDENCE,No compatible peer-reviewed cohort for requested population/event.,Return None / unavailable; never substitute adult values.,System policy

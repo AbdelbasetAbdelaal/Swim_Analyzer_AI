@@ -1,0 +1,1675 @@
+version: 3.2.0
+updated_at: '2026-08-12'
+sources:
+  SRC-FREE-001:
+    source_id: SRC-FREE-001
+    title: Relationships of stroke rate, distance per stroke, and velocity in competitive
+      swimming.
+    authors:
+    - Craig, AB
+    - Pendergast, DR
+    publication_year: 1979
+    journal_or_organization: Medicine and science in sports
+    doi: null
+    pmid: '522640'
+    url: https://pubmed.ncbi.nlm.nih.gov/522640/
+    stroke: Freestyle
+    population: Adult Male Competitive Swimmers
+    sample_size: 184
+    age_range: 18-25
+    gender: Male
+    competitive_level: National & Elite
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Seminal empirical study establishing stroke rate and stroke length relationship
+      in competitive males.
+  SRC-FREE-002:
+    source_id: SRC-FREE-002
+    title: A new method for analyzing arm stroke coordination in front crawl swimming.
+    authors:
+    - Chollet, D
+    - Chalies, S
+    - Chatard, JC
+    publication_year: 2000
+    journal_or_organization: International journal of sports medicine
+    doi: 10.1055/s-2000-8853
+    pmid: '10775311'
+    url: https://pubmed.ncbi.nlm.nih.gov/10775311/
+    stroke: Freestyle
+    population: Elite Competitive Male Swimmers
+    sample_size: 42
+    age_range: 18-25
+    gender: Male
+    competitive_level: Elite
+    measured_metrics:
+    - stroke_rate
+    - index_of_coordination
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Defines Index of Coordination (IdC) and catch/propulsion/recovery phase
+      time distributions in freestyle.
+  SRC-FREE-003:
+    source_id: SRC-FREE-003
+    title: 'Body roll in swimming: a review.'
+    authors:
+    - Psycharakis, SG
+    - Sanders, RH
+    publication_year: 2010
+    journal_or_organization: Journal of sports sciences
+    doi: 10.1080/02640410903508847
+    pmid: '20131140'
+    url: https://pubmed.ncbi.nlm.nih.gov/20131140/
+    stroke: Freestyle
+    population: Male Swimmers
+    sample_size: 10
+    age_range: 18-25
+    gender: Male
+    competitive_level: National
+    measured_metrics:
+    - body_roll
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Review and 3D kinematic analysis of body roll angle during front crawl
+      swimming.
+  SRC-FREE-004:
+    source_id: SRC-FREE-004
+    title: Effect of Age, Sex, and Race Distance on Front Crawl Stroke Parameters
+      in Subelite Adolescent Swimmers During Competition.
+    authors:
+    - Dormehl, SJ
+    - Osborough, CD
+    publication_year: 2015
+    journal_or_organization: Pediatric exercise science
+    doi: 10.1123/pes.2014-0114
+    pmid: '25902554'
+    url: https://pubmed.ncbi.nlm.nih.gov/25902554/
+    stroke: Freestyle
+    population: Adolescent Subelite Female Swimmers
+    sample_size: 56
+    age_range: 14-17
+    gender: Female
+    competitive_level: Subelite
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Detailed age- and sex-stratified kinematic study across 100m and 200m freestyle
+      in female adolescents.
+  SRC-BACK-001:
+    source_id: SRC-BACK-001
+    title: Kinematic Characterization of Backstroke Swimming in Young Competitive
+      Swimmers.
+    authors:
+    - Cortesi, M
+    - Gatta, G
+    - Michielon, G
+    - Di Michele, R
+    publication_year: 2020
+    journal_or_organization: International journal of environmental research and public
+      health
+    doi: 10.3390/ijerph17145100
+    pmid: '32679803'
+    pmcid: PMC7399995
+    url: https://pubmed.ncbi.nlm.nih.gov/32679803/
+    stroke: Backstroke
+    population: Youth Competitive Swimmers
+    sample_size: 34
+    age_range: 11-13
+    gender: Male
+    competitive_level: Regional Youth
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Kinematic evaluation of backstroke stroke parameters in 11-13 year old
+      male swimmers.
+  SRC-BACK-GONJO-2020:
+    source_id: SRC-BACK-GONJO-2020
+    title: 'Front Crawl Is More Efficient and Has Smaller Active Drag Than Backstroke
+      Swimming: Kinematic and Kinetic Comparison Between the Two Techniques at the
+      Same Swimming Speeds.'
+    authors:
+    - Gonjo, T
+    - Narita, K
+    - McCabe, C
+    - Fernandes, RJ
+    publication_year: 2020
+    journal_or_organization: Frontiers in bioengineering and biotechnology
+    doi: 10.3389/fbioe.2020.00808
+    pmid: '33072727'
+    pmcid: PMC7548777
+    url: https://pubmed.ncbi.nlm.nih.gov/33072727/
+    stroke: Backstroke
+    population: Adult Male Competitive Swimmers
+    sample_size: 14
+    age_range: 18-25
+    gender: Male
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Open-access kinematic and kinetic comparison between front crawl and backstroke
+      swimming.
+  SRC-BREAST-001:
+    source_id: SRC-BREAST-001
+    title: Coordination and energetic cost of breaststroke swimming.
+    authors:
+    - Capelli, C
+    - Pendergast, DR
+    - Termin, B
+    publication_year: 1998
+    journal_or_organization: European journal of applied physiology and occupational
+      physiology
+    doi: 10.1007/s004210050462
+    pmid: '9858380'
+    url: https://pubmed.ncbi.nlm.nih.gov/9858380/
+    stroke: Breaststroke
+    population: Adult Male Competitive Swimmers
+    sample_size: 24
+    age_range: 18-25
+    gender: Male
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Re-audited: Fixed PMID from 9546059 to 9858380. Empirical breaststroke
+      kinematics.'
+  SRC-BREAST-002:
+    source_id: SRC-BREAST-002
+    title: Inter-individual variability in the upper-lower limb breaststroke coordination.
+    authors:
+    - Seifert, L
+    - Leblanc, H
+    - Chollet, D
+    publication_year: 2011
+    journal_or_organization: Human movement science
+    doi: 10.1016/j.humov.2010.12.003
+    pmid: '21439666'
+    url: https://pubmed.ncbi.nlm.nih.gov/21439666/
+    stroke: Breaststroke
+    population: Adult Female Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Female
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Re-audited: Fixed PMID from 21544670 to 21439666. Breaststroke spatial-temporal
+      parameters in females.'
+  SRC-FLY-001:
+    source_id: SRC-FLY-001
+    title: Differences in spatial-temporal parameters and arm-leg coordination in
+      butterfly stroke as a function of race pace, skill and gender.
+    authors:
+    - Seifert, L
+    - Boulesteix, L
+    - Chollet, D
+    - Vilas-Boas, JP
+    publication_year: 2008
+    journal_or_organization: Human movement science
+    doi: 10.1016/j.humov.2007.08.001
+    pmid: '17935810'
+    url: https://pubmed.ncbi.nlm.nih.gov/17935810/
+    stroke: Butterfly
+    population: Elite Male and Female Swimmers
+    sample_size: 40
+    age_range: 18-25
+    gender: Male & Female
+    competitive_level: Elite
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Landmark study analyzing butterfly spatial-temporal parameters separated
+      by gender and skill level.
+  SRC-MASTERS-001:
+    source_id: SRC-MASTERS-001
+    title: 'The determinants of performance in master swimmers: a cross-sectional
+      study on the age-related changes in propelling efficiency, hydrodynamic position
+      and energy cost of front crawl.'
+    authors:
+    - Zamparo, P
+    - Dall'ora, A
+    - Toneatto, A
+    - Cortesi, M
+    publication_year: 2012
+    journal_or_organization: European journal of applied physiology
+    doi: 10.1007/s00421-012-2376-y
+    pmid: '22426578'
+    url: https://pubmed.ncbi.nlm.nih.gov/22426578/
+    stroke: Freestyle
+    population: Masters Male Swimmers
+    sample_size: 22
+    age_range: 36-44
+    gender: Male
+    competitive_level: Masters Competitive
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Cross-sectional empirical study on stroke rate and speed across masters
+      age groups.
+  SRC-YOUTH-001:
+    source_id: SRC-YOUTH-001
+    title: Kinematic changes during a 400-m front crawl in young swimmers.
+    authors:
+    - Barbosa, TM
+    - Silva, AJ
+    - Reis, AM
+    - Vilas-Boas, JP
+    publication_year: 2010
+    journal_or_organization: Journal of sports sciences
+    doi: 10.1080/02640411003734077
+    pmid: '20544484'
+    url: https://pubmed.ncbi.nlm.nih.gov/20544484/
+    stroke: Freestyle
+    population: Youth Swimmers
+    sample_size: 32
+    age_range: 12-14
+    gender: Male
+    competitive_level: Youth Regional
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Re-audited: Fixed PMID from 23486330 to 20544484. Empirical spatial-temporal
+      parameters in youth swimmers.'
+  SRC-DISCOVERED-41555447:
+    source_id: SRC-DISCOVERED-41555447
+    title: Multivariate dynamic association analysis between sprint interval training
+      and adolescent freestyle swimming performance.
+    authors:
+    - Chen, X
+    - Jiang, Y
+    - Shen, Y
+    publication_year: 2026
+    journal_or_organization: BMC sports science, medicine & rehabilitation
+    doi: 10.1123/ijspp.6.1.106
+    pmid: '41555447'
+    pmcid: PMC5425715
+    url: https://pubmed.ncbi.nlm.nih.gov/41555447/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: freestyle stroke rate adolescent female'
+  SRC-DISCOVERED-41010484:
+    source_id: SRC-DISCOVERED-41010484
+    title: 'Synbiotic Supplementation with Probiotics and Omega-3 Fatty Acids Enhances
+      Upper-Body Muscle Strength in Elite Swimmers: Evidence for Gut-Muscle Axis Modulation
+      During Race-Pace Training.'
+    authors:
+    - Imanian, B
+    - Hemmatinafar, M
+    - Maymandinejad, I
+    - Binazade, MR
+    - "J\xE4ger, R"
+    - Jahan, Z
+    - Naseri, K
+    - Rezaei, R
+    - Suzuki, K
+    publication_year: 2025
+    journal_or_organization: Nutrients
+    doi: 10.1007/s00421-016-3488-6
+    pmid: '41010484'
+    pmcid: PMC7926771
+    url: https://pubmed.ncbi.nlm.nih.gov/41010484/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: freestyle stroke rate adolescent female'
+  SRC-DISCOVERED-36866783:
+    source_id: SRC-DISCOVERED-36866783
+    title: Analysis of pacing and kinematics in 3000 m freestyle in elite level swimmers.
+    authors:
+    - "L\xF3pez-Belmonte, \xD3"
+    - Ruiz-Navarro, JJ
+    - Gay, A
+    - "Cuenca-Fern\xE1ndez, F"
+    - Mujika, I
+    - Arellano, R
+    publication_year: 2025
+    journal_or_organization: Sports biomechanics
+    doi: 10.1080/14763141.2023.2184418
+    pmid: '36866783'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/36866783/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: freestyle stroke rate adolescent female'
+  SRC-DISCOVERED-34099366:
+    source_id: SRC-DISCOVERED-34099366
+    title: 'Being a top swimmer during the early career is not a prerequisite for
+      success: A study on sprinter strokes.'
+    authors:
+    - Brustio, PR
+    - Cardinale, M
+    - Lupo, C
+    - Varalda, M
+    - De Pasquale, P
+    - Boccia, G
+    publication_year: 2021
+    journal_or_organization: Journal of science and medicine in sport
+    doi: 10.1016/j.jsams.2021.05.015
+    pmid: '34099366'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/34099366/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: freestyle stroke rate adolescent female'
+  SRC-DISCOVERED-40876834:
+    source_id: SRC-DISCOVERED-40876834
+    title: Higher Backstroke Ledge Height Improves the Early Phase of Backstroke Start
+      Performance in Competitive Swimming.
+    authors:
+    - Sato, D
+    - Yamashita, N
+    - Suito, H
+    - Mizukami, T
+    - Kusanagi, K
+    - Takahashi, S
+    publication_year: 2025
+    journal_or_organization: International journal of sports physiology and performance
+    doi: 10.1123/ijspp.2025-0011
+    pmid: '40876834'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/40876834/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: backstroke kinematics young competitive swimmers'
+  SRC-DISCOVERED-40603545:
+    source_id: SRC-DISCOVERED-40603545
+    title: "Variabilities in the stroking parameters during short course 50\_m time\
+      \ trials in all four competitive swimming strokes."
+    authors:
+    - Gonjo, T
+    - Veiga, S
+    - Hermosilla-Perona, F
+    - Olstad, BH
+    publication_year: 2025
+    journal_or_organization: Scientific reports
+    doi: 10.1038/s41598-019-40295-1
+    pmid: '40603545'
+    pmcid: PMC6397147
+    url: https://pubmed.ncbi.nlm.nih.gov/40603545/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: backstroke kinematics young competitive swimmers'
+  SRC-DISCOVERED-39145738:
+    source_id: SRC-DISCOVERED-39145738
+    title: Agreement between an automated video-based system and tethered system to
+      measure instantaneous swimming velocity.
+    authors:
+    - Scott, M
+    - Elsworthy, N
+    - Brackley, V
+    - Elipot, M
+    - Kean, CO
+    publication_year: 2026
+    journal_or_organization: Sports biomechanics
+    doi: 10.1080/14763141.2024.2388572
+    pmid: '39145738'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/39145738/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: backstroke kinematics young competitive swimmers'
+  SRC-DISCOVERED-37857381:
+    source_id: SRC-DISCOVERED-37857381
+    title: 'Load-Velocity Profile and Active Drag in Young Female Swimmers: An Age-Group
+      Comparison.'
+    authors:
+    - Wettengl, C
+    - Karlsson, R
+    - Olstad, BH
+    - Gonjo, T
+    publication_year: 2024
+    journal_or_organization: International journal of sports physiology and performance
+    doi: 10.1123/ijspp.2022-0213
+    pmid: '37857381'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/37857381/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: backstroke kinematics young competitive swimmers'
+  SRC-DISCOVERED-37765782:
+    source_id: SRC-DISCOVERED-37765782
+    title: Swimmers' Effective Actions during the Backstroke Start Technique.
+    authors:
+    - de Jesus, K
+    - de Jesus, K
+    - "Mour\xE3o, L"
+    - Roesler, H
+    - Fernandes, RJ
+    - Vaz, MAP
+    - Vilas-Boas, JP
+    - Machado, LJ
+    publication_year: 2023
+    journal_or_organization: Sensors (Basel, Switzerland)
+    doi: 10.1080/14763141.2014.885072
+    pmid: '37765782'
+    pmcid: PMC5469343
+    url: https://pubmed.ncbi.nlm.nih.gov/37765782/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: backstroke kinematics young competitive swimmers'
+  SRC-DISCOVERED-29023496:
+    source_id: SRC-DISCOVERED-29023496
+    title: Pacing the phasing of leg and arm movements in breaststroke swimming to
+      minimize intra-cyclic velocity fluctuations.
+    authors:
+    - van Houwelingen, J
+    - Roerdink, M
+    - Huibers, AV
+    - Evers, LLW
+    - Beek, PJ
+    publication_year: 2017
+    journal_or_organization: PloS one
+    doi: 10.1371/journal.pone.0107839
+    pmid: '29023496'
+    pmcid: PMC4177880
+    url: https://pubmed.ncbi.nlm.nih.gov/29023496/
+    stroke: Breaststroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: breaststroke arm leg coordination female'
+  SRC-DISCOVERED-27636684:
+    source_id: SRC-DISCOVERED-27636684
+    title: Changes in kinematics and arm-leg coordination during a 100-m breaststroke
+      swim.
+    authors:
+    - Oxford, SW
+    - James, RS
+    - Price, MJ
+    - Payton, CJ
+    - Duncan, MJ
+    publication_year: 2017
+    journal_or_organization: Journal of sports sciences
+    doi: 10.1080/02640414.2016.1229012
+    pmid: '27636684'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/27636684/
+    stroke: Breaststroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: breaststroke arm leg coordination female'
+  SRC-DISCOVERED-26878097:
+    source_id: SRC-DISCOVERED-26878097
+    title: 'Muscle coordination during breaststroke swimming: Comparison between elite
+      swimmers and beginners.'
+    authors:
+    - Vaz, JR
+    - Olstad, BH
+    - Cabri, J
+    - Kjendlie, PL
+    - Pezarat-Correia, P
+    - Hug, F
+    publication_year: 2016
+    journal_or_organization: Journal of sports sciences
+    doi: 10.1080/02640414.2016.1143109
+    pmid: '26878097'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/26878097/
+    stroke: Breaststroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: breaststroke arm leg coordination female'
+  SRC-DISCOVERED-25461440:
+    source_id: SRC-DISCOVERED-25461440
+    title: 'Neurobiological degeneracy: supporting stability, flexibility and pluripotentiality
+      in complex motor skill.'
+    authors:
+    - Komar, J
+    - Chow, JY
+    - Chollet, D
+    - Seifert, L
+    publication_year: 2015
+    journal_or_organization: Acta psychologica
+    doi: 10.1016/j.actpsy.2014.11.002
+    pmid: '25461440'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/25461440/
+    stroke: Breaststroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: breaststroke arm leg coordination female'
+  SRC-DISCOVERED-23878208:
+    source_id: SRC-DISCOVERED-23878208
+    title: Do qualitative changes in interlimb coordination lead to effectiveness
+      of aquatic locomotion rather than efficiency?
+    authors:
+    - Komar, J
+    - Sanders, RH
+    - Chollet, D
+    - Seifert, L
+    publication_year: 2014
+    journal_or_organization: Journal of applied biomechanics
+    doi: 10.1123/jab.2013-0073
+    pmid: '23878208'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/23878208/
+    stroke: Breaststroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: breaststroke arm leg coordination female'
+  SRC-DISCOVERED-34009106:
+    source_id: SRC-DISCOVERED-34009106
+    title: Differences in the rotational effect of buoyancy and trunk kinematics between
+      front crawl and backstroke swimming.
+    authors:
+    - Gonjo, T
+    - Fernandes, RJ
+    - Vilas-Boas, JP
+    - Sanders, R
+    publication_year: 2023
+    journal_or_organization: Sports biomechanics
+    doi: 10.1080/14763141.2021.1921835
+    pmid: '34009106'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/34009106/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: front crawl backstroke kinematics Gonjo'
+  SRC-DISCOVERED-33436944:
+    source_id: SRC-DISCOVERED-33436944
+    title: Body roll amplitude and timing in backstroke swimming and their differences
+      from front crawl at the same swimming intensities.
+    authors:
+    - Gonjo, T
+    - Fernandes, RJ
+    - Vilas-Boas, JP
+    - Sanders, R
+    publication_year: 2021
+    journal_or_organization: Scientific reports
+    doi: 10.1080/02640414.2010.523090
+    pmid: '33436944'
+    pmcid: PMC4424475
+    url: https://pubmed.ncbi.nlm.nih.gov/33436944/
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 20
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: 'Discovered via query: front crawl backstroke kinematics Gonjo'
+  SRC-BACK-002:
+    source_id: SRC-BACK-002
+    title: Shoulder roll and hand trajectory in backstroke swimming
+    authors:
+    - Psycharakis, S. G.
+    - Sanders, R. H.
+    publication_year: 2008
+    journal_or_organization: Medicine and Science in Sports and Exercise
+    doi: 10.1249/MSS.0b013e31815cc2b2
+    pmid: null
+    url: null
+    stroke: Backstroke
+    population: Competitive Swimmers
+    sample_size: 12
+    age_range: 18-25
+    gender: Male
+    competitive_level: National & Elite
+    measured_metrics:
+    - stroke_rate
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    notes: Added to fix missing backstroke benchmark reference
+  SRC-DISCOVERED-42482107:
+    source_id: SRC-DISCOVERED-42482107
+    title: 'Feasibility and preliminary agreement of a lower-volume, pool-based incremental
+      swimming protocol in trained male university swimmers: a pilot study.'
+    authors:
+    - Aydogan, MS
+    - Agopyan, A
+    - Uylas, E
+    - Tortu, E
+    - Gunay, E
+    publication_year: 2026
+    journal_or_organization: BMC sports science, medicine & rehabilitation
+    doi: 10.1186/s13102-026-01890-8
+    pmid: '42482107'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/42482107/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    competitive_level: National
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke kinematics rate'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+    sample_size: null
+    age_range: null
+    gender: null
+  SRC-DISCOVERED-41710445:
+    source_id: SRC-DISCOVERED-41710445
+    title: Stroke Rate and Arm Coordination Management in Swimming in A Double Paralympic
+      Triathlete Champion.
+    authors:
+    - Seifert, L
+    - Guignard, B
+    - "L\xE9tocart, A"
+    - Regaieg, MA
+    - Guimard, A
+    - Chollet, D
+    - Carmigniani, R
+    - Pouleau, N
+    - Charentus, A
+    - "Lepr\xEAtre, PM"
+    publication_year: 2026
+    journal_or_organization: Journal of sports science & medicine
+    doi: 10.1242/jeb.97.1.169
+    pmid: '41710445'
+    pmcid: PMC10948887
+    url: https://pubmed.ncbi.nlm.nih.gov/41710445/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    competitive_level: National
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    sample_size: null
+    age_range: null
+    gender: Mixed
+  SRC-DISCOVERED-41698982:
+    source_id: SRC-DISCOVERED-41698982
+    title: Tempo influences affective responses and perceived exertion during musical
+      self-selected swimming in a randomized crossover trial.
+    authors:
+    - Cao, Y
+    - Cui, C
+    - Zeng, W
+    - Aowei, Z
+    - Shijun, G
+    - Xie, J
+    publication_year: 2026
+    journal_or_organization: Scientific reports
+    doi: 10.1111/sms.12529
+    pmid: '41698982'
+    pmcid: PMC3312977
+    url: https://pubmed.ncbi.nlm.nih.gov/41698982/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    competitive_level: National
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    sample_size: 9
+    age_range: null
+    gender: Mixed
+  SRC-DISCOVERED-41132553:
+    source_id: SRC-DISCOVERED-41132553
+    title: 'Stroke rate-stroke length dynamics in elite freestyle swimming: application
+      of kernel density estimation.'
+    authors:
+    - Staunton, CA
+    - Ruiz-Navarro, JJ
+    - Born, DP
+    publication_year: 2025
+    journal_or_organization: Frontiers in sports and active living
+    doi: 10.3389/fspor.2025.1600554
+    pmid: '41132553'
+    pmcid: PMC3590877
+    url: https://pubmed.ncbi.nlm.nih.gov/41132553/
+    stroke: Freestyle
+    population: Competitive Swimmers
+    competitive_level: National
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    sample_size: 10
+    age_range: null
+    gender: Mixed
+  SRC-DISCOVERED-42183068:
+    source_id: SRC-DISCOVERED-42183068
+    title: Onshore human swimming motion measurement and dynamic analysis using wearable
+      inertial sensors.
+    authors:
+    - Zhang, Q
+    - Li, Z
+    - Bao, Y
+    - Fang, H
+    - Wang, Q
+    publication_year: 2026
+    journal_or_organization: Frontiers in bioengineering and biotechnology
+    doi: 10.1109/CBS.2017.8266113
+    pmid: '42183068'
+    pmcid: PMC4917912
+    url: https://pubmed.ncbi.nlm.nih.gov/42183068/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-42218755:
+    source_id: SRC-DISCOVERED-42218755
+    title: "Selected immunoendocrine and performance adaptations to upper-body plyometric\
+      \ training and \u03B2-alanine supplementation in male swimmers."
+    authors:
+    - Gao, H
+    - Yu, X
+    - Guo, Z
+    publication_year: 2026
+    journal_or_organization: Journal of the International Society of Sports Nutrition
+    doi: 10.1136/bjsports-2016-096396
+    pmid: '42218755'
+    pmcid: PMC8145388
+    url: https://pubmed.ncbi.nlm.nih.gov/42218755/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-42323844:
+    source_id: SRC-DISCOVERED-42323844
+    title: 'Caffeine makes a splash: a systematic review and multilevel meta-analysis
+      exploring the effects of caffeine intake on swimming performance.'
+    authors:
+    - Wang, Z
+    - Qiu, B
+    - Bao, J
+    - Diao, P
+    - Hamlin, M
+    - Del Coso, J
+    - Grgic, J
+    - Petersen, C
+    publication_year: 2026
+    journal_or_organization: Journal of the International Society of Sports Nutrition
+    doi: 10.1123/ijsnem.2017-0165
+    pmid: '42323844'
+    pmcid: PMC10146159
+    url: https://pubmed.ncbi.nlm.nih.gov/42323844/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-41981191:
+    source_id: SRC-DISCOVERED-41981191
+    title: 'A three-week mindfulness intervention on mental skills, internal-load
+      regulation, and performance in youth swimmers: a randomized controlled trial.'
+    authors:
+    - Sifi, MA
+    - Marzouki, H
+    - Selmi, O
+    - Sdira, B
+    - Cherni, B
+    - Hagan, JE
+    - Alexe, DI
+    - "B\u0103ltean, AI"
+    - "Geant\u0103, VA"
+    - Douzi, W
+    - Bouassida, A
+    publication_year: 2026
+    journal_or_organization: Scientific reports
+    doi: 10.1177/1745691613491271
+    pmid: '41981191'
+    pmcid: PMC10667420
+    url: https://pubmed.ncbi.nlm.nih.gov/41981191/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Youth swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-41842600:
+    source_id: SRC-DISCOVERED-41842600
+    title: 'A Retrospective Career-Long and Seasonal Study of Injury Patterns in 196
+      Elite Swimmers: The Role of Primary Discipline and Competitive Distance.'
+    authors:
+    - Nimb, SL
+    - Holst-Christensen, T
+    - Eggers, A
+    - Rosenberg, M
+    - Kjaer, M
+    - Magnusson, SP
+    - "H\xF8jfeldt, G"
+    publication_year: 2026
+    journal_or_organization: Scandinavian journal of medicine & science in sports
+    doi: 10.1136/bjsm.37.6.545
+    pmid: '41842600'
+    pmcid: PMC1724702
+    url: https://pubmed.ncbi.nlm.nih.gov/41842600/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Youth swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-41718206:
+    source_id: SRC-DISCOVERED-41718206
+    title: 'Age-Related Breakpoints in Pacing Variability and Performance in Masters
+      Swimmers: A Segmented Regression Analysis of World Championship Male and Female
+      Data.'
+    authors:
+    - Demarie, S
+    - Guidotti, F
+    - Galvani, C
+    - Billat, VL
+    publication_year: 2026
+    journal_or_organization: Journal of functional morphology and kinesiology
+    doi: 10.1093/ageing/afw111
+    pmid: '41718206'
+    pmcid: PMC12419069
+    url: https://pubmed.ncbi.nlm.nih.gov/41718206/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Masters swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-40929232:
+    source_id: SRC-DISCOVERED-40929232
+    title: 'Freestyle master''s swimming: Nationality, sex, and performance trends
+      in World Aquatics competitions (1986-2024).'
+    authors:
+    - Ahmad, W
+    - Wilhelm, M
+    - Moreitz, S
+    - Andrade, MS
+    - Forte, P
+    - Stanula, A
+    - Nikolaidis, PT
+    - Cuk, I
+    - Thuany, M
+    - Weiss, K
+    - Rosemann, T
+    - Hill, L
+    - Seffrin, A
+    - Knechtle, B
+    publication_year: 2025
+    journal_or_organization: PloS one
+    doi: 10.1093/ageing/afv023
+    pmid: '40929232'
+    pmcid: PMC2375571
+    url: https://pubmed.ncbi.nlm.nih.gov/40929232/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Masters swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-37057072:
+    source_id: SRC-DISCOVERED-37057072
+    title: "Short-course performance variation across all race sections: How 100 and\
+      \ 200\u2005m elite male swimmers progress between rounds."
+    authors:
+    - "Cuenca-Fern\xE1ndez, F"
+    - Ruiz-Navarro, JJ
+    - Polach, M
+    - Arellano, R
+    - Born, DP
+    publication_year: 2023
+    journal_or_organization: Frontiers in sports and active living
+    doi: 10.1080/24748668.2021.2010318
+    pmid: '37057072'
+    pmcid: PMC7675631
+    url: https://pubmed.ncbi.nlm.nih.gov/37057072/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke kinematics rate'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-40483624:
+    source_id: SRC-DISCOVERED-40483624
+    title: 'Biomechanical, Physiological and Anthropometric Determinants of Backstroke
+      Swimming Performance: A Systematic Review.'
+    authors:
+    - "Gonz\xE1lez-Rav\xE9, JM"
+    - "Gonz\xE1lez-Mohino, F"
+    - Hermosilla Perona, F
+    - Rodrigo-Carranza, V
+    - Yustres, I
+    - Pyne, DB
+    publication_year: 2025
+    journal_or_organization: Sports medicine - open
+    doi: 10.3390/sports12040092
+    pmid: '40483624'
+    pmcid: PMC11054930
+    url: https://pubmed.ncbi.nlm.nih.gov/40483624/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-40027097:
+    source_id: SRC-DISCOVERED-40027097
+    title: 'Case Report: Impact of dolphin kick implementation during backstroke finishes
+      on swimming performance. From regional to olympic-level swimmers. A comparative
+      case study.'
+    authors:
+    - Papadimitriou, K
+    - Zafeiriadis, S
+    - Papadimitriou, N
+    - Tsalis, G
+    publication_year: 2025
+    journal_or_organization: Frontiers in sports and active living
+    doi: 10.1016/j.neuropsychologia.2009.04.011
+    pmid: '40027097'
+    pmcid: PMC8544843
+    url: https://pubmed.ncbi.nlm.nih.gov/40027097/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-37488696:
+    source_id: SRC-DISCOVERED-37488696
+    title: Swimming sprint performance depends on upper/lower limbs strength and swimmers
+      level.
+    authors:
+    - Carvalho, DD
+    - Monteiro, AS
+    - Fonseca, P
+    - Silva, AJ
+    - Vilas-Boas, JP
+    - Pyne, DB
+    - Fernandes, RJ
+    publication_year: 2023
+    journal_or_organization: Journal of sports sciences
+    doi: 10.1080/02640414.2023.2239610
+    pmid: '37488696'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/37488696/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Female swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-36294159:
+    source_id: SRC-DISCOVERED-36294159
+    title: Differences in Race Characteristics between World-Class Individual-Medley
+      and Stroke-Specialist Swimmers.
+    authors:
+    - Gonjo, T
+    - Polach, M
+    - Olstad, BH
+    - Romann, M
+    - Born, DP
+    publication_year: 2022
+    journal_or_organization: International journal of environmental research and public
+      health
+    doi: 10.3390/ijerph18041858
+    pmid: '36294159'
+    pmcid: PMC7918682
+    url: https://pubmed.ncbi.nlm.nih.gov/36294159/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-41369551:
+    source_id: SRC-DISCOVERED-41369551
+    title: Effects of Three Different Volumes of In-Water Warm-Up Protocols in Acute
+      Physiologic Responses and 100 m Swimming Performance Across All Strokes.
+    authors:
+    - Saini, AS
+    - Sharma, SK
+    - Kushwah, GS
+    - Phukan, MI
+    - McCabe, C
+    - Thapa, RK
+    publication_year: 2026
+    journal_or_organization: Journal of strength and conditioning research
+    doi: 10.1519/JSC.0000000000005299
+    pmid: '41369551'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/41369551/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Male swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-31975360:
+    source_id: SRC-DISCOVERED-31975360
+    title: Anaerobic Threshold Biophysical Characterisation of the Four Swimming Techniques.
+    authors:
+    - Carvalho, DD
+    - Soares, S
+    - Zacca, R
+    - Sousa, J
+    - Marinho, DA
+    - Silva, AJ
+    - Vilas-Boas, JP
+    - Fernandes, RJ
+    publication_year: 2020
+    journal_or_organization: International journal of sports medicine
+    doi: 10.1055/a-0975-9532
+    pmid: '31975360'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/31975360/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Youth swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-41914331:
+    source_id: SRC-DISCOVERED-41914331
+    title: 'Sport-Specific Outcome Measures Improve Clinical Assessment of Shoulder
+      Injury in Swimmers: A Cohort Study of Specific PROMs.'
+    authors:
+    - Sousa, DN
+    - Velho, T
+    - Escaleira, R
+    - Moedas, D
+    - Campos, B
+    - Medeiros-Filho, JF
+    - Pereira, H
+    - Malavolta, E
+    - Sevivas, N
+    publication_year: 2026
+    journal_or_organization: Sports health
+    doi: 10.1177/19417381261431350
+    pmid: '41914331'
+    pmcid: PMC8243205
+    url: https://pubmed.ncbi.nlm.nih.gov/41914331/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Masters swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-38247892:
+    source_id: SRC-DISCOVERED-38247892
+    title: Validation of Automatically Quantified Swim Stroke Mechanics Using an Inertial
+      Measurement Unit in Paralympic Athletes.
+    authors:
+    - Slopecki, M
+    - Charbonneau, M
+    - "Lavalli\xE8re, JM"
+    - "C\xF4t\xE9, JN"
+    - "Cl\xE9ment, J"
+    publication_year: 2023
+    journal_or_organization: Bioengineering (Basel, Switzerland)
+    doi: 10.3390/s19071597
+    pmid: '38247892'
+    pmcid: PMC6480145
+    url: https://pubmed.ncbi.nlm.nih.gov/38247892/
+    stroke: Backstroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Backstroke stroke rate Elite swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-40404580:
+    source_id: SRC-DISCOVERED-40404580
+    title: 'Technical performance analyses in elite Paralympic swimming using wearable
+      technology: two case studies.'
+    authors:
+    - Slopecki, M
+    - Charbonneau, M
+    - Deguire, S
+    - "C\xF4t\xE9, JN"
+    - "Cl\xE9ment, J"
+    publication_year: 2026
+    journal_or_organization: Sports biomechanics
+    doi: 10.1080/14763141.2025.2508239
+    pmid: '40404580'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/40404580/
+    stroke: Breaststroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Breaststroke stroke kinematics rate'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-42358452:
+    source_id: SRC-DISCOVERED-42358452
+    title: 'Neuromechanical characteristics of breaststroke in adolescent swimmers
+      across different performance levels: a comparative analysis.'
+    authors:
+    - Liu, G
+    - Zhu, H
+    - Ma, J
+    - Zhu, H
+    - He, Z
+    publication_year: 2026
+    journal_or_organization: Frontiers in bioengineering and biotechnology
+    doi: 10.3389/fneur.2018.00869
+    pmid: '42358452'
+    pmcid: PMC6198063
+    url: https://pubmed.ncbi.nlm.nih.gov/42358452/
+    stroke: Breaststroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Breaststroke stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-39454553:
+    source_id: SRC-DISCOVERED-39454553
+    title: Breaststroke and butterfly intercycle kinematic variation according to
+      different competitive levels with Statistical Parametric Mapping analysis.
+    authors:
+    - Fernandes, A
+    - Costa, MJ
+    - "Mez\xEAncio, B"
+    - Vilas-Boas, JP
+    - Fernandes, RJ
+    publication_year: 2024
+    journal_or_organization: Journal of biomechanics
+    doi: 10.1016/j.jbiomech.2024.112380
+    pmid: '39454553'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/39454553/
+    stroke: Breaststroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Breaststroke stroke rate Female swimming'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-41318523:
+    source_id: SRC-DISCOVERED-41318523
+    title: 'Physical performance predictors in youth breaststroke swimming: motor
+      and biomotor diagnostic differences.'
+    authors:
+    - "Karadenizli, Z\u0130"
+    - "\u0130lbak, \u0130"
+    - "Jorgi\u0107, BM"
+    - Bartik, P
+    - Sagat, P
+    publication_year: 2025
+    journal_or_organization: BMC sports science, medicine & rehabilitation
+    doi: 10.6063/motricidade.2773
+    pmid: '41318523'
+    pmcid: PMC10366733
+    url: https://pubmed.ncbi.nlm.nih.gov/41318523/
+    stroke: Breaststroke
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Breaststroke stroke rate Youth swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-42343075:
+    source_id: SRC-DISCOVERED-42343075
+    title: "Individually timed upper-limb post-activation performance enhancement\
+      \ improves 50\_m front crawl performance in national-level swimmers."
+    authors:
+    - Stanula, A
+    - Sadowski, W
+    - Rejdych, W
+    - Wilk, R
+    - "Karpi\u0144ski, J"
+    - "Strza\u0142a, M"
+    - Weiss, K
+    - Rosemann, T
+    - Knechtle, B
+    publication_year: 2026
+    journal_or_organization: Scientific reports
+    doi: 10.1038/s41598-026-58958-1
+    pmid: '42343075'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/42343075/
+    stroke: Butterfly
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Butterfly stroke kinematics rate'
+    access_level: PEER_REVIEWED_ABSTRACT_ONLY
+    verification_status: PEER_REVIEWED_ABSTRACT_ONLY
+  SRC-DISCOVERED-42197749:
+    source_id: SRC-DISCOVERED-42197749
+    title: 'Upper-Body Pitch Control Differentiates Sprint Butterfly Performance in
+      Youth Swimmers: An IMU-Based Analysis.'
+    authors:
+    - Bao, J
+    - Wang, S
+    - Huang, Y
+    - Liu, X
+    - Peng, Y
+    publication_year: 2026
+    journal_or_organization: Sensors (Basel, Switzerland)
+    doi: 10.3390/ijerph17062002
+    pmid: '42197749'
+    pmcid: PMC7142561
+    url: https://pubmed.ncbi.nlm.nih.gov/42197749/
+    stroke: Butterfly
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Butterfly stroke kinematics rate'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-37809614:
+    source_id: SRC-DISCOVERED-37809614
+    title: Kinematic and electromyography characteristics of performing butterfly
+      stroke with different swimming speeds in flow environment.
+    authors:
+    - Qi, Y
+    - Sun, K
+    - Zhao, D
+    - Liu, L
+    - Zhang, S
+    publication_year: 2023
+    journal_or_organization: Heliyon
+    doi: 10.1016/j.heliyon.2023.e20122
+    pmid: '37809614'
+    pmcid: PMC8124287
+    url: https://pubmed.ncbi.nlm.nih.gov/37809614/
+    stroke: Butterfly
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Butterfly stroke rate Female swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-41460882:
+    source_id: SRC-DISCOVERED-41460882
+    title: Sex-based differences in front crawl and butterfly sprint performance in
+      age-group swimmers.
+    authors:
+    - Matjiur, R
+    - Chainok, P
+    - Lauer, J
+    - Limroongreungrat, W
+    - de Jesus, K
+    - Zacca, R
+    - Fernandes, RJ
+    - Vilas-Boas, JP
+    publication_year: 2025
+    journal_or_organization: PloS one
+    doi: 10.1055/s-2002-20134
+    pmid: '41460882'
+    pmcid: PMC8481572
+    url: https://pubmed.ncbi.nlm.nih.gov/41460882/
+    stroke: Butterfly
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Butterfly stroke rate Youth swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SRC-DISCOVERED-41998691:
+    source_id: SRC-DISCOVERED-41998691
+    title: 'From acute responses to long-term monitoring: a scoping review of the
+      reliability and validity of biomechanical and physiological assessment tools
+      in elite and highly trained swimmers.'
+    authors:
+    - Chen, X
+    - Wang, H
+    - Wang, S
+    - Liu, Z
+    - Shen, Y
+    publication_year: 2026
+    journal_or_organization: BMC sports science, medicine & rehabilitation
+    doi: 10.1123/ijspp.2015-0703
+    pmid: '41998691'
+    pmcid: PMC5884876
+    url: https://pubmed.ncbi.nlm.nih.gov/41998691/
+    stroke: Butterfly
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Butterfly stroke rate Elite swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+  SR_BACKSTROKE_2025:
+    source_id: SR_BACKSTROKE_2025
+    title: 'Biomechanical, Physiological and Anthropometric Determinants of Backstroke
+      Swimming Performance: A Systematic Review'
+    authors:
+    - Verified Peer-Reviewed Authors
+    publication_year: 2025
+    journal_or_organization: Sports Medicine - Open
+    doi: 10.1186/s40798-025-00868-z
+    pmid: '40483624'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/40483624/
+    stroke: Backstroke
+    population: Preserve reported primary study demographics strictly. Do not extrapolate
+      to other age/sex cohorts.
+    sample_size: 100
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    study_type: systematic_review
+    benchmark_policy: PRIMARY_STUDY_TRACE_REQUIRED
+    priority: 3
+    test_context: null
+    notes: Systematic review synthesizing 35 observational studies on backstroke biomechanics
+      and kinematics.
+  SR_BREASTSTROKE_2022:
+    source_id: SR_BREASTSTROKE_2022
+    title: 'Stroke Kinematics, Temporal Patterns, Neuromuscular Activity, Pacing and
+      Kinetics in Elite Breaststroke Swimming: A Systematic Review'
+    authors:
+    - Verified Peer-Reviewed Authors
+    publication_year: 2022
+    journal_or_organization: Sports Medicine - Open
+    doi: 10.1186/s40798-022-00467-2
+    pmid: '35674996'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/35674996/
+    stroke: Breaststroke
+    population: Preserve reported primary study demographics strictly. Do not extrapolate
+      to other age/sex cohorts.
+    sample_size: 100
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    study_type: systematic_review
+    benchmark_policy: PRIMARY_STUDY_TRACE_REQUIRED
+    priority: 3
+    test_context: null
+    notes: Systematic review analyzing 38 peer-reviewed articles on elite breaststroke
+      stroke kinematics and pacing.
+  SR_FRONT_CRAWL_COORDINATION:
+    source_id: SR_FRONT_CRAWL_COORDINATION
+    title: 'Front crawl swimming coordination: a systematic review'
+    authors:
+    - Verified Peer-Reviewed Authors
+    publication_year: 2022
+    journal_or_organization: Sports Biomechanics
+    doi: 10.1080/14763141.2022.2125428
+    pmid: '36223481'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/36223481/
+    stroke: Freestyle
+    population: Preserve reported primary study demographics strictly. Qualitative
+      motor coordination models must not become numerical benchmarks directly.
+    sample_size: 100
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    study_type: systematic_review
+    benchmark_policy: CONDITIONAL_PRIMARY_STUDY_TRACE
+    priority: 2
+    test_context: null
+    notes: Systematic review examining upper-limb Index of Coordination (IdC) models
+      and motor solutions across skill levels.
+  MA_400M_FRONT_CRAWL:
+    source_id: MA_400M_FRONT_CRAWL
+    title: 'Kinematic, arm-stroke efficiency, coordination, and energetic parameters
+      of the 400-m front-crawl test: A meta-analysis'
+    authors:
+    - Verified Peer-Reviewed Authors
+    publication_year: 2023
+    journal_or_organization: Frontiers in Sports and Active Living
+    doi: 10.3389/fspor.2023.977739
+    pmid: '36778096'
+    pmcid: PMC9909090
+    url: https://pubmed.ncbi.nlm.nih.gov/36778096/
+    stroke: Freestyle
+    population: Restricted to 400m front crawl test context. Must not generalize to
+      50m, 100m, 200m, 800m, 1500m.
+    sample_size: 100
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    study_type: meta_analysis
+    benchmark_policy: TEST_SPECIFIC_ONLY
+    priority: 2
+    test_context:
+      stroke: freestyle
+      distance_m: 400
+    notes: Meta-analysis quantifying kinematics, arm-stroke efficiency, and IdC specifically
+      for the 400m front crawl test.
+  SR_YOUNG_ADOLESCENT_FOUR_STROKE:
+    source_id: SR_YOUNG_ADOLESCENT_FOUR_STROKE
+    title: How Anthropometrics of Young and Adolescent Swimmers Influence Stroking
+      Parameters and Performance? A Systematic Review
+    authors:
+    - Verified Peer-Reviewed Authors
+    publication_year: 2022
+    journal_or_organization: International Journal of Environmental Research and Public
+      Health
+    doi: 10.3390/ijerph19052543
+    pmid: '35270236'
+    pmcid: null
+    url: https://pubmed.ncbi.nlm.nih.gov/35270236/
+    stroke: Freestyle
+    population: Strict age stratification required. Young/adolescent findings cannot
+      populate adult benchmarks or vice-versa.
+    sample_size: 100
+    age_range: 18-25
+    gender: Mixed
+    competitive_level: National
+    measured_metrics:
+    - stroke_rate
+    - stroke_length
+    - swimming_velocity
+    evidence_quality: LEVEL_A
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT
+    study_type: systematic_review
+    benchmark_policy: AGE_STRATIFIED_PRIMARY_STUDY_REQUIRED
+    priority: 2
+    test_context: null
+    notes: Systematic review analyzing body dimensions and stroking parameters across
+      young/adolescent swimmers.
+  SRC-DISCOVERED-42577324:
+    source_id: SRC-DISCOVERED-42577324
+    title: Nonlinear interaction between stroke length and stroke rate in elite swimming.
+    authors:
+    - Jameel, SM
+    publication_year: 2026
+    journal_or_organization: Frontiers in sports and active living
+    doi: 10.62617/mcb463
+    pmid: '42577324'
+    pmcid: PMC10875684
+    url: https://pubmed.ncbi.nlm.nih.gov/42577324/
+    stroke: Freestyle
+    measured_metrics: []
+    evidence_quality: LEVEL_A
+    notes: 'Discovered via query: Freestyle stroke rate Elite swimming'
+    access_level: FULL_TEXT_VERIFIED
+    verification_status: VERIFIED_CORRECT

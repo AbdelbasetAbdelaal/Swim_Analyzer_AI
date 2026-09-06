@@ -10,7 +10,7 @@
     "resolution": "720x1280",
     "sha256": "916b168bc666636e552636fcae08870fb35030c6f580eebdd68b3f024edb3f93",
     "file_size_bytes": 13810203,
-    "verification_timestamp": "2026-09-06T16:03:53.725174+00:00"
+    "verification_timestamp": "2026-09-06T17:10:03.845780+00:00"
   },
   {
     "sample_id": "GT-FREE-002",
@@ -23,7 +23,7 @@
     "resolution": "720x1280",
     "sha256": "5a6f8f56fc78194cd0103637690749f80b2e0bd36ee2bed6802fdd250749ac7c",
     "file_size_bytes": 9832142,
-    "verification_timestamp": "2026-09-06T16:03:58.694604+00:00"
+    "verification_timestamp": "2026-09-06T17:10:09.327123+00:00"
   },
   {
     "sample_id": "GT-BACK-001",
@@ -36,7 +36,7 @@
     "resolution": "1280x720",
     "sha256": "2cdedfd1aa19390ad610fd6a3f2ef2ebfe3c87142e9f1fc56ff13c770c6c2a6f",
     "file_size_bytes": 4201424,
-    "verification_timestamp": "2026-09-06T16:04:02.621981+00:00"
+    "verification_timestamp": "2026-09-06T17:10:13.971956+00:00"
   },
   {
     "sample_id": "GT-BACK-002",
@@ -49,7 +49,7 @@
     "resolution": "720x1280",
     "sha256": "9d06708aa0f9167ca730201d563030cd9292e04aacef5dfaa8c33d21fe7fc74e",
     "file_size_bytes": 2187962,
-    "verification_timestamp": "2026-09-06T16:04:08.163348+00:00"
+    "verification_timestamp": "2026-09-06T17:10:18.998831+00:00"
   },
   {
     "sample_id": "GT-BRST-001",
@@ -62,7 +62,7 @@
     "resolution": "720x1280",
     "sha256": "62e30e6b534017bd2f78983428894b109c86e61788c1f03807e544a1180c1873",
     "file_size_bytes": 3823897,
-    "verification_timestamp": "2026-09-06T16:04:10.400078+00:00"
+    "verification_timestamp": "2026-09-06T17:10:20.932544+00:00"
   },
   {
     "sample_id": "GT-BRST-002",
@@ -75,7 +75,7 @@
     "resolution": "720x1280",
     "sha256": "753ca95e5136e68aab795bbd26835f1942f332ecc134181b5e28f3b5914282b1",
     "file_size_bytes": 1682291,
-    "verification_timestamp": "2026-09-06T16:04:12.882348+00:00"
+    "verification_timestamp": "2026-09-06T17:10:23.213225+00:00"
   },
   {
     "sample_id": "GT-FLY-001",
@@ -88,7 +88,7 @@
     "resolution": "720x1280",
     "sha256": "59e85c045939e8b359300902951107d0cf749c5de0336daf85c21f610fa2df48",
     "file_size_bytes": 9134857,
-    "verification_timestamp": "2026-09-06T16:04:13.853715+00:00"
+    "verification_timestamp": "2026-09-06T17:10:24.180368+00:00"
   },
   {
     "sample_id": "GT-FLY-002",
@@ -101,6 +101,6 @@
     "resolution": "720x1280",
     "sha256": "18174f3508f45ca0395ee0a138fd752406a72c4ac95b9d611499f4719a0da49f",
     "file_size_bytes": 7095947,
-    "verification_timestamp": "2026-09-06T16:04:18.783029+00:00"
+    "verification_timestamp": "2026-09-06T17:10:29.020390+00:00"
   }
 ]

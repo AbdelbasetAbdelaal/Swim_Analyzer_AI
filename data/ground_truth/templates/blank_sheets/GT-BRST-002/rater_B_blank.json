@@ -11,6 +11,7 @@
   "stroke_type": "Breaststroke",
   "participant_id": "PARTICIPANT-002",
   "session_id": "SESSION-002",
+  "video_id": "VIDEO-002",
   "source_type": "HIGH_SPEED_OPTICAL_DUAL_RATER",
   "annotation_version": "1.0.0",
   "is_synthetic_fixture": false,
@@ -105,16 +106,19 @@
     "mean_elbow_angle_deg": {
       "value": null,
       "unit": "deg",
+      "angle_dimension": "2D_PLANAR",
       "source_modality": "HUMAN_VIDEO_ANNOTATION"
     },
     "mean_knee_angle_deg": {
       "value": null,
       "unit": "deg",
+      "angle_dimension": "2D_PLANAR",
       "source_modality": "HUMAN_VIDEO_ANNOTATION"
     },
     "body_roll_amplitude_deg": {
       "value": null,
       "unit": "deg",
+      "angle_dimension": "2D_PLANAR",
       "source_modality": "HUMAN_VIDEO_ANNOTATION"
     },
     "stroke_symmetry_percent": {

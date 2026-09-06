@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swim-analyzer-ai.internal/schemas/ground_truth_manifest_schema.json",
+  "title": "GroundTruthManifestSchema",
+  "description": "Schema for Ground Truth validation cohort manifests in Swim Analyzer AI",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "manifest_id",
+    "created_at",
+    "cohort_name",
+    "protocol_version",
+    "records"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "manifest_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "cohort_name": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_synthetic_manifest": {
+      "type": "boolean",
+      "default": false,
+      "description": "True only if this manifest is for automated test suites. Must be false for official validation cohorts."
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sample_id",
+          "video_path",
+          "stroke",
+          "participant_id",
+          "annotation_file",
+          "annotation_status",
+          "quality_status",
+          "inclusion_status",
+          "validator_version"
+        ],
+        "properties": {
+          "sample_id": {
+            "type": "string",
+            "pattern": "^GT-[A-Z0-9_-]+$"
+          },
+          "video_path": {
+            "type": "string"
+          },
+          "video_sha256": {
+            "type": "string"
+          },
+          "stroke": {
+            "type": "string",
+            "enum": [
+              "Freestyle",
+              "Backstroke",
+              "Breaststroke",
+              "Butterfly"
+            ]
+          },
+          "participant_id": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "annotation_file": {
+            "type": "string"
+          },
+          "annotation_status": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "INCOMPLETE",
+              "PENDING_SECOND_RATER",
+              "PENDING_ADJUDICATION"
+            ]
+          },
+          "quality_status": {
+            "type": "string",
+            "enum": [
+              "PASSED",
+              "SUSPECT",
+              "FAILED"
+            ]
+          },
+          "inclusion_status": {
+            "type": "string",
+            "enum": [
+              "INCLUDED",
+              "AMBIGUOUS",
+              "EXCLUDED"
+            ]
+          },
+          "exclusion_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "VALIDATION_OFFICIAL",
+              "EXPLORATORY",
+              "BENCHMARK_CALIBRATION",
+              "TEST_FIXTURE"
+            ],
+            "default": "VALIDATION_OFFICIAL"
+          },
+          "validator_version": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

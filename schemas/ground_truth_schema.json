@@ -1,0 +1,321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swim-analyzer-ai.internal/schemas/ground_truth_schema.json",
+  "title": "GroundTruthSampleSchema",
+  "description": "Standard machine-readable schema for individual physical ground truth annotation trials in Swim Analyzer AI",
+  "type": "object",
+  "required": [
+    "sample_id",
+    "participant_id",
+    "session_id",
+    "stroke_type",
+    "video_id",
+    "video_filename",
+    "source_type",
+    "annotation_version",
+    "annotator_id",
+    "annotation_timestamp",
+    "video_fps",
+    "video_duration",
+    "frame_count",
+    "exclusion_status"
+  ],
+  "properties": {
+    "sample_id": {
+      "type": "string",
+      "pattern": "^GT-[A-Z0-9_-]+$",
+      "description": "Unique identifier for this ground truth sample (e.g. GT-FREE-001)"
+    },
+    "participant_id": {
+      "type": "string",
+      "pattern": "^(PARTICIPANT|SWIMMER|ATHLETE)-[A-Z0-9_-]+$",
+      "description": "Pseudonymized participant identifier. Direct PII is strictly forbidden."
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Identifier for the recording session or capture protocol"
+    },
+    "stroke_type": {
+      "type": "string",
+      "enum": [
+        "Freestyle",
+        "Backstroke",
+        "Breaststroke",
+        "Butterfly"
+      ],
+      "description": "Target swimming style for this trial"
+    },
+    "video_id": {
+      "type": "string",
+      "description": "Identifier linking to the raw or preprocessed video asset"
+    },
+    "video_filename": {
+      "type": "string",
+      "description": "Filename of the source video"
+    },
+    "video_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "SHA-256 cryptographic checksum of the raw video asset"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "HIGH_SPEED_OPTICAL_DUAL_RATER",
+        "UNDERWATER_QUALISYS_3D_MOCAP",
+        "VICON_SUBMERGED_ARRAY",
+        "SYNCHRONIZED_IMU_PRESSURE_ARRAY",
+        "SYNTHETIC_TEST_FIXTURE"
+      ],
+      "description": "Origin apparatus for the ground truth measurement"
+    },
+    "annotation_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "Schema and protocol version used for annotation"
+    },
+    "annotator_id": {
+      "type": "string",
+      "description": "Identifier of the primary certified annotator or consensus panel"
+    },
+    "secondary_annotator_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Identifier of the independent second rater if dual-annotated"
+    },
+    "annotation_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when annotation was completed"
+    },
+    "video_fps": {
+      "type": "number",
+      "minimum": 30.0,
+      "description": "True constant frame rate of the video recording"
+    },
+    "video_duration": {
+      "type": "number",
+      "minimum": 1.0,
+      "description": "Total duration of video trial in seconds"
+    },
+    "frame_count": {
+      "type": "integer",
+      "minimum": 30,
+      "description": "Total number of frames in the video"
+    },
+    "pool_context": {
+      "type": "object",
+      "properties": {
+        "pool_length_m": {
+          "type": "number",
+          "enum": [25.0, 33.33, 50.0]
+        },
+        "water_type": {
+          "type": "string",
+          "enum": ["Freshwater", "Chlorinated", "Saltwater"]
+        },
+        "lane_width_m": {
+          "type": "number"
+        },
+        "camera_position": {
+          "type": "string",
+          "enum": [
+            "Submerged_Window",
+            "Submerged_Housing",
+            "Poolside_Surface",
+            "Poolside_Elevated"
+          ]
+        },
+        "calibration_type": {
+          "type": "string",
+          "enum": [
+            "Metric_Physical_Pool",
+            "Submerged_Wand_DLT",
+            "Body_Normalized",
+            "Uncalibrated"
+          ]
+        }
+      }
+    },
+    "demographics": {
+      "type": "object",
+      "properties": {
+        "sex": {
+          "type": "string",
+          "enum": ["Male", "Female", "Unknown"]
+        },
+        "age_group": {
+          "type": "string",
+          "enum": ["Junior", "Senior", "Masters", "Elite_Senior"]
+        },
+        "competition_level": {
+          "type": "string",
+          "enum": ["Club", "National", "International_Elite", "Recreational"]
+        }
+      }
+    },
+    "cycle_annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cycle_index",
+          "start_frame",
+          "end_frame",
+          "duration_ms",
+          "stroke_rate_spm"
+        ],
+        "properties": {
+          "cycle_index": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "start_frame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_frame": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "duration_ms": {
+            "type": "number",
+            "minimum": 100.0
+          },
+          "stroke_rate_spm": {
+            "type": "number",
+            "minimum": 10.0,
+            "maximum": 120.0
+          },
+          "phase_events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["phase_name", "transition_frame"],
+              "properties": {
+                "phase_name": {
+                  "type": "string"
+                },
+                "transition_frame": {
+                  "type": "integer"
+                },
+                "timestamp_ms": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "metric_annotations": {
+      "type": "object",
+      "description": "Standardized ground truth metric values. Explicitly distinguishes physical quantities from proxy measures.",
+      "properties": {
+        "stroke_rate_spm": {
+          "type": "number",
+          "description": "Measured physical cycle rate in strokes per minute"
+        },
+        "cycle_duration_ms": {
+          "type": "number",
+          "description": "Measured physical mean cycle duration in milliseconds"
+        },
+        "true_dps_meters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "MEASURED PHYSICAL QUANTITY: True center-of-mass translation per cycle in meters. Null if uncalibrated."
+        },
+        "hand_excursion_proxy_bl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "PROXY / ESTIMATE: Normalized wrist travel distance relative to torso body length. NOT literal center-of-mass translation."
+        },
+        "mean_elbow_angle_deg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "MEASURED PHYSICAL QUANTITY: Mean elbow angle during pull phase in degrees."
+        },
+        "mean_knee_angle_deg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "MEASURED PHYSICAL QUANTITY: Mean knee flexion angle in degrees."
+        },
+        "body_roll_amplitude_deg": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Peak-to-peak or peak shoulder/hip roll angle in degrees."
+        },
+        "stroke_symmetry_percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Symmetry percentage between left and right limb kinematics (0 - 100)."
+        }
+      }
+    },
+    "annotation_notes": {
+      "type": "string",
+      "description": "Qualitative notes recorded by the human annotator regarding visual conditions or edge cases."
+    },
+    "quality_flags": {
+      "type": "object",
+      "properties": {
+        "occlusion_level": {
+          "type": "string",
+          "enum": ["NONE", "LOW", "MEDIUM", "HIGH"]
+        },
+        "lighting_quality": {
+          "type": "string",
+          "enum": ["HIGH", "ADEQUATE", "LOW"]
+        },
+        "water_turbulence": {
+          "type": "string",
+          "enum": ["CALM", "MODERATE", "SEVERE"]
+        },
+        "inter_rater_agreement_icc": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "requires_adjudication": {
+          "type": "boolean"
+        }
+      }
+    },
+    "exclusion_status": {
+      "type": "string",
+      "enum": [
+        "INCLUDED",
+        "AMBIGUOUS",
+        "EXCLUDED"
+      ],
+      "description": "Quality gating status. Only 'INCLUDED' samples may enter official validation cohorts."
+    },
+    "exclusion_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Detailed explanation if exclusion_status is EXCLUDED or AMBIGUOUS"
+    },
+    "is_synthetic_fixture": {
+      "type": "boolean",
+      "default": false,
+      "description": "CRITICAL: True ONLY if this sample is a software test mock. Synthetic fixtures must NEVER enter official validation cohorts."
+    }
+  }
+}

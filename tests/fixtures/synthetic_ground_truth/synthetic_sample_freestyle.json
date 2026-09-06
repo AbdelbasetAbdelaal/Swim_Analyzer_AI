@@ -1,0 +1,77 @@
+{
+  "sample_id": "GT-SYNTH-FREE-001",
+  "participant_id": "PARTICIPANT-SYNTH-01",
+  "session_id": "SESS-SYNTH-2026",
+  "stroke_type": "Freestyle",
+  "video_id": "VID-SYNTH-001",
+  "video_filename": "mock_freestyle_trial.mp4",
+  "video_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "source_type": "SYNTHETIC_TEST_FIXTURE",
+  "annotation_version": "1.0.0",
+  "annotator_id": "TEST-FIXTURE-GENERATOR",
+  "secondary_annotator_id": "TEST-FIXTURE-VALIDATOR",
+  "annotation_timestamp": "2026-09-06T12:00:00Z",
+  "video_fps": 60.0,
+  "video_duration": 10.0,
+  "frame_count": 600,
+  "pool_context": {
+    "pool_length_m": 50.0,
+    "water_type": "Freshwater",
+    "camera_position": "Submerged_Window",
+    "calibration_type": "Metric_Physical_Pool"
+  },
+  "demographics": {
+    "sex": "Female",
+    "age_group": "Senior",
+    "competition_level": "National"
+  },
+  "cycle_annotations": [
+    {
+      "cycle_index": 1,
+      "start_frame": 0,
+      "end_frame": 60,
+      "duration_ms": 1000.0,
+      "stroke_rate_spm": 60.0,
+      "phase_events": [
+        {"phase_name": "Entry", "transition_frame": 0, "timestamp_ms": 0.0},
+        {"phase_name": "Catch", "transition_frame": 15, "timestamp_ms": 250.0},
+        {"phase_name": "Pull", "transition_frame": 30, "timestamp_ms": 500.0},
+        {"phase_name": "Recovery", "transition_frame": 45, "timestamp_ms": 750.0}
+      ]
+    },
+    {
+      "cycle_index": 2,
+      "start_frame": 60,
+      "end_frame": 120,
+      "duration_ms": 1000.0,
+      "stroke_rate_spm": 60.0,
+      "phase_events": [
+        {"phase_name": "Entry", "transition_frame": 60, "timestamp_ms": 1000.0},
+        {"phase_name": "Catch", "transition_frame": 75, "timestamp_ms": 1250.0},
+        {"phase_name": "Pull", "transition_frame": 90, "timestamp_ms": 1500.0},
+        {"phase_name": "Recovery", "transition_frame": 105, "timestamp_ms": 1750.0}
+      ]
+    }
+  ],
+  "metric_annotations": {
+    "stroke_rate_spm": 60.0,
+    "cycle_duration_ms": 1000.0,
+    "true_dps_meters": 1.80,
+    "hand_excursion_proxy_bl": 1.20,
+    "mean_elbow_angle_deg": 110.0,
+    "mean_knee_angle_deg": 150.0,
+    "body_roll_amplitude_deg": 35.0,
+    "stroke_symmetry_percent": 95.0
+  },
+  "annotation_notes": "TEST FIXTURE — NOT SCIENTIFIC GROUND TRUTH. Used strictly for automated runner unit verification.",
+  "quality_flags": {
+    "occlusion_level": "NONE",
+    "lighting_quality": "HIGH",
+    "water_turbulence": "CALM",
+    "inter_rater_agreement_icc": 0.99,
+    "requires_adjudication": false
+  },
+  "exclusion_status": "INCLUDED",
+  "exclusion_reason": null,
+  "is_synthetic_fixture": true
+}

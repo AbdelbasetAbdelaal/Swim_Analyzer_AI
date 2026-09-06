@@ -1,0 +1,26 @@
+{
+  "manifest_version": "1.0.0",
+  "manifest_id": "MANIFEST-SYNTH-001",
+  "created_at": "2026-09-06T12:00:00Z",
+  "cohort_name": "TEST FIXTURE — NOT SCIENTIFIC GROUND TRUTH",
+  "protocol_version": "1.0.0",
+  "description": "Synthetic unit test fixture manifest. Must never be used for scientific claims.",
+  "is_synthetic_manifest": true,
+  "records": [
+    {
+      "sample_id": "GT-SYNTH-FREE-001",
+      "video_path": "tests/fixtures/synthetic_ground_truth/mock_freestyle_trial.mp4",
+      "video_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "stroke": "Freestyle",
+      "participant_id": "PARTICIPANT-SYNTH-01",
+      "session_id": "SESS-SYNTH-2026",
+      "annotation_file": "tests/fixtures/synthetic_ground_truth/synthetic_sample_freestyle.json",
+      "annotation_status": "COMPLETE",
+      "quality_status": "PASSED",
+      "inclusion_status": "INCLUDED",
+      "exclusion_reason": null,
+      "split": "TEST_FIXTURE",
+      "validator_version": "1.0.0"
+    }
+  ]
+}

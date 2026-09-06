@@ -45,7 +45,7 @@ Every video recording candidate must pass this checklist before being registered
 | Check | Item | Specification | Status |
 |---|---|---|---|
 | ☐ | **File Integrity & Format** | Video playable, uncorrupted MP4/MOV container. | Mandatory |
-| ☐ | **Checksum Generation** | Cryptographic SHA-256 computed on raw file: `sha256sum trial.mp4`. | Mandatory |
+| ☐ | **Checksum Generation** | Cryptographic SHA-256 computed on raw file bytes via `python tools/verify_physical_assets.py`. | Mandatory |
 | ☐ | **Local Secure Storage** | Video moved to `data/ground_truth/raw/<stroke>/`. File confirmed untracked in Git. | Mandatory |
 | ☐ | **Metadata File Generated** | Demographics, pool calibration, camera parameters recorded in `data/ground_truth/metadata/`. | Mandatory |
 
@@ -55,11 +55,12 @@ Every video recording candidate must pass this checklist before being registered
 
 | Check | Item | Specification | Status |
 |---|---|---|---|
-| ☐ | **Dual-Rater Blinding** | Annotators assigned and verified blinded to all Swim Analyzer AI outputs. | Mandatory |
+| ☐ | **Blank Sheets Prepared** | Skeletons generated with `python tools/generate_blank_rater_sheets.py` (null metric values). | Mandatory |
+| ☐ | **Dual-Rater Blinding** | Annotators assigned and verified blinded to all Swim Analyzer AI outputs and to each other. | Mandatory |
 | ☐ | **Independent Annotation** | Both raters completed independent cycle boundary and event logging. | Mandatory |
 | ☐ | **Inter-Rater Agreement Check** | Temporal boundary discrepancy $\le 2\text{ frames}$; continuous metrics adhere to $ICC(2, 1) \ge 0.90$ protocol; any rater divergence reviewed and adjudicated. | Mandatory |
 | ☐ | **Provenance Contract Compliance** | Modalities declared per Step 68.1 rules (`true_dps` uses physical/optical calibration; angles declare 2D/3D; symmetry declares definition). | Mandatory |
-| ☐ | **Schema Validation** | Annotation JSON passes `schemas/ground_truth_schema.json` via ingestion tool. | Mandatory |
+| ☐ | **Schema Validation & Ingestion** | Human annotation files validated and imported via `python tools/import_human_annotations.py`. | Mandatory |
 | ☐ | **Manifest Registration** | Trial registered into `data/ground_truth/manifests/ground_truth_manifest.json` with status `INCLUDED`. | Mandatory |
 
 ---

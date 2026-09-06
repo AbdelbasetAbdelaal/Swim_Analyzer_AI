@@ -1,9 +1,9 @@
 # Scientific Validation Experiment Design & Execution Report
 
-**Document Version:** 1.0.0  
-**Effective Date:** 2026-09-05  
-**Pose Estimation Engine:** MediaPipe Tasks API (`PoseLandmarker`) — Single Backend Invariant  
-**Experiment Execution Status:** **BLOCKED — GROUND TRUTH DATASET REQUIRED**
+**Document Version:** 1.1.0  
+**Effective Date:** 2026-09-06 (Step 70: Physical Asset Audit Complete, Double-Blind Annotation in Progress)  
+**Pose Estimation Engine:** MediaPipe Tasks API (`PoseLandmarker`) — Single Backend Invariant (Frozen Baseline Commit `db33130abb4af653ccacc4bec872be25233b59e4`)  
+**Experiment Execution Status:** **BLOCKED — GROUND TRUTH DATASET REQUIRED / COLLECTION IN PROGRESS**
 
 ---
 
@@ -11,26 +11,27 @@
 
 An exhaustive investigation across all directories in the `Swim_Analyzer_AI` repository was conducted to determine whether real physical ground truth data exists to execute the validation experiment.
 
-### Evidence Inventory Results:
-1. **`data/validation_dataset/`**:
-   - Subdirectories (`freestyle/`, `backstroke/`, `breaststroke/`, `butterfly/`, `unknown_noise/`) contain **only `.gitkeep` placeholder files**.
-   - Zero annotated videos or measurement ground-truth files are present.
-2. **`data/input_videos/`**:
-   - Contains 9 raw user/athlete uploads in MP4 format.
-   - None of these videos possess paired manual landmark annotations, 3D optoelectronic motion capture trajectories, or synchronized IMU telemetry.
-3. **`validation/test_data/test_video_labels.json`**:
-   - A 17-line synthetic mock fixture containing 5 fabricated numbers (SR=40, SL=1.5, BR=35, KF=2.0, SC=10) and 8 toy events used exclusively for checking arithmetic formulas in `tests/test_validation_math.py`. It is **not** an empirical ground truth dataset.
-4. **`data/reference/swimming_reference_data_v2_scientific_registry.csv`**:
-   - Contains published macro-level cohort statistics from peer-reviewed literature (e.g., Born et al., 2022 for European Championship finalists). These are population norms, not paired video frame-by-frame ground truth.
-5. **`data/reports/rtmpose_vs_mediapipe_benchmark.json`**:
-   - Explicitly documents on line 7: `"note": "Engineering proxy metrics without ground-truth manual annotations"`.
+### Evidence Inventory & Collection Progress (Step 70):
+1. **Physical Video Asset Verification (`data/ground_truth/raw/`)**:
+   - 8 real swimming videos across all 4 strokes (GT-FREE-001/002, GT-BACK-001/002, GT-BRST-001/002, GT-FLY-001/002) were physically audited and confirmed present and readable on local disk.
+   - Cryptographic SHA-256 checksums were computed directly from physical file bytes and registered in `data/ground_truth/metadata/asset_verification_audit.json` via `tools/verify_physical_assets.py`.
+2. **Double-Blind Annotation Infrastructure (`data/ground_truth/templates/`)**:
+   - Guidelines and canonical templates created (`ANNOTATION_GUIDELINES.md`, `rater_annotation_template.json`).
+   - Blank rater sheets (`rater_A_blank.json`, `rater_B_blank.json`) generated with null values for all 8 candidate assets (`tools/generate_blank_rater_sheets.py`).
+   - Certified human annotations are currently awaiting completion by independent human experts (0 completed, 0 in manifest).
+3. **Official Manifest Purity (`data/ground_truth/manifests/ground_truth_manifest.json`)**:
+   - Contains exactly 0 records (`records: []`). Zero synthetic or programmatically generated annotations are accepted into the official validation cohort.
+4. **Historical Engineering Directories (`data/validation_dataset/`, `data/input_videos/`)**:
+   - `data/validation_dataset/` contains only `.gitkeep` placeholder files.
+   - `data/input_videos/` contains 9 raw user/athlete uploads without paired ground truth.
+   - `validation/test_data/test_video_labels.json` is a synthetic 17-line unit-test mock fixture strictly for code formula verification (`tests/test_validation_math.py`).
 
 ### Scientific Safety Enforcement:
 Under the project's strict Scientific Safety Policy:
 > **No results may be fabricated.**  
-> In the absence of real Physical Ground Truth, the validation experiment **cannot be executed**.  
+> In the absence of completed certified Human Ground Truth annotations, the validation experiment **cannot be executed**.  
 > The mandatory verdict for this step is:  
-> $$\textbf{BLOCKED — GROUND TRUTH DATASET REQUIRED}$$
+> $$\textbf{BLOCKED — GROUND TRUTH DATASET REQUIRED / COLLECTION IN PROGRESS}$$
 
 ---
 

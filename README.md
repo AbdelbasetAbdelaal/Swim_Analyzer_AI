@@ -71,6 +71,14 @@ It transforms raw video of swimming technique into auditable kinematic measureme
 - **Ground Truth Specification**: Standardized specifications for collecting 24 calibrated high-speed video trials ($\ge 60\text{ fps}$) paired with double-blind manual landmark annotations and IMU telemetry ([`docs/ground_truth_dataset_specification.md`](docs/ground_truth_dataset_specification.md) and [`data/reference/ground_truth_dataset_schema.json`](data/reference/ground_truth_dataset_schema.json)).
 - **Current Empirical Status**: Rigorously held at **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`** until physical reference data is acquired ([`docs/scientific_validation_results.md`](docs/scientific_validation_results.md)). MediaPipe monocular depth ($z$) remains an uncalibrated relative estimate and is not accepted as physical 3D ground truth.
 
+### 13. 🔒 Ground Truth Acquisition & Double-Blind Protocol (Steps 68–70)
+- **Permanent AI Freeze**: Algorithmic pipeline permanently frozen at commit `db33130abb4af653ccacc4bec872be25233b59e4` (`docs/scientific/validation_freeze_record.md`).
+- **Physical Asset Auditing**: `tools/verify_physical_assets.py` cryptographically audits physical video assets directly from local file bytes (`data/ground_truth/metadata/asset_verification_audit.json`).
+- **Zero Automated Annotations**: Code strictly barred from synthesizing or programmatically populating human ground truth.
+- **Blank Rater Sheets**: `tools/generate_blank_rater_sheets.py` generates empty skeleton files (`rater_A_blank.json`, `rater_B_blank.json`) with null values for human experts.
+- **Independent Human Importer & QC**: `tools/import_human_annotations.py` ingests trials ONLY when independent, blinded human files are supplied, enforcing content-level blinding, non-future timestamps, $\ge 3$ cycles, and strict provenance contracts.
+- **Official Manifest Purity**: `data/ground_truth/manifests/ground_truth_manifest.json` contains 0 records pending receipt of certified human annotations.
+
 ---
 
 ## 🛠️ System Architecture
@@ -80,6 +88,7 @@ Swim_Analyzer_AI/
 ├── analysis/                        # Biomechanical Analysis Engines
 │   ├── benchmarks/                  # BenchmarkEngine & percentile math
 │   ├── strategies/                  # Stroke-specific strategies (Freestyle, Backstroke, Breaststroke, Butterfly)
+│   ├── validation/                  # Ground Truth QC, Ingestion & Runner
 │   ├── consistency_validator.py     # Scientific consistency rules
 │   ├── pose_detector.py             # MediaPipe PoseLandmarker (Contiguous C-Memory)
 │   ├── reliability_engine.py       # Transparent Video Analysis Reliability Engine
@@ -109,7 +118,17 @@ Swim_Analyzer_AI/
 │   ├── export_service.py            # JSON report exporter
 │   ├── pdf_report_service.py        # FPDF report generator
 │   └── scientific_evidence_service.py# Citation formatter
-└── tests/                           # Automated Pytest Suite (350 Passed / 100% Green)
+├── tools/                           # Operational Ground Truth Tools
+│   ├── verify_physical_assets.py    # Local video asset byte audit
+│   ├── generate_blank_rater_sheets.py # Blank template generator
+│   └── import_human_annotations.py  # Human annotation QC and ingestion
+├── data/ground_truth/               # Ground Truth Dataset Storage
+│   ├── raw/                         # Local swimming videos (untracked)
+│   ├── templates/                   # Guidelines & blank rater sheets
+│   ├── quality_control/             # Double-blind audit trail (rater A/B)
+│   ├── manifests/                   # Official validation manifest
+│   └── metadata/                    # Cryptographic asset verification audit
+└── tests/                           # Automated Pytest Suite (423 Passed, 1 Skipped / 100% Green)
 ```
 
 ---
@@ -139,7 +158,7 @@ streamlit run app/streamlit_app.py
 ### 3. Running Automated Tests
 ```bash
 python -m pytest tests/ -v
-# 350 passed, 1 skipped, 0 failed (100% Pass Rate)
+# 423 passed, 1 skipped, 0 failed (100% Pass Rate)
 ```
 
 ```bash
@@ -162,17 +181,21 @@ Run the full test suite:
 ```bash
 venv\Scripts\python -m pytest tests/ -v
 ```
-Run biomechanics baseline tests:
+Run ground truth collection & double-blind human protocol tests:
 ```bash
-venv\Scripts\python -m pytest tests/test_biomechanics_baseline.py -v
+venv\Scripts\python -m pytest tests/test_ground_truth_collection.py -v
+```
+Run ground truth dataset & validation infrastructure tests:
+```bash
+venv\Scripts\python -m pytest tests/test_ground_truth_validation_infrastructure.py -v
 ```
 Run scientific validation protocol & safety gate tests:
 ```bash
 venv\Scripts\python -m pytest tests/test_scientific_validation_protocol.py -v
 ```
-Run ground truth dataset & validation infrastructure tests:
+Run biomechanics baseline tests:
 ```bash
-venv\Scripts\python -m pytest tests/test_validation_experiment_infrastructure.py -v
+venv\Scripts\python -m pytest tests/test_biomechanics_baseline.py -v
 ```
 Run user stroke selection and reliability tests:
 ```bash

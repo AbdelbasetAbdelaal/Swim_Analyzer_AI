@@ -54,14 +54,43 @@
     }
   ],
   "metric_annotations": {
-    "stroke_rate_spm": 60.0,
-    "cycle_duration_ms": 1000.0,
-    "true_dps_meters": 1.80,
-    "hand_excursion_proxy_bl": 1.20,
-    "mean_elbow_angle_deg": 110.0,
-    "mean_knee_angle_deg": 150.0,
-    "body_roll_amplitude_deg": 35.0,
-    "stroke_symmetry_percent": 95.0
+    "stroke_rate_spm": {
+      "value": 60.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE",
+      "temporal_reference": "ENTRY_TO_ENTRY"
+    },
+    "cycle_duration_ms": {
+      "value": 1000.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE"
+    },
+    "true_dps_meters": {
+      "value": 1.80,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE"
+    },
+    "hand_excursion_proxy_bl": {
+      "value": 1.20,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE"
+    },
+    "mean_elbow_angle_deg": {
+      "value": 110.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE",
+      "angle_dimension": "2D_PLANAR"
+    },
+    "mean_knee_angle_deg": {
+      "value": 150.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE",
+      "angle_dimension": "2D_PLANAR"
+    },
+    "body_roll_amplitude_deg": {
+      "value": 35.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE",
+      "angle_dimension": "2D_PLANAR"
+    },
+    "stroke_symmetry_percent": {
+      "value": 95.0,
+      "source_modality": "SYNTHETIC_TEST_FIXTURE",
+      "operational_definition": "MIN_MAX_PULL_DURATION_RATIO"
+    }
   },
   "annotation_notes": "TEST FIXTURE — NOT SCIENTIFIC GROUND TRUTH. Used strictly for automated runner unit verification.",
   "quality_flags": {

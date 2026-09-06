@@ -27,6 +27,7 @@ from .ground_truth_models import (
 from .ground_truth_comparator import GroundTruthComparator
 from .ground_truth_policy import ValidationStatus
 from .data_leakage_validator import DataLeakageValidator
+from .provenance_contract import ProvenanceValidator
 
 logger = setup_logger(__name__)
 
@@ -83,12 +84,18 @@ class GroundTruthValidationRunner:
             return False, f"Manifest schema violation at '{'.'.join([str(p) for p in e.path])}': {e.message}"
 
     def validate_sample_schema(self, sample_dict: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
-        """Verifies sample against schemas/ground_truth_schema.json."""
+        """Verifies sample against schemas/ground_truth_schema.json and provenance contracts."""
         try:
             jsonschema.validate(instance=sample_dict, schema=self.gt_schema)
-            return True, None
         except jsonschema.ValidationError as e:
             return False, f"Sample schema violation at '{'.'.join([str(p) for p in e.path])}': {e.message}"
+
+        # Provenance contract validation
+        prov_valid, prov_errs = ProvenanceValidator.validate_sample_metrics(sample_dict)
+        if not prov_valid:
+            return False, f"Provenance contract violation: {'; '.join(prov_errs)}"
+
+        return True, None
 
     def load_manifest(self, manifest_path: Path) -> GroundTruthManifest:
         """Loads and schema-validates a manifest file."""

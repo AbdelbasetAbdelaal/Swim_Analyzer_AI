@@ -45,3 +45,8 @@ data/ground_truth/raw/*
 !data/ground_truth/raw/.gitkeep
 data/ground_truth/validation_runs/*.json
 !data/ground_truth/validation_runs/.gitkeep
+
+# Logs
+logs/
+!logs/.gitkeep
+

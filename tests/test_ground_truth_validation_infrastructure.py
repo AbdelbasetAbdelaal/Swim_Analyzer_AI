@@ -25,6 +25,11 @@ from analysis.validation.ground_truth_policy import (
 )
 from analysis.validation.data_leakage_validator import DataLeakageValidator
 from analysis.validation.ground_truth_runner import GroundTruthValidationRunner, get_git_commit_sha
+from analysis.validation.provenance_contract import (
+    SourceModality,
+    AngleDimension,
+    ProvenanceValidator,
+)
 
 
 @pytest.fixture
@@ -58,13 +63,38 @@ def valid_sample_dict():
         "exclusion_status": "INCLUDED",
         "exclusion_reason": None,
         "metric_annotations": {
-            "stroke_rate_spm": 62.5,
-            "cycle_duration_ms": 960.0,
-            "mean_elbow_angle_deg": 115.0,
-            "hand_excursion_proxy_bl": 1.25,
-            "true_dps_meters": None,
-            "body_roll_amplitude_deg": 38.0,
-            "stroke_symmetry_percent": 96.0,
+            "stroke_rate_spm": {
+                "value": 62.5,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION",
+                "temporal_reference": "ENTRY_TO_ENTRY"
+            },
+            "cycle_duration_ms": {
+                "value": 960.0,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION"
+            },
+            "mean_elbow_angle_deg": {
+                "value": 115.0,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION",
+                "angle_dimension": "2D_PLANAR"
+            },
+            "hand_excursion_proxy_bl": {
+                "value": 1.25,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION"
+            },
+            "true_dps_meters": {
+                "value": None,
+                "source_modality": "CALIBRATED_OPTICAL"
+            },
+            "body_roll_amplitude_deg": {
+                "value": 38.0,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION",
+                "angle_dimension": "2D_PLANAR"
+            },
+            "stroke_symmetry_percent": {
+                "value": 96.0,
+                "source_modality": "HUMAN_VIDEO_ANNOTATION",
+                "operational_definition": "MIN_MAX_PULL_DURATION_RATIO"
+            },
         },
         "quality_flags": {
             "occlusion_level": "LOW",
@@ -377,3 +407,127 @@ def test_official_manifest_file_exists_and_empty(repo_root):
     assert data["manifest_version"] == "1.0.0"
     assert data["is_synthetic_manifest"] is False
     assert len(data["records"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# 7. Step 68.1 Provenance Contract Tests
+# ---------------------------------------------------------------------------
+
+def test_true_dps_rejects_human_video_annotation_and_imu(runner, valid_sample_dict):
+    """true_dps_meters MUST NOT be accepted from HUMAN_VIDEO_ANNOTATION or IMU."""
+    # Test HUMAN_VIDEO_ANNOTATION
+    sample_bad = dict(valid_sample_dict)
+    sample_bad["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    sample_bad["metric_annotations"]["true_dps_meters"] = {
+        "value": 1.85,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION"
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is False
+    assert "true_dps_meters" in err or "source_modality" in err
+
+    # Test IMU
+    sample_bad["metric_annotations"]["true_dps_meters"] = {
+        "value": 1.85,
+        "source_modality": "IMU"
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is False
+
+
+def test_true_dps_accepts_physical_mocap_and_calibrated_optical(runner, valid_sample_dict):
+    """true_dps_meters IS accepted from PHYSICAL_MOCAP and CALIBRATED_OPTICAL."""
+    sample_good = dict(valid_sample_dict)
+    sample_good["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    
+    # PHYSICAL_MOCAP
+    sample_good["metric_annotations"]["true_dps_meters"] = {
+        "value": 1.85,
+        "source_modality": "PHYSICAL_MOCAP"
+    }
+    is_valid, err = runner.validate_sample_schema(sample_good)
+    assert is_valid is True, err
+
+    # CALIBRATED_OPTICAL
+    sample_good["metric_annotations"]["true_dps_meters"] = {
+        "value": 1.85,
+        "source_modality": "CALIBRATED_OPTICAL"
+    }
+    is_valid, err = runner.validate_sample_schema(sample_good)
+    assert is_valid is True, err
+
+
+def test_hand_excursion_proxy_accepts_human_video_annotation(runner, valid_sample_dict):
+    """hand_excursion_proxy_bl is explicitly valid from HUMAN_VIDEO_ANNOTATION."""
+    sample = dict(valid_sample_dict)
+    sample["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    sample["metric_annotations"]["hand_excursion_proxy_bl"] = {
+        "value": 1.25,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION"
+    }
+    is_valid, err = runner.validate_sample_schema(sample)
+    assert is_valid is True, err
+
+
+def test_angle_metrics_require_angle_dimension(runner, valid_sample_dict):
+    """Angle metrics must explicitly declare angle_dimension."""
+    sample_bad = dict(valid_sample_dict)
+    sample_bad["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    sample_bad["metric_annotations"]["mean_elbow_angle_deg"] = {
+        "value": 115.0,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION"
+        # missing angle_dimension!
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is False
+    assert "angle_dimension" in err
+
+
+def test_angle_metric_monocular_cannot_claim_3d(runner, valid_sample_dict):
+    """Human video annotation from monocular video cannot claim 3D_SPATIAL."""
+    sample_bad = dict(valid_sample_dict)
+    sample_bad["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    sample_bad["metric_annotations"]["mean_elbow_angle_deg"] = {
+        "value": 115.0,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION",
+        "angle_dimension": "3D_SPATIAL" # VIOLATION!
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is False
+    assert "2D_PLANAR" in err or "3D_SPATIAL" in err or "angle_dimension" in err
+
+
+def test_symmetry_metric_requires_operational_definition(runner, valid_sample_dict):
+    """Symmetry metrics must record their exact operational definition."""
+    # Missing definition
+    sample_bad = dict(valid_sample_dict)
+    sample_bad["metric_annotations"] = dict(valid_sample_dict["metric_annotations"])
+    sample_bad["metric_annotations"]["stroke_symmetry_percent"] = {
+        "value": 95.0,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION"
+        # missing operational_definition!
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is False
+    assert "operational_definition" in err
+
+    # Valid definition
+    sample_bad["metric_annotations"]["stroke_symmetry_percent"] = {
+        "value": 95.0,
+        "source_modality": "HUMAN_VIDEO_ANNOTATION",
+        "operational_definition": "MIN_MAX_PULL_DURATION_RATIO"
+    }
+    is_valid, err = runner.validate_sample_schema(sample_bad)
+    assert is_valid is True, err
+
+
+def test_non_synthetic_sample_cannot_claim_synthetic_modality(valid_sample_dict):
+    """Non-synthetic sample claiming SYNTHETIC_TEST_FIXTURE is rejected by ProvenanceValidator."""
+    bad_payload = {
+        "value": 60.0,
+        "source_modality": "SYNTHETIC_TEST_FIXTURE"
+    }
+    is_valid, errs = ProvenanceValidator.validate_metric("stroke_rate_spm", bad_payload, is_synthetic_sample=False)
+    assert is_valid is False
+    assert any("SYNTHETIC_TEST_FIXTURE" in e for e in errs)
+

@@ -212,11 +212,17 @@ class GroundTruthComparator:
                 elif ai_val is None and metric_name == "stroke_length_proxy":
                     ai_val = ai_dict.get("stroke_length")
 
-                # Extract GT value
+                # Extract GT value (supports both structured provenance dict and legacy numeric value)
                 gt_metrics = gt_dict.get("metric_annotations", {})
-                gt_val = gt_metrics.get(gt_key)
-                if gt_val is None and gt_key in gt_dict:
+                gt_entry = gt_metrics.get(gt_key)
+                if isinstance(gt_entry, dict):
+                    gt_val = gt_entry.get("value")
+                elif gt_entry is not None:
+                    gt_val = gt_entry
+                elif gt_key in gt_dict:
                     gt_val = gt_dict.get(gt_key)
+                else:
+                    gt_val = None
 
                 pairs.append((ai_val, gt_val))
 

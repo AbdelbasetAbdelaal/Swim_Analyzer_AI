@@ -10,6 +10,13 @@ from .ground_truth_models import (
 from .ground_truth_comparator import GroundTruthComparator
 from .ground_truth_policy import ValidationStatus, GroundTruthValidationPolicy
 from .data_leakage_validator import DataLeakageValidator
+from .provenance_contract import (
+    SourceModality,
+    AngleDimension,
+    ALLOWED_METRIC_MODALITIES,
+    ProvenanceValidator,
+    MetricProvenanceRecord,
+)
 from .ground_truth_runner import GroundTruthValidationRunner
 
 __all__ = [
@@ -21,5 +28,10 @@ __all__ = [
     "ValidationStatus",
     "GroundTruthValidationPolicy",
     "DataLeakageValidator",
+    "SourceModality",
+    "AngleDimension",
+    "ALLOWED_METRIC_MODALITIES",
+    "ProvenanceValidator",
+    "MetricProvenanceRecord",
     "GroundTruthValidationRunner",
 ]

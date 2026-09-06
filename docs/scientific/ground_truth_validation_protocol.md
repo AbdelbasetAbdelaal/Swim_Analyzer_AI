@@ -68,6 +68,31 @@ The protocol enforces a strict distinction between **MEASURED PHYSICAL QUANTITIE
 | **Stroke Symmetry** | Normalized Measure | `%` | Left vs. Right half-cycle kinematics | Ratio of left-to-right arm pull duration or excursion: $\min(L, R)/\max(L, R) \times 100$. |
 | **Stroke Length (Proxy)** | **PROXY / ESTIMATE / NORMALIZED** | `BL` or `m` | Distal wrist trajectory relative to torso | **CRITICAL:** In uncalibrated monocular video, this measures hand excursion relative to body landmarks, **NOT literal whole-body Center of Mass (CoM) translation**. Must never be labeled as true CoM DPS without physical pool calibration. |
 
+### E.1 Metric Provenance & Source Modality Contract (Step 68.1)
+
+To eliminate ambiguity and prevent scientific misattribution, every Ground Truth measurement in `metric_annotations` must declare its exact **source modality**:
+
+| Source Modality Key | Description & Permitted Instrumentation |
+|---|---|
+| `HUMAN_VIDEO_ANNOTATION` | Frame-accurate manual event logging or 2D planar joint digitization by certified dual-raters on video recordings. |
+| `PHYSICAL_MOCAP` | Multi-camera underwater/surface optoelectronic active/passive retroreflective marker tracking (e.g., Qualisys, Vicon). |
+| `IMU` | Multi-sensor waterproof inertial measurement units (accelerometer, gyroscope, magnetometer array). |
+| `CALIBRATED_OPTICAL` | Stationary metric pool-calibrated multi-view cameras using spatial calibration wands and direct linear transformation (DLT). |
+| `SYNTHETIC_TEST_FIXTURE` | Software test mock. **Permanently barred from official scientific validation.** |
+
+#### Strict Metric-to-Modality Provenance Matrix:
+
+| Metric Name | Permitted Modalities | Strict Modality Restrictions & Contract Rules |
+|---|---|---|
+| `stroke_rate_spm` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `IMU`, `CALIBRATED_OPTICAL` | Permitted via dual-rater video chronometry ($ICC \ge 0.90$). |
+| `cycle_duration_ms` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `IMU`, `CALIBRATED_OPTICAL` | Permitted via timecode synchronization. |
+| `true_dps_meters` | `PHYSICAL_MOCAP`, `CALIBRATED_OPTICAL` ONLY | **STRICT PROVENANCE GATE:** MUST NOT be accepted from `HUMAN_VIDEO_ANNOTATION` or `IMU`. Requires calibrated physical spatial measurement of true whole-body translation. |
+| `hand_excursion_proxy_bl` | `HUMAN_VIDEO_ANNOTATION`, `CALIBRATED_OPTICAL`, `PHYSICAL_MOCAP` | Permitted from human/video annotation because it is explicitly defined as a torso-normalized proxy, not CoM translation. |
+| `mean_elbow_angle_deg` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `CALIBRATED_OPTICAL` | Must declare `angle_dimension` (`2D_PLANAR` or `3D_SPATIAL`). Monocular human annotation **must be `2D_PLANAR`**; claiming 3D is strictly forbidden. |
+| `mean_knee_angle_deg` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `CALIBRATED_OPTICAL` | Must declare `angle_dimension` (`2D_PLANAR` or `3D_SPATIAL`). Monocular human annotation **must be `2D_PLANAR`**. |
+| `body_roll_amplitude_deg` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `IMU`, `CALIBRATED_OPTICAL` | Must declare `angle_dimension` (`2D_PLANAR` or `3D_SPATIAL`). |
+| `stroke_symmetry_percent` | `HUMAN_VIDEO_ANNOTATION`, `PHYSICAL_MOCAP`, `IMU`, `CALIBRATED_OPTICAL` | Must explicitly record its `operational_definition` (e.g. `MIN_MAX_PULL_DURATION_RATIO`, `BILATERAL_EXCURSION_SYMMETRY`). |
+
 ### F. Stroke-Specific Rules
 
 #### 1. Freestyle

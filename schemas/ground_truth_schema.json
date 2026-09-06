@@ -212,57 +212,204 @@
     },
     "metric_annotations": {
       "type": "object",
-      "description": "Standardized ground truth metric values. Explicitly distinguishes physical quantities from proxy measures.",
+      "description": "Standardized ground truth metric values with mandatory source modality and provenance declarations.",
       "properties": {
         "stroke_rate_spm": {
-          "type": "number",
-          "description": "Measured physical cycle rate in strokes per minute"
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "IMU",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            },
+            "temporal_reference": { "type": "string" }
+          }
         },
         "cycle_duration_ms": {
-          "type": "number",
-          "description": "Measured physical mean cycle duration in milliseconds"
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "IMU",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            }
+          }
         },
         "true_dps_meters": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "MEASURED PHYSICAL QUANTITY: True center-of-mass translation per cycle in meters. Null if uncalibrated."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "PHYSICAL_MOCAP",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ],
+              "description": "STRICT CONSTRAINT: Only calibrated physical systems capable of measuring true whole-body translation. HUMAN_VIDEO_ANNOTATION and IMU are strictly forbidden."
+            }
+          }
         },
         "hand_excursion_proxy_bl": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "PROXY / ESTIMATE: Normalized wrist travel distance relative to torso body length. NOT literal center-of-mass translation."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "CALIBRATED_OPTICAL",
+                "PHYSICAL_MOCAP",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            }
+          }
         },
         "mean_elbow_angle_deg": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "MEASURED PHYSICAL QUANTITY: Mean elbow angle during pull phase in degrees."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            },
+            "angle_dimension": {
+              "type": "string",
+              "enum": ["2D_PLANAR", "3D_SPATIAL"]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "value": { "type": "number" } }
+              },
+              "then": {
+                "required": ["angle_dimension"]
+              }
+            },
+            {
+              "if": {
+                "properties": { "source_modality": { "const": "HUMAN_VIDEO_ANNOTATION" } }
+              },
+              "then": {
+                "properties": { "angle_dimension": { "const": "2D_PLANAR" } }
+              }
+            }
+          ]
         },
         "mean_knee_angle_deg": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "MEASURED PHYSICAL QUANTITY: Mean knee flexion angle in degrees."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            },
+            "angle_dimension": {
+              "type": "string",
+              "enum": ["2D_PLANAR", "3D_SPATIAL"]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "value": { "type": "number" } }
+              },
+              "then": {
+                "required": ["angle_dimension"]
+              }
+            },
+            {
+              "if": {
+                "properties": { "source_modality": { "const": "HUMAN_VIDEO_ANNOTATION" } }
+              },
+              "then": {
+                "properties": { "angle_dimension": { "const": "2D_PLANAR" } }
+              }
+            }
+          ]
         },
         "body_roll_amplitude_deg": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Peak-to-peak or peak shoulder/hip roll angle in degrees."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "IMU",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            },
+            "angle_dimension": {
+              "type": "string",
+              "enum": ["2D_PLANAR", "3D_SPATIAL"]
+            }
+          },
+          "if": {
+            "properties": { "value": { "type": "number" } }
+          },
+          "then": {
+            "required": ["angle_dimension"]
+          }
         },
         "stroke_symmetry_percent": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Symmetry percentage between left and right limb kinematics (0 - 100)."
+          "type": "object",
+          "required": ["source_modality"],
+          "properties": {
+            "value": { "type": ["number", "null"] },
+            "source_modality": {
+              "type": "string",
+              "enum": [
+                "HUMAN_VIDEO_ANNOTATION",
+                "PHYSICAL_MOCAP",
+                "IMU",
+                "CALIBRATED_OPTICAL",
+                "SYNTHETIC_TEST_FIXTURE"
+              ]
+            },
+            "operational_definition": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          "if": {
+            "properties": { "value": { "type": "number" } }
+          },
+          "then": {
+            "required": ["operational_definition"]
+          }
         }
       }
     },

@@ -77,14 +77,39 @@ def render_population_benchmark_cards(bm_res: BenchmarkResult, athlete_profile: 
         ev_meta = getattr(comp, 'evidence', None)
         m_title = m_name.replace("_", " ").title()
 
-        # Evidence status badge text & icon
-        ev_id = getattr(ev_meta, 'evidence_id', 'NONE') if ev_meta else 'NONE'
-        ev_record = ev_service.get_evidence_record(ev_id) if ev_id != 'NONE' else None
+        # Resolve evidence provenance
+        source_ids = getattr(ev_meta, 'source_ids', []) if ev_meta else []
+        ev_id = getattr(ev_meta, 'evidence_id', None) if ev_meta else None
 
-        badge_text = "⚠ INSUFFICIENT EVIDENCE"
-        badge_style = "background-color:#FF9800; color:white;"
+        ev_record = None
+        if ev_id:
+            ev_record = ev_service.get_evidence_record(ev_id)
+        if not ev_record and source_ids:
+            for sid in source_ids:
+                ev_record = ev_service.get_evidence_for_source(sid, m_name)
+                if ev_record:
+                    break
 
-        if ev_record:
+        sources = ev_service.get_sources_for_ids(source_ids) if source_ids else []
+        source_obj = sources[0] if sources else None
+
+        # Check provenance verification status
+        src_rel = getattr(ev_meta, 'source_relationship', None)
+        src_rel_str = src_rel.value if hasattr(src_rel, 'value') else str(src_rel or '')
+        
+        is_verified_evidence = False
+        if ev_record and ev_record.audit_decision in [AuditDecision.ACCEPT, AuditDecision.ACCEPT_AS_DERIVED]:
+            is_verified_evidence = True
+        elif source_obj and source_obj.verification_status == "VERIFIED_CORRECT":
+            is_verified_evidence = True
+
+        if src_rel_str.upper() in ("UNVERIFIED", "APPROXIMATED") and not is_verified_evidence:
+            is_verified_evidence = False
+
+        badge_text = "⚠ UNVERIFIED BENCHMARK"
+        badge_style = "background-color:#757575; color:white;"
+
+        if is_verified_evidence and ev_record:
             if ev_record.audit_decision in [AuditDecision.ACCEPT, AuditDecision.ACCEPT_AS_DERIVED]:
                 badge_text = "✓ SCIENTIFICALLY ACCEPTED"
                 badge_style = "background-color:#4CAF50; color:white;"
@@ -94,8 +119,18 @@ def render_population_benchmark_cards(bm_res: BenchmarkResult, athlete_profile: 
             elif ev_record.audit_decision == AuditDecision.REJECT:
                 badge_text = "✕ REJECTED"
                 badge_style = "background-color:#F44336; color:white;"
+                is_verified_evidence = False
+        elif is_verified_evidence and source_obj:
+            badge_text = "✓ VERIFIED PRIMARY SOURCE"
+            badge_style = "background-color:#4CAF50; color:white;"
+        else:
+            badge_text = "⚠ UNVERIFIED BENCHMARK"
+            badge_style = "background-color:#757575; color:white;"
 
-        relationship_label = ev_record.relationship_to_benchmark.value if ev_record else "UNVERIFIED"
+        relationship_label = (
+            ev_record.relationship_to_benchmark.value if ev_record and hasattr(ev_record, 'relationship_to_benchmark')
+            else (src_rel_str if src_rel_str else "UNVERIFIED")
+        )
         relationship_fmt = relationship_label.replace("_", " ").title()
 
         with st.container(border=True):
@@ -117,25 +152,39 @@ def render_population_benchmark_cards(bm_res: BenchmarkResult, athlete_profile: 
             raw_display = f"{raw_value} {comp.unit}".strip() if raw_value is not None else "UNAVAILABLE"
             c_val1.metric("Athlete Measurement", raw_display)
             
-            ref_val = f"{comp.population_mean:.1f} {comp.unit}".strip() if comp.population_mean is not None else "N/A"
+            # Scientific Reference & Percentile presentation rules
+            if is_verified_evidence and comp.population_mean is not None:
+                ref_val = f"{comp.population_mean:.1f} {comp.unit}".strip()
+                z_display = f"{comp.z_score:+.2f}" if comp.z_score is not None else "N/A"
+                pct_display = f"{comp.percentile:.1f}%" if comp.percentile is not None else "N/A"
+                delta_str = f"Z: {z_display}" if z_display != "N/A" else None
+            else:
+                # Suppress or clearly mark unverified when provenance is unavailable
+                ref_val = f"{comp.population_mean:.1f} {comp.unit} (Unverified)" if comp.population_mean is not None else "Unverified"
+                pct_display = "N/A (Unverified Reference)"
+                delta_str = None
+
             c_val2.metric("Scientific Reference", ref_val)
-            
-            c_val3.metric("Reference Population", "Adult Competitive Males (18–25)")
-            
-            z_display = f"{comp.z_score:+.2f}" if comp.z_score is not None else "N/A"
-            pct_display = f"{comp.percentile:.1f}%" if comp.percentile is not None else "N/A"
-            c_val4.metric("Percentile Rank", pct_display, delta=f"Z: {z_display}" if z_display != "N/A" else None)
+            c_val3.metric("Reference Population", getattr(comp.evidence, 'population_description', 'Adult Competitive Swimmers') if getattr(comp, 'evidence', None) and getattr(comp.evidence, 'population_description', None) else "Adult Competitive Swimmers (18–25)")
+            c_val4.metric("Percentile Rank", pct_display, delta=delta_str)
 
             # Source Line
-            if ev_record:
+            if is_verified_evidence and ev_record:
                 authors_str = ", ".join(ev_record.authors[:2]) if ev_record.authors else "Unknown"
                 if len(ev_record.authors) > 2:
                     authors_str += " et al."
                 citation_line = f"**Source:** {authors_str} ({ev_record.year}) — *{ev_record.publication}* | **Relationship:** {relationship_fmt}"
+            elif is_verified_evidence and source_obj:
+                authors_str = ", ".join(source_obj.authors[:2]) if source_obj.authors else "Unknown"
+                if len(source_obj.authors) > 2:
+                    authors_str += " et al."
+                citation_line = f"**Source:** {authors_str} ({source_obj.publication_year}) — *{source_obj.journal_or_organization}* | **Relationship:** {relationship_fmt}"
             else:
                 citation_line = "**Source:** Not available in verified primary source | **Relationship:** Unverified"
 
             st.markdown(citation_line)
+            if not is_verified_evidence:
+                st.caption("ℹ️ Comparative percentile rank is suppressed because this benchmark lacks verified primary literature in the evidence registry.")
 
             # Expandable Scientific Evidence Drawer
             with st.expander("🔬 Scientific Evidence & Provenance Details", expanded=False):

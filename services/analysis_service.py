@@ -187,13 +187,6 @@ class AnalysisService:
             )
             analysis_result.frames.append(frame_data)
             
-            # 4. Annotate
-            annotated_frame = annotator.annotate(
-                frame, landmarks, angles, frames_processed, timestamp, 
-                frame_conf, stroke_phase, effective_fps, 100.0, 0, new_transitions
-            )
-            processor.write_frame(annotated_frame)
-            
             if progress_callback:
                 progress_callback(frame_data, frame_conf, visualization_mode)
             
@@ -201,12 +194,90 @@ class AnalysisService:
             
         return False, valid_frames_count, peak_ram, peak_cpu
 
+    def _render_annotated_video(self, processor: VideoProcessor, output_video_path: str, 
+                                annotator: Any, analysis_result: AnalysisResult, 
+                                metadata: VideoMetadata, effective_fps: float, 
+                                frame_stride: int = 1, preprocessor: Optional[Any] = None) -> bool:
+        """Renders annotated video frames with the final evidence-aware technique score and assessment."""
+        if not analysis_result.frames or not output_video_path:
+            logger.warning("No frames or output path to annotate.")
+            return False
+
+        if not processor.rewind():
+            logger.error("Could not rewind video capture for annotation rendering pass.")
+            return False
+
+        if not processor.setup_writer(output_video_path):
+            logger.error(f"Could not setup output video writer: {output_video_path}")
+            return False
+
+        final_score = analysis_result.report.overall_score if analysis_result.report else None
+        final_assessment = analysis_result.report.technique_assessment if analysis_result.report else None
+        final_sufficiency = analysis_result.report.evidence_sufficiency if analysis_result.report else None
+        errors_count = len(analysis_result.report.errors) if (analysis_result.report and analysis_result.report.errors) else 0
+
+        raw_frame_counter = 0
+        processed_frame_idx = 0
+        total_processed = len(analysis_result.frames)
+
+        transitions = getattr(analysis_result.stroke_statistics, 'transitions', []) if analysis_result.stroke_statistics else []
+        transition_map = {t.frame_index: t for t in transitions}
+
+        for frame in processor.generate_frames():
+            raw_frame_counter += 1
+            if frame_stride > 1 and (raw_frame_counter % frame_stride != 0):
+                continue
+
+            if processed_frame_idx >= total_processed:
+                break
+
+            frame_data = analysis_result.frames[processed_frame_idx]
+
+            if preprocessor is not None:
+                frame = preprocessor.preprocess(
+                    frame,
+                    auto_exposure=config.preprocess_auto_exposure,
+                    auto_contrast=config.preprocess_auto_contrast,
+                    stabilization=config.preprocess_stabilization,
+                    clahe_clip_limit=config.preprocess_clahe_clip_limit
+                )
+
+            new_trans = [transition_map[frame_data.frame_index]] if frame_data.frame_index in transition_map else None
+            frame_conf = frame_data.phase_confidence if frame_data.phase_confidence > 0 else (0.95 if frame_data.is_valid else 0.4)
+
+            annotated_frame = annotator.annotate(
+                frame=frame,
+                landmarks=frame_data.raw_landmarks,
+                angles=frame_data.angles,
+                frame_idx=frame_data.frame_index,
+                timestamp=frame_data.timestamp_ms,
+                confidence=frame_conf,
+                phase=frame_data.stroke_phase,
+                fps=effective_fps,
+                score=final_score,
+                errors=errors_count,
+                new_transitions=new_trans,
+                technique_assessment=final_assessment,
+                evidence_sufficiency=final_sufficiency
+            )
+            processor.write_frame(annotated_frame)
+            processed_frame_idx += 1
+
+        processor.close_writer()
+        logger.info(f"Rendered {processed_frame_idx} annotated frames with Available Technique Score: {final_score}")
+
+        # Browser compatibility transcode
+        VideoProcessor.ensure_browser_compatible_mp4(output_video_path, metadata.duration_seconds)
+        return True
+
     def _finalize_metrics_and_export(self, analysis_result: AnalysisResult, metadata: VideoMetadata, 
                                      stroke_analyzer: Any, BiomechanicsCalculator: Any, scoring_engine: Any, 
                                      calibration_engine: Any, processor: VideoProcessor, input_filename: str, 
                                      output_video_path: str, athlete_id: Optional[str] = None,
-                                     coach_id: Optional[str] = None) -> Tuple[str, str, str]:
-        """Finalize metrics, generate reports, run consistency validator, and export JSONs."""
+                                     coach_id: Optional[str] = None,
+                                     annotator: Any = None, effective_fps: float = 30.0,
+                                     frame_stride: int = 1, preprocessor: Optional[Any] = None) -> Tuple[str, str, str]:
+        """Finalize metrics, generate reports, run consistency validator, render annotated video, and export JSONs."""
         from models.data_models import StrokeStatistics
         stats = StrokeStatistics(
             time_in_phases=stroke_analyzer.time_in_phases,
@@ -243,6 +314,13 @@ class AnalysisService:
             raise ValueError("[SECURITY] coach_id is required to load athlete profile.")
         athlete_profile = AthleteService().load_profile(athlete_id=athlete_id, coach_id=coach_id) if (athlete_id and coach_id) else None
         BenchmarkService().evaluate_session(analysis_result, athlete_profile)
+
+        # Render annotated video with final session score
+        if annotator is not None and analysis_result.frames and output_video_path:
+            self._render_annotated_video(
+                processor, output_video_path, annotator, analysis_result,
+                metadata, effective_fps, frame_stride, preprocessor
+            )
 
         json_report_path, metadata_path, _ = ExportService.export_to_json(analysis_result, metadata, input_filename)
         
@@ -325,8 +403,6 @@ class AnalysisService:
                 if duration_s > config.max_allowed_duration_s:
                     raise ValueError(f"Video duration ({duration_s:.1f}s) exceeds the maximum allowed limit of {config.max_allowed_duration_s:.0f} seconds. Please upload a shorter clip.")
 
-                if not processor.setup_writer(output_video_path): raise RuntimeError(f"Could not setup output video writer: {output_video_path}")
-                    
                 metadata.detected_fps = processor.fps
                 metadata.resolution_width = processor.width
                 metadata.resolution_height = processor.height
@@ -379,11 +455,12 @@ class AnalysisService:
                     "validity_ratio": valid_frames_count / frames_processed if frames_processed > 0 else 0
                 }
                 
-            json_report_path, metadata_path, output_video_path = self._finalize_metrics_and_export(
-                analysis_result, metadata, stroke_analyzer, BiomechanicsCalculator, scoring_engine,
-                calibration_engine, processor, input_filename, output_video_path, athlete_id=athlete_id,
-                coach_id=coach_id
-            )
+                json_report_path, metadata_path, output_video_path = self._finalize_metrics_and_export(
+                    analysis_result, metadata, stroke_analyzer, BiomechanicsCalculator, scoring_engine,
+                    calibration_engine, processor, input_filename, output_video_path, athlete_id=athlete_id,
+                    coach_id=coach_id, annotator=annotator, effective_fps=adjusted_effective_fps,
+                    frame_stride=stride, preprocessor=preprocessor
+                )
             
         except Exception as e:
             logger.error(f"Error during video processing: {e}")

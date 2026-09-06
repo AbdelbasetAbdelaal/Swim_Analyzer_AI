@@ -85,13 +85,27 @@ class VideoProcessor:
             return
             
         self._writer.write(frame)
+
+    def close_writer(self) -> None:
+        """Releases the video writer resource so the output file is flushed and finalized."""
+        if self._writer is not None:
+            self._writer.release()
+            self._writer = None
+            logger.info("Video writer released.")
         
     def rewind(self) -> bool:
         """Seeks the capture back to the first frame."""
         if self._cap is None:
             logger.warning("Cannot rewind: capture is not initialized.")
             return False
-        return self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        res = self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        current_pos = int(self._cap.get(cv2.CAP_PROP_POS_FRAMES)) if self._cap else -1
+        if not res or current_pos != 0:
+            if self._cap is not None:
+                self._cap.release()
+            self._cap = cv2.VideoCapture(self.input_path)
+            return self._cap.isOpened()
+        return True
 
     def generate_frames(self) -> Generator[np.ndarray, None, None]:
         """

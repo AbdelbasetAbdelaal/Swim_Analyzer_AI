@@ -34,8 +34,10 @@ class VideoAnnotator:
         
     def annotate(self, frame: np.ndarray, landmarks: Any, angles: Optional[JointAngles], 
                  frame_idx: int, timestamp: int, confidence: float, phase: str, fps: float, 
-                 score: float, errors: int, new_transitions: list = None) -> np.ndarray:
-        """Annotates a single frame."""
+                 score: Optional[float] = None, errors: int = 0, new_transitions: list = None,
+                 technique_assessment: Optional[str] = None,
+                 evidence_sufficiency: Optional[str] = None) -> np.ndarray:
+        """Annotates a single frame with evidence-aware technique score and assessment."""
         annotated = frame.copy()
         height, width, _ = annotated.shape
         
@@ -64,15 +66,24 @@ class VideoAnnotator:
             self.transition_timer -= 1
         else:
             self.last_transition = None
+
+        # Build evidence-aware technique score text and color
+        if score is not None:
+            score_text = f"Available Technique Score: {score:.1f}/100"
+            if technique_assessment and technique_assessment.upper() not in ("N/A", "UNKNOWN", "NONE"):
+                score_text += f" ({technique_assessment})"
+            score_color = (0, 255, 0) if score >= 80 else (0, 215, 255) if score >= 60 else (0, 165, 255)
+        else:
+            score_text = "Available Technique Score: INSUFFICIENT EVIDENCE"
+            score_color = (0, 165, 255) # Warning Amber/Orange
                 
         # User Mode (Minimal)
         if self.mode == "User Mode":
             if landmarks:
                 self._draw_skeleton(annotated, pixel_landmarks)
-            # Add simple score
-            cv2.putText(annotated, f"Technique Score: {score:.1f}", (20, 30), self.font, 0.7, (0, 255, 0), 2)
+            self._draw_text_with_background(annotated, score_text, (20, 35), self.font, 0.65, score_color, 2)
             if errors > 0:
-                cv2.putText(annotated, f"Errors Detected: {errors}", (20, 60), self.font, 0.7, (0, 0, 255), 2)
+                self._draw_text_with_background(annotated, f"Errors Detected: {errors}", (20, 70), self.font, 0.65, (0, 0, 255), 2)
             return annotated
             
         # Coach Mode
@@ -80,7 +91,8 @@ class VideoAnnotator:
             if landmarks:
                 self._draw_skeleton(annotated, pixel_landmarks)
                 self._draw_angles(annotated, pixel_landmarks, angles)
-            cv2.putText(annotated, f"Phase: {phase}", (20, 30), self.font, 0.8, (255, 255, 0), 2)
+            self._draw_text_with_background(annotated, f"Phase: {phase}", (20, 35), self.font, 0.75, (255, 255, 0), 2)
+            self._draw_text_with_background(annotated, score_text, (20, 70), self.font, 0.65, score_color, 2)
             return annotated
             
         # Developer Mode (Full)
@@ -91,10 +103,10 @@ class VideoAnnotator:
                 self._draw_skeleton(annotated, pixel_landmarks)
                 self._draw_angles(annotated, pixel_landmarks, angles)
                 
-            self._draw_debug_panel(annotated, frame_idx, timestamp, confidence, phase, fps, score, errors, len(pixel_landmarks))
+            self._draw_debug_panel(annotated, frame_idx, timestamp, confidence, phase, fps, score, errors, len(pixel_landmarks), technique_assessment)
             
             if self.last_transition:
-                cv2.putText(annotated, f"TRANSITION: {self.last_transition}", (20, height - 30), self.font, 0.7, (0, 255, 255), 2)
+                self._draw_text_with_background(annotated, f"TRANSITION: {self.last_transition}", (20, height - 30), self.font, 0.7, (0, 255, 255), 2)
                 
         return annotated
         
@@ -142,11 +154,14 @@ class VideoAnnotator:
         draw_text(angles.left_knee, 25)
         draw_text(angles.right_knee, 26)
         
-    def _draw_debug_panel(self, frame, frame_idx, timestamp, conf, phase, fps, score, errors, lm_count):
+    def _draw_debug_panel(self, frame, frame_idx, timestamp, conf, phase, fps, score, errors, lm_count, technique_assessment=None):
         overlay = frame.copy()
-        cv2.rectangle(overlay, (10, 10), (350, 260), (0, 0, 0), -1)
+        cv2.rectangle(overlay, (10, 10), (430, 280), (0, 0, 0), -1)
         cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
         
+        score_val_str = f"{score:.1f}/100" if score is not None else "INSUFFICIENT"
+        assessment_str = technique_assessment if technique_assessment else "N/A"
+
         texts = [
             "DEV DEBUG MODE",
             f"Frame: {frame_idx} | TS: {timestamp}ms",
@@ -154,12 +169,21 @@ class VideoAnnotator:
             f"Confidence: {conf:.2f}",
             f"Stroke Phase: {phase}",
             f"Landmarks: {lm_count}/33",
-            f"Curr Score (Temp): {score:.1f}",
+            f"Available Technique Score: {score_val_str}",
+            f"Technique Assessment: {assessment_str}",
             f"Active Errors: {errors}"
         ]
         
         y = 35
         for t in texts:
-            color = (0, 255, 0) if "Score" in t else (0, 0, 255) if "Error" in t else (255, 255, 255)
-            cv2.putText(frame, t, (20, y), self.font, 0.6, color, 1)
-            y += 25
+            color = (0, 255, 0) if "Score" in t and score is not None else (0, 165, 255) if "Score" in t else (0, 0, 255) if "Error" in t else (255, 255, 255)
+            cv2.putText(frame, t, (20, y), self.font, 0.55, color, 1, cv2.LINE_AA)
+            y += 26
+
+    def _draw_text_with_background(self, frame, text, pos, font, scale, color, thickness=2, bg_color=(0, 0, 0)):
+        """Draws text with a dark rectangular background pill for maximum contrast and legibility."""
+        (tw, th), baseline = cv2.getTextSize(text, font, scale, thickness)
+        x, y = pos
+        cv2.rectangle(frame, (x - 4, y - th - 4), (x + tw + 4, y + baseline + 4), bg_color, -1)
+        cv2.putText(frame, text, (x, y), font, scale, color, thickness, cv2.LINE_AA)
+

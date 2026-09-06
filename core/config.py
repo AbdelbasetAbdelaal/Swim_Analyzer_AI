@@ -68,6 +68,26 @@ class AppConfig:
     analysis_confidence_penalty: float = 0.20
     calibration_shoulder_width_m: float = 0.40
     
+    # AI Coach Settings (Step 71 - Optional Hugging Face Coaching Layer)
+    ai_coach_enabled: bool = field(
+        default_factory=lambda: os.getenv("SWIM_ANALYZER_AI_COACH_ENABLED", "false").strip().lower() in ("true", "1", "yes")
+    )
+    ai_coach_provider: str = field(
+        default_factory=lambda: os.getenv("SWIM_ANALYZER_AI_PROVIDER", "huggingface").strip()
+    )
+    ai_coach_hf_model: str = field(
+        default_factory=lambda: os.getenv("SWIM_ANALYZER_HF_MODEL", "Qwen/Qwen2.5-1.5B-Instruct").strip()
+    )
+    ai_coach_hf_token: str = field(
+        default_factory=lambda: os.getenv("SWIM_ANALYZER_HF_TOKEN", "").strip()
+    )
+    ai_coach_hf_timeout_seconds: float = field(
+        default_factory=lambda: float(os.getenv("SWIM_ANALYZER_HF_TIMEOUT_SECONDS", "20.0"))
+    )
+    ai_coach_hf_api_url: str = field(
+        default_factory=lambda: os.getenv("SWIM_ANALYZER_HF_API_URL", "").strip()
+    )
+
     def __post_init__(self):
         """Ensure all required directories exist and load yaml settings upon initialization."""
         self.input_dir.mkdir(parents=True, exist_ok=True)

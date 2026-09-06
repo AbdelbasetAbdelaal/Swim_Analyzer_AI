@@ -46,6 +46,7 @@ STROKE_ICONS = {
 from app.ui.tabs.summary_tab import render_executive_summary_card, render_summary, render_consistency, render_report_tab
 from app.ui.tabs.charts_tab import render_raw_data_tab
 from app.ui.tabs.downloads_tab import render_video_section, render_download_buttons
+from app.ui.tabs.ai_coach_tab import render_ai_coach_tab
 from app.ui.pages.admin_console import render_admin_dashboard_page
 
 
@@ -1216,12 +1217,13 @@ def main():
                 st.markdown("---")
 
                 # 2. Reorganized Full-Width SaaS Tabs (Zero Scrolling Clutter)
-                tab_overview, tab_biomech, tab_benchmarks, tab_3d, tab_charts, tab_downloads = st.tabs([
+                tab_overview, tab_biomech, tab_benchmarks, tab_3d, tab_charts, tab_aicoach, tab_downloads = st.tabs([
                     "📋 Overview", 
                     "🧬 Biomechanics", 
                     "📊 Population Benchmarks", 
                     "🧊 3D Analysis", 
                     "📈 Raw Data Charts", 
+                    "🤖 AI Coach",
                     "📥 Downloads"
                 ])
 
@@ -1299,6 +1301,10 @@ def main():
                 with tab_charts:
                     st.markdown("### 📈 Joint Angle Timeseries & Phase Summary")
                     render_raw_data_tab(analysis_result)
+
+                with tab_aicoach:
+                    selected_profile = next((p for p in profiles if p.athlete_id == selected_athlete_id), None) if 'profiles' in locals() else None
+                    render_ai_coach_tab(analysis_result, athlete_profile=selected_profile)
 
                 with tab_downloads:
                     st.markdown("### 📥 Session Export Center")

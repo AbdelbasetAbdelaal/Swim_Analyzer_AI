@@ -305,6 +305,7 @@ class AnalysisResult:
     reliability: Optional[ReliabilityResult] = None
     consistency: Optional[ConsistencyReport] = None
     benchmark_result: Optional[Any] = None
+    ai_coach_feedback: Optional[Any] = None
     
     def get_angles_timeseries(self) -> Dict[str, List[Optional[float]]]:
         """Returns timeseries data suitable for plotting."""

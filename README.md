@@ -79,6 +79,13 @@ It transforms raw video of swimming technique into auditable kinematic measureme
 - **Independent Human Importer & QC**: `tools/import_human_annotations.py` ingests trials ONLY when independent, blinded human files are supplied, enforcing content-level blinding, non-future timestamps, $\ge 3$ cycles, and strict provenance contracts.
 - **Official Manifest Purity**: `data/ground_truth/manifests/ground_truth_manifest.json` contains 0 records pending receipt of certified human annotations.
 
+### 14. 🤖 Optional AI Coach Layer — Experimental Beta (Step 71)
+- **Coach-Friendly Interpretation Subsystem**: Generates technique summaries, drills, and observations using `Qwen/Qwen2.5-1.5B-Instruct` via Hugging Face Serverless Inference API ([`docs/ai_coach_layer.md`](docs/ai_coach_layer.md)).
+- **Strict Non-Measurement Invariant**: The LLM operates *strictly* on pre-computed structured analysis results and has zero ability to measure, alter, or overwrite numerical metrics.
+- **Core Analysis Independence**: Video analysis runs 100% reliably regardless of whether Hugging Face is enabled, disabled, unauthenticated, rate-limited, timed out, or offline.
+- **Deterministic Safe Fallbacks**: Automatic graceful degradation to factual, rule-based observations if external network calls time out or fail.
+- **Scientific Safety Invariant**: Reaffirms that scientific status remains **`NOT_VALIDATED — INSUFFICIENT GROUND TRUTH`**. Zero clinical or diagnostic claims.
+
 ---
 
 ## 🛠️ System Architecture
@@ -105,10 +112,12 @@ Swim_Analyzer_AI/
 │   ├── models.py                    # Database models (Coaches, Athletes, Sessions)
 │   └── repository.py                # Authenticated tenant-isolated repositories
 ├── models/                          # Dataclasses & Domain Schemas
+│   ├── ai_coach_models.py           # AI Coach input payload & feedback schema
 │   ├── athlete_profile.py           # Athlete Profile schema
 │   ├── benchmark_models.py          # Benchmark result schemas
 │   └── data_models.py               # StrokeSelection, AnalysisResult, ReliabilityResult
 ├── services/                        # Service Layer
+│   ├── ai_coach_service.py          # Optional Hugging Face AI Coach Service & Providers
 │   ├── analysis_service.py          # Video analysis orchestrator (User selected stroke)
 │   ├── athlete_service.py           # Athlete roster service (with Context Manager)
 │   ├── analysis_history_service.py  # Session history service (with Context Manager)
@@ -200,4 +209,8 @@ venv\Scripts\python -m pytest tests/test_biomechanics_baseline.py -v
 Run user stroke selection and reliability tests:
 ```bash
 venv\Scripts\python -m pytest tests/test_user_stroke_selection_and_reliability.py -v
+```
+Run optional AI coach layer tests:
+```bash
+venv\Scripts\python -m pytest tests/test_ai_coach.py -v
 ```

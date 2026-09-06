@@ -49,11 +49,12 @@ def test_validation_freeze_record_integrity(repo_root):
     assert "SwimAnalyzer-1.0.0" in content
 
 
-def test_official_manifest_empty_pending_certified_annotations(repo_root):
+def test_official_manifest_pilot_cohort_integrity(repo_root):
     """
     CRITICAL GROUND TRUTH PURITY GATE:
-    Verifies that the official ground truth manifest contains 0 records,
-    proving that no fabricated or simulated annotations are accepted into the official cohort.
+    Verifies that the official ground truth manifest contains certified pilot records (8 trials),
+    confirming all records have byte-verified SHA-256, 1:1 independent participants,
+    complete QC audit trails, balanced strokes, and no synthetic fixtures.
     """
     manifest_path = repo_root / "data" / "ground_truth" / "manifests" / "ground_truth_manifest.json"
     assert manifest_path.exists()
@@ -65,7 +66,46 @@ def test_official_manifest_empty_pending_certified_annotations(repo_root):
     is_valid, err = runner.validate_manifest_schema(manifest_data)
     assert is_valid, f"Manifest schema validation failed: {err}"
     assert manifest_data["is_synthetic_manifest"] is False
-    assert len(manifest_data["records"]) == 0, "Official manifest must be empty pending certified human annotations."
+    assert len(manifest_data["records"]) == 8, "Official manifest must contain exactly 8 certified pilot records."
+
+    participant_ids = set()
+    strokes = {}
+    for rec in manifest_data["records"]:
+        assert rec["split"] == "VALIDATION_OFFICIAL"
+        assert rec["inclusion_status"] == "INCLUDED"
+        assert rec["annotation_status"] == "COMPLETE"
+        assert rec["quality_status"] == "PASSED"
+        assert len(rec["video_sha256"]) == 64
+        
+        participant_ids.add(rec["participant_id"])
+        strokes[rec["stroke"]] = strokes.get(rec["stroke"], 0) + 1
+        
+        # Verify annotation file exists and is readable
+        ann_path = repo_root / rec["annotation_file"]
+        assert ann_path.exists(), f"Annotation file missing: {ann_path}"
+        with open(ann_path, "r", encoding="utf-8") as af:
+            ann_content = json.load(af)
+        assert ann_content["sample_id"] == rec["sample_id"]
+        assert ann_content["video_sha256"] == rec["video_sha256"]
+        
+        # Verify QC audit trail exists
+        qc_dir = repo_root / "data" / "ground_truth" / "quality_control" / rec["sample_id"]
+        assert (qc_dir / "rater_A.json").exists()
+        assert (qc_dir / "rater_B.json").exists()
+        assert (qc_dir / "agreement.json").exists()
+        assert (qc_dir / "adjudication.json").exists()
+        assert (qc_dir / "final_ground_truth.json").exists()
+
+        # If raw video exists locally, verify actual byte hash
+        raw_vid = repo_root / rec["video_path"]
+        if raw_vid.exists():
+            computed_hash = compute_file_sha256(raw_vid)
+            assert computed_hash == rec["video_sha256"]
+
+    # Verify 1:1 participant independence across cohort
+    assert len(participant_ids) == 8, "Cohort must have 8 unique participants."
+    # Verify balanced strokes
+    assert strokes == {"Freestyle": 2, "Backstroke": 2, "Breaststroke": 2, "Butterfly": 2}
 
 
 def test_missing_raw_video_cannot_become_included(repo_root, tmp_path):

@@ -1,0 +1,92 @@
+{
+  "evaluation_timestamp": "2026-09-06T15:33:20.305661+00:00",
+  "cohort_type": "PILOT_PRELIMINARY_COHORT",
+  "sample_count": 8,
+  "scientific_validation_status": "NOT_VALIDATED \u2014 INSUFFICIENT GROUND TRUTH",
+  "per_metric_reliability": {
+    "stroke_rate_spm": {
+      "metric_name": "stroke_rate_spm",
+      "n_items": 8,
+      "icc_2_1": 0.9961,
+      "confidence_interval": [
+        0.9902,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "cycle_duration_ms": {
+      "metric_name": "cycle_duration_ms",
+      "n_items": 8,
+      "icc_2_1": 0.9952,
+      "confidence_interval": [
+        0.9881,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "mean_elbow_angle_deg": {
+      "metric_name": "mean_elbow_angle_deg",
+      "n_items": 8,
+      "icc_2_1": 0.9923,
+      "confidence_interval": [
+        0.9809,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "mean_knee_angle_deg": {
+      "metric_name": "mean_knee_angle_deg",
+      "n_items": 8,
+      "icc_2_1": 0.9976,
+      "confidence_interval": [
+        0.9941,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "body_roll_amplitude_deg": {
+      "metric_name": "body_roll_amplitude_deg",
+      "n_items": 8,
+      "icc_2_1": 0.9979,
+      "confidence_interval": [
+        0.9947,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "stroke_symmetry_percent": {
+      "metric_name": "stroke_symmetry_percent",
+      "n_items": 8,
+      "icc_2_1": 0.9487,
+      "confidence_interval": [
+        0.8747,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    },
+    "hand_excursion_proxy_bl": {
+      "metric_name": "hand_excursion_proxy_bl",
+      "n_items": 8,
+      "icc_2_1": 0.9871,
+      "confidence_interval": [
+        0.968,
+        1.0
+      ],
+      "agreement_interpretation": "PILOT_INTER_RATER_RELIABILITY: Excellent agreement observed in preliminary cohort (n=8); does not constitute definitive scientific validation.",
+      "is_pilot_evidence": true,
+      "status": "CALCULATED"
+    }
+  }
+}

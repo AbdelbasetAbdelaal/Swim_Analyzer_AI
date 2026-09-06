@@ -70,9 +70,12 @@ class GroundTruthIngestionService:
         a_path = annotation_path if annotation_path.is_absolute() else self.repo_root / annotation_path
         m_path = manifest_path if manifest_path.is_absolute() else self.repo_root / manifest_path
 
-        # 2. Check video file existence
+        # 2. Check physical raw video file existence
         if not v_path.exists() or not v_path.is_file():
-            errors.append(f"Target video file does not exist: {v_path}")
+            errors.append(
+                f"PHYSICAL ASSET ERROR: Target raw video file does not exist locally: {v_path}. "
+                "Unverified trials without real local video files cannot enter the validation cohort."
+            )
             return False, None, errors
 
         # 3. Check annotation file existence
@@ -98,7 +101,25 @@ class GroundTruthIngestionService:
             errors.append(f"Sample schema/provenance validation failed: {schema_err}")
             return False, None, errors
 
-        # 6. Verify checksum
+        # 6. Timestamp Integrity Validation (reject future-dated annotations)
+        ann_ts_str = raw_sample.get("annotation_timestamp")
+        if ann_ts_str:
+            try:
+                ts_clean = ann_ts_str.replace("Z", "+00:00")
+                ann_dt = datetime.fromisoformat(ts_clean)
+                from datetime import timedelta
+                now_utc = datetime.now(timezone.utc)
+                if ann_dt > (now_utc + timedelta(seconds=60)):
+                    errors.append(
+                        f"TIMESTAMP INTEGRITY ERROR: annotation_timestamp '{ann_ts_str}' is in the future. "
+                        "Future-dated annotations are strictly forbidden."
+                    )
+                    return False, None, errors
+            except Exception as e:
+                errors.append(f"TIMESTAMP PARSING ERROR: Invalid annotation_timestamp '{ann_ts_str}': {e}")
+                return False, None, errors
+
+        # 7. Verify checksum from actual local file bytes
         actual_sha256 = compute_file_sha256(v_path)
         recorded_sha256 = raw_sample.get("video_sha256")
         if recorded_sha256:
@@ -112,7 +133,7 @@ class GroundTruthIngestionService:
             # Auto-populate computed checksum
             raw_sample["video_sha256"] = actual_sha256
 
-        # 7. Check synthetic isolation gate
+        # 8. Check synthetic isolation gate
         is_synth_sample = raw_sample.get("is_synthetic_fixture", False)
         manifest = self.runner.load_manifest(m_path)
 
@@ -123,7 +144,7 @@ class GroundTruthIngestionService:
             )
             return False, None, errors
 
-        # 8. Check duplicate sample_id and duplicate video in manifest
+        # 9. Check duplicate sample_id and duplicate video in manifest
         sample_id = raw_sample["sample_id"]
         rel_video_str = str(video_path).replace("\\", "/")
 
@@ -135,7 +156,7 @@ class GroundTruthIngestionService:
                 errors.append(f"DUPLICATE ERROR: Video '{rel_video_str}' already registered under sample '{existing_rec.sample_id}'.")
                 return False, None, errors
 
-        # 9. Determine quality, annotation, and inclusion status
+        # 10. Determine quality, annotation, and inclusion status
         exclusion_status = raw_sample.get("exclusion_status", InclusionStatus.INCLUDED.value)
         exclusion_reason = raw_sample.get("exclusion_reason")
         
@@ -156,6 +177,19 @@ class GroundTruthIngestionService:
             quality_status = QualityStatus.SUSPECT.value
         else:
             quality_status = QualityStatus.PASSED.value
+
+        # Check dual-rater independence for official validation split
+        if split == "VALIDATION_OFFICIAL":
+            r_a = raw_sample.get("annotator_id")
+            r_b = raw_sample.get("secondary_annotator_id")
+            if not r_a or not r_b:
+                if exclusion_status == InclusionStatus.INCLUDED.value:
+                    exclusion_status = InclusionStatus.EXCLUDED.value
+                    exclusion_reason = "Official validation trials require two distinct independent annotators."
+            elif str(r_a).strip() == str(r_b).strip():
+                if exclusion_status == InclusionStatus.INCLUDED.value:
+                    exclusion_status = InclusionStatus.EXCLUDED.value
+                    exclusion_reason = f"Dual-rater independence violation: annotators are identical ('{r_a}')."
 
         # CRITICAL SAFETY: Cannot mark INCLUDED if incomplete, failed quality, or explicitly excluded
         if exclusion_status == InclusionStatus.INCLUDED.value:

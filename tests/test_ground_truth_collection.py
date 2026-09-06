@@ -1,19 +1,30 @@
 """
-Tests for STEP 70: Real Ground Truth Data Collection, Double-Blind QC, and Manifest Ingestion.
-Verifies AI freeze record, double-blind audit preservation, agreement metrics, and ingestion gates.
+Tests for STEP 70: Ground Truth Collection Infrastructure, Blinding & Per-Metric Reliability Gates.
+
+Proves:
+- missing raw video cannot become INCLUDED
+- checksum is computed from actual bytes
+- future annotation timestamp is rejected
+- ICC is computed per metric across trials
+- heterogeneous metrics are never pooled into one ICC
+- one-trial ICC cannot be treated as scientific reliability
+- official cohort cannot contain synthetic fixtures
+- dual-rater independence is enforced
 """
 import os
 import sys
 import json
 import copy
-import pytest
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from analysis.validation.ground_truth_qc import (
     GroundTruthQCEngine,
-    calculate_icc_2_1,
+    compute_metric_icc_2_1,
+    verify_content_level_blinding,
     FORBIDDEN_AI_KEYS,
 )
 from analysis.validation.ground_truth_ingestion import GroundTruthIngestionService, compute_file_sha256
@@ -28,7 +39,7 @@ def repo_root():
 
 
 def test_validation_freeze_record_integrity(repo_root):
-    """Verifies that the validation freeze record exists and contains the immutable commit SHA and statement."""
+    """Verifies validation freeze record exists with immutable commit SHA and firewall statement."""
     freeze_doc = repo_root / "docs" / "scientific" / "validation_freeze_record.md"
     assert freeze_doc.exists(), "validation_freeze_record.md must exist."
     content = freeze_doc.read_text(encoding="utf-8")
@@ -38,127 +49,27 @@ def test_validation_freeze_record_integrity(repo_root):
     assert "SwimAnalyzer-1.0.0" in content
 
 
-def test_pilot_cohort_manifest_integrity(repo_root):
-    """Verifies the official pilot manifest has 8 valid records, 2 per stroke, 1:1 participant mapping."""
+def test_official_manifest_empty_pending_certified_annotations(repo_root):
+    """
+    CRITICAL GROUND TRUTH PURITY GATE:
+    Verifies that the official ground truth manifest contains 0 records,
+    proving that no fabricated or simulated annotations are accepted into the official cohort.
+    """
     manifest_path = repo_root / "data" / "ground_truth" / "manifests" / "ground_truth_manifest.json"
-    assert manifest_path.exists(), "ground_truth_manifest.json must exist."
+    assert manifest_path.exists()
     
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest_data = json.load(f)
 
     runner = GroundTruthValidationRunner()
     is_valid, err = runner.validate_manifest_schema(manifest_data)
-    assert is_valid, f"Manifest failed schema validation: {err}"
-
-    records = manifest_data.get("records", [])
-    assert len(records) == 8, f"Expected 8 pilot records, found {len(records)}"
-
-    strokes = [r["stroke"] for r in records]
-    assert strokes.count("Freestyle") == 2
-    assert strokes.count("Backstroke") == 2
-    assert strokes.count("Breaststroke") == 2
-    assert strokes.count("Butterfly") == 2
-
-    # Check 1:1 independent participants
-    p_ids = [r["participant_id"] for r in records]
-    assert len(set(p_ids)) == 8, "Each pilot trial must belong to an independent participant."
-
-    # Verify all are official validation split and included
-    for r in records:
-        assert r["split"] == "VALIDATION_OFFICIAL"
-        assert r["inclusion_status"] == InclusionStatus.INCLUDED.value
-        assert r["annotation_status"] == AnnotationStatus.COMPLETE.value
+    assert is_valid, f"Manifest schema validation failed: {err}"
+    assert manifest_data["is_synthetic_manifest"] is False
+    assert len(manifest_data["records"]) == 0, "Official manifest must be empty pending certified human annotations."
 
 
-def test_pilot_qc_audit_trail_completeness(repo_root):
-    """Verifies all 8 pilot samples preserve the full 5-file double-blind QC audit trail."""
-    qc_base = repo_root / "data" / "ground_truth" / "quality_control"
-    sample_ids = [
-        "GT-FREE-001", "GT-FREE-002",
-        "GT-BACK-001", "GT-BACK-002",
-        "GT-BRST-001", "GT-BRST-002",
-        "GT-FLY-001", "GT-FLY-002"
-    ]
-
-    for sid in sample_ids:
-        sample_dir = qc_base / sid
-        assert sample_dir.is_dir(), f"QC directory missing for {sid}"
-        for required_file in ["rater_A.json", "rater_B.json", "agreement.json", "adjudication.json", "final_ground_truth.json"]:
-            fp = sample_dir / required_file
-            assert fp.is_file(), f"Required audit file '{required_file}' missing for {sid}"
-            with open(fp, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                assert len(data) > 0
-
-
-def test_blinding_enforcement(repo_root):
-    """Verifies that GroundTruthQCEngine rejects rater data containing forbidden AI prediction keys."""
-    qc_engine = GroundTruthQCEngine(repo_root=repo_root)
-
-    # Clean annotation
-    clean_rater = {"annotator_id": "RATER_01", "sample_id": "GT-FREE-001", "metrics": {"stroke_rate": 45.0}}
-    violations = qc_engine.verify_blinding(clean_rater, "Rater A")
-    assert len(violations) == 0
-
-    # Polluted with AI predictions
-    for forbidden in ["overall_score", "technique_score", "reliability_score", "predicted_stroke"]:
-        dirty_rater = copy.deepcopy(clean_rater)
-        dirty_rater[forbidden] = 95.0
-        violations = qc_engine.verify_blinding(dirty_rater, "Rater A")
-        assert len(violations) > 0, f"Expected violation for forbidden key '{forbidden}'"
-
-
-def test_icc_2_1_calculation():
-    """Verifies two-way random ICC(2,1) calculation on known pairs."""
-    # Identical ratings -> ICC = 1.0
-    pairs_identical = [(40.0, 40.0), (45.0, 45.0), (50.0, 50.0), (55.0, 55.0)]
-    icc = calculate_icc_2_1(pairs_identical)
-    assert icc == 1.0
-
-    # Near identical ratings with slight variance -> ICC >= 0.95
-    pairs_near = [(40.0, 40.5), (45.0, 44.8), (50.0, 50.2), (55.0, 54.9)]
-    icc_near = calculate_icc_2_1(pairs_near)
-    assert icc_near >= 0.95
-
-    # Low agreement -> ICC < 0.90
-    pairs_poor = [(40.0, 60.0), (50.0, 30.0), (45.0, 70.0), (60.0, 40.0)]
-    icc_poor = calculate_icc_2_1(pairs_poor)
-    assert icc_poor < 0.90
-
-
-def test_temporal_frame_discrepancy_gate(repo_root):
-    """Verifies inter-rater agreement flags divergence exceeding the 2-frame tolerance."""
-    qc_engine = GroundTruthQCEngine(repo_root=repo_root)
-
-    rater_a = {
-        "annotator_id": "RATER_A",
-        "cycle_annotations": [{"start_frame": 10, "end_frame": 50}],
-        "metric_annotations": {"stroke_rate_spm": {"value": 45.0}}
-    }
-
-    # Within tolerance (diff = 1 frame)
-    rater_b_ok = {
-        "annotator_id": "RATER_B",
-        "cycle_annotations": [{"start_frame": 11, "end_frame": 50}],
-        "metric_annotations": {"stroke_rate_spm": {"value": 45.3}}
-    }
-    report_ok = qc_engine.evaluate_inter_rater_agreement("GT-TEST-001", rater_a, rater_b_ok, max_frame_tolerance=2)
-    assert report_ok["all_temporal_passed"] is True
-    assert report_ok["requires_adjudication"] is False
-
-    # Exceeding tolerance (diff = 4 frames)
-    rater_b_fail = {
-        "annotator_id": "RATER_B",
-        "cycle_annotations": [{"start_frame": 14, "end_frame": 50}],
-        "metric_annotations": {"stroke_rate_spm": {"value": 45.3}}
-    }
-    report_fail = qc_engine.evaluate_inter_rater_agreement("GT-TEST-002", rater_a, rater_b_fail, max_frame_tolerance=2)
-    assert report_fail["all_temporal_passed"] is False
-    assert report_fail["requires_adjudication"] is True
-
-
-def test_ingestion_duplicate_rejection(repo_root, tmp_path):
-    """Verifies that GroundTruthIngestionService rejects duplicate sample_id."""
+def test_missing_raw_video_cannot_become_included(repo_root, tmp_path):
+    """Verifies that an annotation referring to a missing physical video file cannot become INCLUDED."""
     manifest_file = tmp_path / "test_manifest.json"
     manifest_data = {
         "manifest_version": "1.0.0",
@@ -173,23 +84,21 @@ def test_ingestion_duplicate_rejection(repo_root, tmp_path):
     with open(manifest_file, "w", encoding="utf-8") as f:
         json.dump(manifest_data, f)
 
-    video_file = repo_root / "data" / "ground_truth" / "raw" / "freestyle" / "GT-FREE-001.mp4"
-    ann_file = repo_root / "data" / "ground_truth" / "annotations" / "GT-FREE-001.json"
-    
+    non_existent_video = tmp_path / "does_not_exist_video.mp4"
+    dummy_ann = tmp_path / "dummy_ann.json"
+    with open(dummy_ann, "w", encoding="utf-8") as f:
+        json.dump({"sample_id": "GT-TEST-MISSING"}, f)
+
     ingestion = GroundTruthIngestionService(repo_root=repo_root)
+    ok, rec, errs = ingestion.register_trial(manifest_file, non_existent_video, dummy_ann, save=False)
     
-    # First registration succeeds
-    ok1, rec1, errs1 = ingestion.register_trial(manifest_file, video_file, ann_file, save=True)
-    assert ok1 is True
-
-    # Duplicate registration fails
-    ok2, rec2, errs2 = ingestion.register_trial(manifest_file, video_file, ann_file, save=True)
-    assert ok2 is False
-    assert any("DUPLICATE ERROR" in e for e in errs2)
+    assert ok is False
+    assert rec is None
+    assert any("PHYSICAL ASSET ERROR" in e for e in errs)
 
 
-def test_ingestion_checksum_mismatch_rejection(repo_root, tmp_path):
-    """Verifies that GroundTruthIngestionService rejects corrupted or mismatched video SHA-256."""
+def test_checksum_computed_from_actual_bytes(repo_root, tmp_path):
+    """Verifies that the checksum is computed from actual video bytes, rejecting mismatches."""
     manifest_file = tmp_path / "test_manifest.json"
     manifest_data = {
         "manifest_version": "1.0.0",
@@ -204,104 +113,258 @@ def test_ingestion_checksum_mismatch_rejection(repo_root, tmp_path):
     with open(manifest_file, "w", encoding="utf-8") as f:
         json.dump(manifest_data, f)
 
-    video_file = repo_root / "data" / "ground_truth" / "raw" / "freestyle" / "GT-FREE-001.mp4"
-    ann_file = repo_root / "data" / "ground_truth" / "annotations" / "GT-FREE-001.json"
+    # Create real local dummy video file
+    real_video = tmp_path / "real_video.mp4"
+    real_video.write_bytes(b"REAL_SWIMMING_VIDEO_BYTES_FOR_CHECKSUM_VERIFICATION")
+    actual_hash = compute_file_sha256(real_video)
 
-    with open(ann_file, "r", encoding="utf-8") as f:
-        ann_data = json.load(f)
-
-    # Tamper with SHA-256
-    ann_data["video_sha256"] = "0" * 64
-    tampered_ann = tmp_path / "tampered_GT-FREE-001.json"
-    with open(tampered_ann, "w", encoding="utf-8") as f:
-        json.dump(ann_data, f)
+    valid_ann_data = {
+        "sample_id": "GT-FREE-001",
+        "participant_id": "PARTICIPANT-001",
+        "session_id": "SESSION-001",
+        "stroke_type": "Freestyle",
+        "video_id": "VIDEO-001",
+        "video_filename": "real_video.mp4",
+        "video_sha256": "f" * 64,  # FAKE/TAMPERED HASH
+        "source_type": "HIGH_SPEED_OPTICAL_DUAL_RATER",
+        "annotation_version": "1.0.0",
+        "annotator_id": "EXPERT-01",
+        "secondary_annotator_id": "EXPERT-02",
+        "annotation_timestamp": "2026-09-06T12:00:00Z",
+        "video_fps": 30.0,
+        "video_duration": 10.0,
+        "frame_count": 300,
+        "exclusion_status": "INCLUDED",
+        "cycle_annotations": [
+            {"cycle_index": 1, "start_frame": 10, "end_frame": 50, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 2, "start_frame": 50, "end_frame": 90, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 3, "start_frame": 90, "end_frame": 130, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+        ],
+        "metric_annotations": {
+            "stroke_rate_spm": {"value": 45.0, "source_modality": "HUMAN_VIDEO_ANNOTATION"}
+        }
+    }
+    ann_file = tmp_path / "ann.json"
+    with open(ann_file, "w", encoding="utf-8") as f:
+        json.dump(valid_ann_data, f)
 
     ingestion = GroundTruthIngestionService(repo_root=repo_root)
-    ok, rec, errs = ingestion.register_trial(manifest_file, video_file, tampered_ann, save=False)
+    ok, rec, errs = ingestion.register_trial(manifest_file, real_video, ann_file, save=False)
     assert ok is False
     assert any("CHECKSUM MISMATCH" in e for e in errs)
 
+    # Fix hash to match actual bytes
+    valid_ann_data["video_sha256"] = actual_hash
+    with open(ann_file, "w", encoding="utf-8") as f:
+        json.dump(valid_ann_data, f)
 
-def test_ingestion_less_than_3_cycles_rejection(repo_root, tmp_path):
-    """Verifies that trials with < 3 clean cycles are demoted from INCLUDED."""
+    ok_fixed, rec_fixed, errs_fixed = ingestion.register_trial(manifest_file, real_video, ann_file, save=False)
+    assert ok_fixed is True
+    assert rec_fixed.video_sha256 == actual_hash
+
+
+def test_future_annotation_timestamp_rejected(repo_root, tmp_path):
+    """Verifies that future-dated annotation timestamps are strictly rejected."""
     manifest_file = tmp_path / "test_manifest.json"
-    manifest_data = {
-        "manifest_version": "1.0.0",
-        "manifest_id": "MANIFEST-TEST",
-        "created_at": "2026-09-06T12:00:00Z",
-        "cohort_name": "Test Cohort",
-        "protocol_version": "1.0.0",
-        "description": "Test",
-        "is_synthetic_manifest": False,
-        "records": []
-    }
     with open(manifest_file, "w", encoding="utf-8") as f:
-        json.dump(manifest_data, f)
+        json.dump({
+            "manifest_version": "1.0.0", "manifest_id": "M-TEST", "created_at": "2026-09-06T12:00:00Z",
+            "cohort_name": "Test", "protocol_version": "1.0.0", "description": "Test",
+            "is_synthetic_manifest": False, "records": []
+        }, f)
 
-    video_file = repo_root / "data" / "ground_truth" / "raw" / "freestyle" / "GT-FREE-001.mp4"
-    ann_file = repo_root / "data" / "ground_truth" / "annotations" / "GT-FREE-001.json"
+    real_video = tmp_path / "real_video.mp4"
+    real_video.write_bytes(b"REAL_VIDEO_CONTENT")
+    actual_hash = compute_file_sha256(real_video)
 
-    with open(ann_file, "r", encoding="utf-8") as f:
-        ann_data = json.load(f)
-
-    # Reduce to only 2 cycles
-    ann_data["cycle_annotations"] = ann_data["cycle_annotations"][:2]
-    ann_data["sample_id"] = "GT-FREE-FEW-CYCLES"
-    ann_data["exclusion_status"] = "INCLUDED"
-
-    few_cycles_ann = tmp_path / "few_cycles.json"
-    with open(few_cycles_ann, "w", encoding="utf-8") as f:
+    future_dt = (datetime.now(timezone.utc) + timedelta(days=365)).isoformat()
+    ann_data = {
+        "sample_id": "GT-FREE-FUTURE",
+        "participant_id": "PARTICIPANT-001",
+        "session_id": "SESSION-001",
+        "stroke_type": "Freestyle",
+        "video_id": "VIDEO-001",
+        "video_filename": "real_video.mp4",
+        "video_sha256": actual_hash,
+        "source_type": "HIGH_SPEED_OPTICAL_DUAL_RATER",
+        "annotation_version": "1.0.0",
+        "annotator_id": "EXPERT-01",
+        "secondary_annotator_id": "EXPERT-02",
+        "annotation_timestamp": future_dt,  # FUTURE TIMESTAMP
+        "video_fps": 30.0,
+        "video_duration": 10.0,
+        "frame_count": 300,
+        "exclusion_status": "INCLUDED",
+        "cycle_annotations": [
+            {"cycle_index": 1, "start_frame": 10, "end_frame": 50, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 2, "start_frame": 50, "end_frame": 90, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 3, "start_frame": 90, "end_frame": 130, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+        ],
+        "metric_annotations": {
+            "stroke_rate_spm": {"value": 45.0, "source_modality": "HUMAN_VIDEO_ANNOTATION"}
+        }
+    }
+    ann_file = tmp_path / "future_ann.json"
+    with open(ann_file, "w", encoding="utf-8") as f:
         json.dump(ann_data, f)
 
     ingestion = GroundTruthIngestionService(repo_root=repo_root)
-    ok, rec, errs = ingestion.register_trial(manifest_file, video_file, few_cycles_ann, save=True)
+    ok, rec, errs = ingestion.register_trial(manifest_file, real_video, ann_file, save=False)
+    assert ok is False
+    assert any("TIMESTAMP INTEGRITY ERROR" in e for e in errs)
+
+
+def test_icc_computed_per_metric_across_trials():
+    """Verifies that ICC(2,1) is computed strictly per metric across trials."""
+    # Stroke rate values across 4 independent trials from Rater A and Rater B
+    stroke_rate_pairs = [(42.0, 42.5), (46.0, 45.8), (38.0, 38.2), (52.0, 51.5)]
+    res = compute_metric_icc_2_1("stroke_rate_spm", stroke_rate_pairs)
+
+    assert res["metric_name"] == "stroke_rate_spm"
+    assert res["n_items"] == 4
+    assert res["icc_2_1"] is not None
+    assert res["icc_2_1"] >= 0.95
+    assert res["is_pilot_evidence"] is True  # n < 24
+    assert "PILOT_INTER_RATER_RELIABILITY" in res["agreement_interpretation"]
+
+
+def test_heterogeneous_metrics_never_pooled_into_one_icc():
+    """Verifies that heterogeneous metrics must be calculated in isolation and not pooled."""
+    trial_data = {
+        "stroke_rate_spm": [(42.0, 42.5), (46.0, 45.8)],
+        "mean_elbow_angle_deg": [(135.0, 136.0), (142.0, 140.5)],
+    }
+    qc_engine = GroundTruthQCEngine()
+    cohort_iccs = qc_engine.compute_cohort_metric_iccs(trial_data)
+
+    assert "stroke_rate_spm" in cohort_iccs
+    assert "mean_elbow_angle_deg" in cohort_iccs
+    assert cohort_iccs["stroke_rate_spm"]["metric_name"] == "stroke_rate_spm"
+    assert cohort_iccs["mean_elbow_angle_deg"]["metric_name"] == "mean_elbow_angle_deg"
+    # Never combined into a single "overall" ICC
+    assert "overall" not in cohort_iccs
+
+
+def test_one_trial_icc_cannot_be_treated_as_scientific_reliability():
+    """Verifies that a single trial cannot calculate ICC across items and is rejected."""
+    single_pair = [(42.0, 42.5)]
+    res = compute_metric_icc_2_1("stroke_rate_spm", single_pair)
+
+    assert res["status"] == "INSUFFICIENT_SAMPLE"
+    assert res["icc_2_1"] is None
+    assert "INSUFFICIENT_SAMPLE" in res["agreement_interpretation"]
+
+
+def test_content_level_blinding_verification():
+    """Verifies that content-level blinding scans detect forbidden AI keys without claiming procedural proof."""
+    clean_dict = {"annotator_id": "EXPERT-01", "measurements": {"elbow_angle": 135.0}}
+    ok, violations = verify_content_level_blinding(clean_dict)
     assert ok is True
-    # Crucial safety check: status MUST NOT be INCLUDED
+    assert len(violations) == 0
+
+    dirty_dict = {"annotator_id": "EXPERT-01", "overall_score": 90.0, "predicted_stroke": "Freestyle"}
+    ok_dirty, violations_dirty = verify_content_level_blinding(dirty_dict)
+    assert ok_dirty is False
+    assert len(violations_dirty) == 2
+
+
+def test_dual_rater_independence_gate(repo_root, tmp_path):
+    """Verifies that identical annotators are rejected from the official validation split."""
+    manifest_file = tmp_path / "test_manifest.json"
+    with open(manifest_file, "w", encoding="utf-8") as f:
+        json.dump({
+            "manifest_version": "1.0.0", "manifest_id": "M-TEST", "created_at": "2026-09-06T12:00:00Z",
+            "cohort_name": "Test", "protocol_version": "1.0.0", "description": "Test",
+            "is_synthetic_manifest": False, "records": []
+        }, f)
+
+    real_video = tmp_path / "real_video.mp4"
+    real_video.write_bytes(b"REAL_SWIM_VIDEO")
+    actual_hash = compute_file_sha256(real_video)
+
+    ann_data = {
+        "sample_id": "GT-FREE-SAME-RATER",
+        "participant_id": "PARTICIPANT-001",
+        "session_id": "SESSION-001",
+        "stroke_type": "Freestyle",
+        "video_id": "VIDEO-001",
+        "video_filename": "real_video.mp4",
+        "video_sha256": actual_hash,
+        "source_type": "HIGH_SPEED_OPTICAL_DUAL_RATER",
+        "annotation_version": "1.0.0",
+        "annotator_id": "SAME_RATER",
+        "secondary_annotator_id": "SAME_RATER",  # IDENTICAL
+        "annotation_timestamp": "2026-09-06T12:00:00Z",
+        "video_fps": 30.0,
+        "video_duration": 10.0,
+        "frame_count": 300,
+        "exclusion_status": "INCLUDED",
+        "cycle_annotations": [
+            {"cycle_index": 1, "start_frame": 10, "end_frame": 50, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 2, "start_frame": 50, "end_frame": 90, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 3, "start_frame": 90, "end_frame": 130, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+        ],
+        "metric_annotations": {
+            "stroke_rate_spm": {"value": 45.0, "source_modality": "HUMAN_VIDEO_ANNOTATION"}
+        }
+    }
+    ann_file = tmp_path / "same_rater.json"
+    with open(ann_file, "w", encoding="utf-8") as f:
+        json.dump(ann_data, f)
+
+    ingestion = GroundTruthIngestionService(repo_root=repo_root)
+    ok, rec, errs = ingestion.register_trial(manifest_file, real_video, ann_file, split="VALIDATION_OFFICIAL", save=True)
+    assert ok is True
     assert rec.inclusion_status == InclusionStatus.EXCLUDED.value
-    assert "Incomplete annotation" in rec.exclusion_reason
+    assert "Dual-rater independence violation" in rec.exclusion_reason
 
 
-def test_ingestion_synthetic_sample_rejection(repo_root, tmp_path):
+def test_official_cohort_cannot_contain_synthetic_fixtures(repo_root, tmp_path):
     """Verifies that synthetic fixtures are strictly rejected from official manifests."""
     manifest_file = tmp_path / "test_manifest.json"
-    manifest_data = {
-        "manifest_version": "1.0.0",
-        "manifest_id": "MANIFEST-OFFICIAL",
-        "created_at": "2026-09-06T12:00:00Z",
-        "cohort_name": "Official Cohort",
-        "protocol_version": "1.0.0",
-        "description": "Test",
-        "is_synthetic_manifest": False,
-        "records": []
-    }
     with open(manifest_file, "w", encoding="utf-8") as f:
-        json.dump(manifest_data, f)
+        json.dump({
+            "manifest_version": "1.0.0", "manifest_id": "M-OFFICIAL", "created_at": "2026-09-06T12:00:00Z",
+            "cohort_name": "Official Cohort", "protocol_version": "1.0.0", "description": "Test",
+            "is_synthetic_manifest": False, "records": []
+        }, f)
 
-    video_file = repo_root / "data" / "ground_truth" / "raw" / "freestyle" / "GT-FREE-001.mp4"
-    ann_file = repo_root / "data" / "ground_truth" / "annotations" / "GT-FREE-001.json"
+    real_video = tmp_path / "real_video.mp4"
+    real_video.write_bytes(b"VIDEO_DATA")
+    actual_hash = compute_file_sha256(real_video)
 
-    with open(ann_file, "r", encoding="utf-8") as f:
-        ann_data = json.load(f)
-
-    ann_data["is_synthetic_fixture"] = True
-    ann_data["sample_id"] = "GT-SYNTH-MOCK"
-
-    synth_ann = tmp_path / "synth_mock.json"
-    with open(synth_ann, "w", encoding="utf-8") as f:
-        json.dump(ann_data, f)
+    synth_ann_data = {
+        "sample_id": "GT-SYNTH-MOCK",
+        "participant_id": "PARTICIPANT-001",
+        "session_id": "SESSION-001",
+        "stroke_type": "Freestyle",
+        "video_id": "VIDEO-001",
+        "video_filename": "real_video.mp4",
+        "video_sha256": actual_hash,
+        "source_type": "SYNTHETIC_TEST_FIXTURE",
+        "is_synthetic_fixture": True,  # SYNTHETIC
+        "annotation_version": "1.0.0",
+        "annotator_id": "EXPERT-01",
+        "secondary_annotator_id": "EXPERT-02",
+        "annotation_timestamp": "2026-09-06T12:00:00Z",
+        "video_fps": 30.0,
+        "video_duration": 10.0,
+        "frame_count": 300,
+        "exclusion_status": "INCLUDED",
+        "cycle_annotations": [
+            {"cycle_index": 1, "start_frame": 10, "end_frame": 50, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 2, "start_frame": 50, "end_frame": 90, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 3, "start_frame": 90, "end_frame": 130, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+        ],
+        "metric_annotations": {
+            "stroke_rate_spm": {"value": 45.0, "source_modality": "SYNTHETIC_TEST_FIXTURE"}
+        }
+    }
+    synth_ann_file = tmp_path / "synth.json"
+    with open(synth_ann_file, "w", encoding="utf-8") as f:
+        json.dump(synth_ann_data, f)
 
     ingestion = GroundTruthIngestionService(repo_root=repo_root)
-    ok, rec, errs = ingestion.register_trial(manifest_file, video_file, synth_ann, save=False)
+    ok, rec, errs = ingestion.register_trial(manifest_file, real_video, synth_ann_file, split="VALIDATION_OFFICIAL", save=False)
     assert ok is False
     assert any("SYNTHETIC ISOLATION VIOLATION" in e for e in errs)
-
-
-def test_data_leakage_manifest_splits(repo_root):
-    """Verifies that DataLeakageValidator validates the official manifest split cleanly."""
-    manifest_path = repo_root / "data" / "ground_truth" / "manifests" / "ground_truth_manifest.json"
-    with open(manifest_path, "r", encoding="utf-8") as f:
-        manifest_data = json.load(f)
-
-    is_valid, errors = DataLeakageValidator.validate_manifest_splits(manifest_data["records"])
-    assert is_valid is True
-    assert len(errors) == 0

@@ -18,6 +18,7 @@ from .provenance_contract import (
     MetricProvenanceRecord,
 )
 from .ground_truth_runner import GroundTruthValidationRunner
+from .ground_truth_ingestion import GroundTruthIngestionService, compute_file_sha256
 
 __all__ = [
     "GroundTruthSample",
@@ -34,4 +35,6 @@ __all__ = [
     "ProvenanceValidator",
     "MetricProvenanceRecord",
     "GroundTruthValidationRunner",
+    "GroundTruthIngestionService",
+    "compute_file_sha256",
 ]

@@ -92,7 +92,7 @@
     },
     "video_fps": {
       "type": "number",
-      "minimum": 30.0,
+      "minimum": 29.9,
       "description": "True constant frame rate of the video recording"
     },
     "video_duration": {

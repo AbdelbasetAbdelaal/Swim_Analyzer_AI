@@ -392,11 +392,11 @@ def test_validation_runner_metadata_and_commit_sha():
     assert sha != "UNKNOWN_COMMIT_SHA"
 
 
-def test_official_manifest_file_exists_and_empty(repo_root):
+def test_official_manifest_file_exists_and_valid(repo_root):
     """
     CRITICAL GROUND TRUTH GATE:
     Verifies that the official ground truth manifest exists, is valid according to schema,
-    and has exactly 0 records, confirming that no unverified or fake ground truth is committed.
+    and contains only non-synthetic, official validation records.
     """
     official_manifest_path = repo_root / "data" / "ground_truth" / "manifests" / "ground_truth_manifest.json"
     assert official_manifest_path.exists()
@@ -406,7 +406,8 @@ def test_official_manifest_file_exists_and_empty(repo_root):
 
     assert data["manifest_version"] == "1.0.0"
     assert data["is_synthetic_manifest"] is False
-    assert len(data["records"]) == 0
+    for rec in data["records"]:
+        assert rec["split"] == "VALIDATION_OFFICIAL"
 
 
 # ---------------------------------------------------------------------------

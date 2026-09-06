@@ -1,0 +1,102 @@
+{
+  "sample_id": "GT-BRST-002",
+  "evaluation_timestamp": "2026-09-06T13:07:00.633040+00:00",
+  "rater_a_id": "EXPERT-RATER-01",
+  "rater_b_id": "EXPERT-RATER-02",
+  "temporal_checks": [
+    {
+      "cycle_index": 1,
+      "rater_a_start": 20,
+      "rater_b_start": 20,
+      "start_frame_diff": 0,
+      "rater_a_end": 64,
+      "rater_b_end": 65,
+      "end_frame_diff": 1,
+      "passed": true
+    },
+    {
+      "cycle_index": 2,
+      "rater_a_start": 64,
+      "rater_b_start": 65,
+      "start_frame_diff": 1,
+      "rater_a_end": 109,
+      "rater_b_end": 109,
+      "end_frame_diff": 0,
+      "passed": true
+    },
+    {
+      "cycle_index": 3,
+      "rater_a_start": 109,
+      "rater_b_start": 109,
+      "start_frame_diff": 0,
+      "rater_a_end": 155,
+      "rater_b_end": 154,
+      "end_frame_diff": 1,
+      "passed": true
+    }
+  ],
+  "metric_checks": [
+    {
+      "metric": "body_roll_amplitude_deg",
+      "rater_a_value": 14.5,
+      "rater_b_value": 13.8,
+      "absolute_diff": 0.7,
+      "tolerance": 6.0,
+      "passed": true
+    },
+    {
+      "metric": "cycle_duration_ms",
+      "rater_a_value": 1481.5,
+      "rater_b_value": 1492.5,
+      "absolute_diff": 11.0,
+      "tolerance": 60.0,
+      "passed": true
+    },
+    {
+      "metric": "hand_excursion_proxy_bl",
+      "rater_a_value": 0.76,
+      "rater_b_value": 0.75,
+      "absolute_diff": 0.01,
+      "tolerance": 0.08,
+      "passed": true
+    },
+    {
+      "metric": "mean_elbow_angle_deg",
+      "rater_a_value": 119.5,
+      "rater_b_value": 118.4,
+      "absolute_diff": 1.1,
+      "tolerance": 6.0,
+      "passed": true
+    },
+    {
+      "metric": "mean_knee_angle_deg",
+      "rater_a_value": 114.0,
+      "rater_b_value": 115.5,
+      "absolute_diff": 1.5,
+      "tolerance": 6.0,
+      "passed": true
+    },
+    {
+      "metric": "stroke_rate_spm",
+      "rater_a_value": 40.5,
+      "rater_b_value": 40.1,
+      "absolute_diff": 0.4,
+      "tolerance": 2.0,
+      "passed": true
+    },
+    {
+      "metric": "stroke_symmetry_percent",
+      "rater_a_value": 98.2,
+      "rater_b_value": 98.5,
+      "absolute_diff": 0.3,
+      "tolerance": 5.0,
+      "passed": true
+    }
+  ],
+  "all_temporal_passed": true,
+  "all_metrics_passed": true,
+  "requires_adjudication": false,
+  "calculated_icc": 1.0,
+  "agreement_status": "PASSED",
+  "notes": []
+}

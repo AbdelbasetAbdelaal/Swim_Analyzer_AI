@@ -1,0 +1,6 @@
+{
+  "sample_id": "GT-FREE-002",
+  "adjudication": "NOT_REQUIRED",
+  "reason": "All inter-rater agreement criteria met within operational tolerances (frame diff <= 2, ICC >= 0.90).",
+  "timestamp": "2026-09-06T13:07:00.586699+00:00"
+}

@@ -139,8 +139,8 @@ class GroundTruthIngestionService:
         exclusion_status = raw_sample.get("exclusion_status", InclusionStatus.INCLUDED.value)
         exclusion_reason = raw_sample.get("exclusion_reason")
         
-        # Check completeness
-        has_cycles = len(raw_sample.get("cycle_annotations", [])) >= 2
+        # Check completeness (Ground Truth protocol requires minimum 3 complete cycles)
+        has_cycles = len(raw_sample.get("cycle_annotations", [])) >= 3
         has_metrics = len(raw_sample.get("metric_annotations", {})) > 0
         
         if has_cycles and has_metrics:

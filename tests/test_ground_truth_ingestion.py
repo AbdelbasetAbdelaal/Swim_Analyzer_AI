@@ -87,6 +87,13 @@ def valid_annotation(temp_dir, dummy_video):
                 "end_frame": 120,
                 "duration_ms": 1000.0,
                 "stroke_rate_spm": 60.0
+            },
+            {
+                "cycle_index": 3,
+                "start_frame": 120,
+                "end_frame": 180,
+                "duration_ms": 1000.0,
+                "stroke_rate_spm": 60.0
             }
         ],
         "metric_annotations": {
@@ -261,3 +268,100 @@ def test_incomplete_annotation_marked_excluded(ingestion_service, temp_dir, dumm
     assert ok is True
     assert rec.annotation_status == AnnotationStatus.INCOMPLETE.value
     assert rec.inclusion_status == InclusionStatus.EXCLUDED.value
+
+
+def test_two_cycles_cannot_become_complete(ingestion_service, temp_dir, dummy_manifest, dummy_video, valid_annotation):
+    """Ground Truth protocol requires >= 3 cycles; an annotation with 2 cycles must be marked INCOMPLETE and EXCLUDED."""
+    two_cycle_anno_file = temp_dir / "two_cycle_annotation.json"
+    with open(valid_annotation, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["sample_id"] = "GT-TWO-CYCLES"
+    data["cycle_annotations"] = data["cycle_annotations"][:2] # Exactly 2 cycles
+    data["exclusion_status"] = "INCLUDED"
+    with open(two_cycle_anno_file, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    ok, rec, _ = ingestion_service.register_trial(
+        manifest_path=dummy_manifest,
+        video_path=dummy_video,
+        annotation_path=two_cycle_anno_file,
+        save=False
+    )
+    assert ok is True
+    assert rec.annotation_status == AnnotationStatus.INCOMPLETE.value
+    assert rec.inclusion_status == InclusionStatus.EXCLUDED.value
+    assert "Incomplete annotation" in rec.exclusion_reason
+
+
+def test_three_cycles_satisfies_completeness(ingestion_service, temp_dir, dummy_manifest, dummy_video, valid_annotation):
+    """An annotation with >= 3 cycles satisfies completeness and remains INCLUDED."""
+    three_cycle_anno_file = temp_dir / "three_cycle_annotation.json"
+    with open(valid_annotation, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["sample_id"] = "GT-THREE-CYCLES"
+    assert len(data["cycle_annotations"]) == 3
+    data["exclusion_status"] = "INCLUDED"
+    with open(three_cycle_anno_file, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    ok, rec, _ = ingestion_service.register_trial(
+        manifest_path=dummy_manifest,
+        video_path=dummy_video,
+        annotation_path=three_cycle_anno_file,
+        save=False
+    )
+    assert ok is True
+    assert rec.annotation_status == AnnotationStatus.COMPLETE.value
+    assert rec.inclusion_status == InclusionStatus.INCLUDED.value
+
+
+def test_unsupported_angle_threshold_not_treated_as_validation_gate(ingestion_service, temp_dir, dummy_manifest, dummy_video, valid_annotation):
+    """
+    Continuous kinematic metrics rely on ICC(2, 1) >= 0.90 per protocol.
+    An unsupported fixed 5-degree threshold is not a scientific validation gate.
+    """
+    anno_file = temp_dir / "icc_annotation.json"
+    with open(valid_annotation, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["sample_id"] = "GT-ICC-VALID"
+    # Inter-rater agreement satisfies protocol: ICC >= 0.90
+    data["quality_flags"]["inter_rater_agreement_icc"] = 0.94
+    data["quality_flags"]["requires_adjudication"] = False
+    with open(anno_file, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    ok, rec, errs = ingestion_service.register_trial(
+        manifest_path=dummy_manifest,
+        video_path=dummy_video,
+        annotation_path=anno_file,
+        save=False
+    )
+    assert ok is True, errs
+    assert rec.inclusion_status == InclusionStatus.INCLUDED.value
+    assert rec.quality_status == QualityStatus.PASSED.value
+
+
+def test_field_recommendations_distinct_from_validation_criteria(ingestion_service, temp_dir, dummy_manifest, dummy_video, valid_annotation):
+    """
+    Field recording recommendations (e.g. water visibility, shutter speed)
+    provide operational quality guidance and are distinct from scientific acceptance criteria.
+    """
+    anno_file = temp_dir / "field_rec_annotation.json"
+    with open(valid_annotation, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["sample_id"] = "GT-FIELD-REC"
+    data["annotation_notes"] = "Field note: water visibility 8m (below 10m recommendation), shutter 1/400s."
+    data["quality_flags"]["water_turbulence"] = "MODERATE"
+    with open(anno_file, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    ok, rec, errs = ingestion_service.register_trial(
+        manifest_path=dummy_manifest,
+        video_path=dummy_video,
+        annotation_path=anno_file,
+        save=False
+    )
+    assert ok is True, errs
+    # Operational notes do not cause false validation failure if core criteria pass
+    assert rec.inclusion_status == InclusionStatus.INCLUDED.value
+

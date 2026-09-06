@@ -70,16 +70,21 @@ Only scientific metadata essential to biomechanical stratification and body-leng
 
 ---
 
-## 4. Video Acquisition Specifications & Viewpoint Rules
+### Optical & Recording Standards: Field Recommendations vs. Scientific Validation Criteria
 
-### Optical & Recording Standards
+> [!NOTE]
+> **DISTINCTION: FIELD RECORDING RECOMMENDATION vs. SCIENTIFIC VALIDATION CRITERION**  
+> Operational field recommendations provide equipment guidance to optimize visual contrast and tracking stability. They must **not** be misrepresented as peer-reviewed scientific validation acceptance thresholds.
 
-| Parameter | Minimum Requirement | Recommended Specification | Rationale |
+| Parameter | Type of Requirement | Specification | Operational / Scientific Rationale |
 |---|---|---|---|
-| **Frame Rate** | $\ge 30.0\text{ fps}$ (Strict CFR) | $\ge 60.0\text{ fps}$ ($100\text{--}120\text{ fps}$ for Butterfly/Sprint) | Limits temporal quantization jitter to $< 16.7\text{ ms}$. |
-| **Resolution** | $1280 \times 720$ (HD) | $1920 \times 1080$ (Full HD) | Ensures sharp landmark boundaries under high water turbulence. |
-| **Shutter Speed** | $\le 1/500\text{ s}$ | $\le 1/1000\text{ s}$ | Eliminates optical motion blur on fast hand pull and kick whip. |
-| **Video Codec** | H.264 / ProRes 422 | Visually lossless / Constant Bitrate (CBR) | Prevents inter-frame compression artifacts from shifting joint centers. |
+| **Frame Rate** | **SCIENTIFIC VALIDATION CRITERION** | $\ge 30.0\text{ fps}$ (Strict CFR) | Hard boundary: Constant frame rate required for accurate temporal normalization. |
+| **High-Speed Rate** | *Field Recording Recommendation* | $\ge 60.0\text{ fps}$ ($100\text{--}120\text{ fps}$ for Fly) | Operational quality guidance: Limits temporal quantization jitter to $< 16.7\text{ ms}$. |
+| **Resolution** | **SCIENTIFIC VALIDATION CRITERION** | Minimum $1280 \times 720$ (HD) | Hard boundary: Ensures adequate pixel density for anatomical joint centers. |
+| **Full HD Resolution** | *Field Recording Recommendation* | $1920 \times 1080$ (Full HD) | Operational quality guidance: Enhances edge contrast in turbulent water. |
+| **Shutter Speed** | *Field Recording Recommendation* | Recommended $\le 1/500\text{ s}$ | Operational quality guidance: Reduces motion blur on distal hand pull and kick whip. |
+| **Water Clarity** | *Field Recording Recommendation* | Pool visibility $\ge 10\text{ m}$ | Operational quality guidance: Optimizes camera optical contrast. |
+| **Video Codec** | **SCIENTIFIC VALIDATION CRITERION** | Standard uncorrupted MP4/MOV (H.264 / ProRes) | Hard boundary: Lossless or high-bitrate container required for frame-accurate seeking. |
 
 ### Viewpoint Taxonomy & Truth Boundaries
 
@@ -193,10 +198,11 @@ Every Ground Truth measurement must adhere to the provenance contract establishe
                       └─────────────────────────────┘
 ```
 
-### Disagreement Tolerances
-- **Temporal Boundaries:** Frame difference $\le 2\text{ frames}$ (at $60\text{ fps}$, $\le 33.3\text{ ms}$).
-- **Kinematic Angles:** Absolute rater difference $\le 5.0^\circ$.
-- **Adjudication:** If raters diverge beyond tolerance, an expert consensus panel adjudicates the discrepancy. If unresolvable, the sample is tagged `AMBIGUOUS` and barred from official cohorts.
+### Disagreement Tolerances & Agreement Standards
+- **Temporal Event Boundaries:** Frame difference $\le 2\text{ frames}$ (at $60\text{ fps}$, $\le 33.3\text{ ms}$).
+- **Continuous Kinematic Metrics:** Evaluated across the validation cohort using two-way random effects Intraclass Correlation Coefficient ($ICC(2, 1) \ge 0.90$) per the established scientific validation protocol.
+- **Operational Annotation-Review Triggers (Adjudication Flags):** Large single-frame angular discrepancies between raters serve as operational flags prompting dual-rater consensus review, but fixed angle thresholds (such as $5.0^\circ$) are **not** scientific acceptance criteria (which remain designated $ICC(2, 1) \ge 0.90$ or `TBD — REQUIRES DOMAIN JUSTIFICATION`).
+- **Adjudication:** If raters diverge beyond consensus or temporal tolerance, an expert consensus panel adjudicates the discrepancy. If unresolvable, the sample is tagged `AMBIGUOUS` and barred from official cohorts.
 - **Audit Preservation:** Raw independent sheets from both raters must be preserved in `data/ground_truth/quality_control/` for permanent provenance auditability.
 
 ---

@@ -22,8 +22,8 @@ Every video recording candidate must pass this checklist before being registered
 | ☐ | **Camera Orientation** | Optical axis strictly perpendicular (orthogonal) to swimmer lane trajectory. | Mandatory |
 | ☐ | **Frame Rate Standard** | Camera configured to Constant Frame Rate (CFR) $\ge 30.0\text{ fps}$ (recommended $\ge 60.0\text{ fps}$). Variable Frame Rate (VFR) is strictly prohibited. | Mandatory |
 | ☐ | **Optical Resolution** | Camera configured to minimum $1280 \times 720$ (recommended $1920 \times 1080$). | Mandatory |
-| ☐ | **Shutter Speed** | Shutter configured to $\le 1/500\text{ s}$ to eliminate limb motion blur. | Recommended |
-| ☐ | **Pool Optical Quality** | Pool water visibility clear to at least $10\text{ m}$. Lane line clearly distinguishable. | Mandatory |
+| ☐ | **Shutter Speed** | Shutter configured to $\le 1/500\text{ s}$ to eliminate limb motion blur. | Field Quality Recommendation |
+| ☐ | **Pool Optical Quality** | Pool water visibility clear to at least $10\text{ m}$. Lane line clearly distinguishable. | Field Quality Recommendation |
 
 ---
 
@@ -34,7 +34,7 @@ Every video recording candidate must pass this checklist before being registered
 | ☐ | **Target Stroke Verification** | Swimmer executed the intended target stroke (Freestyle, Backstroke, Breaststroke, Butterfly). | Mandatory |
 | ☐ | **Mid-Pool Free-Swimming** | Recording captures only the steady-state mid-pool swimming zone ($10\text{--}20\text{ m}$ for $25\text{ m}$ pool; $15\text{--}35\text{ m}$ for $50\text{ m}$ pool). | Mandatory |
 | ☐ | **Zero Start / Turn Contamination** | Dive start, breakout kick, flip turn, or open turn are completely absent from analyzed sequence. | Mandatory |
-| ☐ | **Clean Continuous Cycles** | At least 3 to 5 continuous, clean, completed stroke cycles captured without interruption. | Mandatory |
+| ☐ | **Clean Continuous Cycles** | Minimum 3 complete, clean, completed stroke cycles captured without interruption. (Ingestion completeness gate strictly requires $\ge 3$ cycles). | Mandatory |
 | ☐ | **Swimmer In-Frame Continuity** | Swimmer torso and limbs remain fully within frame throughout the evaluated cycles. | Mandatory |
 | ☐ | **Occlusion Tolerance** | Joint landmark occlusions from air bubbles, surface foam, or lane ropes do not exceed 20% of cycle duration. | Mandatory |
 
@@ -57,7 +57,7 @@ Every video recording candidate must pass this checklist before being registered
 |---|---|---|---|
 | ☐ | **Dual-Rater Blinding** | Annotators assigned and verified blinded to all Swim Analyzer AI outputs. | Mandatory |
 | ☐ | **Independent Annotation** | Both raters completed independent cycle boundary and event logging. | Mandatory |
-| ☐ | **Inter-Rater Agreement Check** | Boundary discrepancy $\le 2\text{ frames}$; angle differences $\le 5.0^\circ$. Disagreements adjudicated. | Mandatory |
+| ☐ | **Inter-Rater Agreement Check** | Temporal boundary discrepancy $\le 2\text{ frames}$; continuous metrics adhere to $ICC(2, 1) \ge 0.90$ protocol; any rater divergence reviewed and adjudicated. | Mandatory |
 | ☐ | **Provenance Contract Compliance** | Modalities declared per Step 68.1 rules (`true_dps` uses physical/optical calibration; angles declare 2D/3D; symmetry declares definition). | Mandatory |
 | ☐ | **Schema Validation** | Annotation JSON passes `schemas/ground_truth_schema.json` via ingestion tool. | Mandatory |
 | ☐ | **Manifest Registration** | Trial registered into `data/ground_truth/manifests/ground_truth_manifest.json` with status `INCLUDED`. | Mandatory |

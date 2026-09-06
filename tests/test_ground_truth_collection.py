@@ -49,12 +49,11 @@ def test_validation_freeze_record_integrity(repo_root):
     assert "SwimAnalyzer-1.0.0" in content
 
 
-def test_official_manifest_pilot_cohort_integrity(repo_root):
+def test_official_manifest_empty_pending_certified_annotations(repo_root):
     """
     CRITICAL GROUND TRUTH PURITY GATE:
-    Verifies that the official ground truth manifest contains certified pilot records (8 trials),
-    confirming all records have byte-verified SHA-256, 1:1 independent participants,
-    complete QC audit trails, balanced strokes, and no synthetic fixtures.
+    Verifies that the official ground truth manifest contains 0 records,
+    proving that no fabricated, simulated, or auto-generated annotations are accepted into the official cohort.
     """
     manifest_path = repo_root / "data" / "ground_truth" / "manifests" / "ground_truth_manifest.json"
     assert manifest_path.exists()
@@ -66,46 +65,7 @@ def test_official_manifest_pilot_cohort_integrity(repo_root):
     is_valid, err = runner.validate_manifest_schema(manifest_data)
     assert is_valid, f"Manifest schema validation failed: {err}"
     assert manifest_data["is_synthetic_manifest"] is False
-    assert len(manifest_data["records"]) == 8, "Official manifest must contain exactly 8 certified pilot records."
-
-    participant_ids = set()
-    strokes = {}
-    for rec in manifest_data["records"]:
-        assert rec["split"] == "VALIDATION_OFFICIAL"
-        assert rec["inclusion_status"] == "INCLUDED"
-        assert rec["annotation_status"] == "COMPLETE"
-        assert rec["quality_status"] == "PASSED"
-        assert len(rec["video_sha256"]) == 64
-        
-        participant_ids.add(rec["participant_id"])
-        strokes[rec["stroke"]] = strokes.get(rec["stroke"], 0) + 1
-        
-        # Verify annotation file exists and is readable
-        ann_path = repo_root / rec["annotation_file"]
-        assert ann_path.exists(), f"Annotation file missing: {ann_path}"
-        with open(ann_path, "r", encoding="utf-8") as af:
-            ann_content = json.load(af)
-        assert ann_content["sample_id"] == rec["sample_id"]
-        assert ann_content["video_sha256"] == rec["video_sha256"]
-        
-        # Verify QC audit trail exists
-        qc_dir = repo_root / "data" / "ground_truth" / "quality_control" / rec["sample_id"]
-        assert (qc_dir / "rater_A.json").exists()
-        assert (qc_dir / "rater_B.json").exists()
-        assert (qc_dir / "agreement.json").exists()
-        assert (qc_dir / "adjudication.json").exists()
-        assert (qc_dir / "final_ground_truth.json").exists()
-
-        # If raw video exists locally, verify actual byte hash
-        raw_vid = repo_root / rec["video_path"]
-        if raw_vid.exists():
-            computed_hash = compute_file_sha256(raw_vid)
-            assert computed_hash == rec["video_sha256"]
-
-    # Verify 1:1 participant independence across cohort
-    assert len(participant_ids) == 8, "Cohort must have 8 unique participants."
-    # Verify balanced strokes
-    assert strokes == {"Freestyle": 2, "Backstroke": 2, "Breaststroke": 2, "Butterfly": 2}
+    assert len(manifest_data["records"]) == 0, "Official manifest must be empty pending certified human annotations."
 
 
 def test_missing_raw_video_cannot_become_included(repo_root, tmp_path):
@@ -408,3 +368,126 @@ def test_official_cohort_cannot_contain_synthetic_fixtures(repo_root, tmp_path):
     ok, rec, errs = ingestion.register_trial(manifest_file, real_video, synth_ann_file, split="VALIDATION_OFFICIAL", save=False)
     assert ok is False
     assert any("SYNTHETIC ISOLATION VIOLATION" in e for e in errs)
+
+
+def test_workflow_cannot_generate_annotation_values_from_code(repo_root):
+    """
+    CRITICAL HUMAN ANNOTATION INTEGRITY TEST:
+    Proves that the codebase does not contain automated/programmatic annotation generation scripts
+    or hardcoded trial specs (cycles_a, cycles_b, metrics_a, metrics_b).
+    """
+    deprecated_script = repo_root / "tools" / "execute_pilot_annotation.py"
+    assert not deprecated_script.exists(), "execute_pilot_annotation.py must NOT exist in the repository."
+
+    tools_dir = repo_root / "tools"
+    if tools_dir.exists():
+        for py_file in tools_dir.glob("*.py"):
+            text = py_file.read_text(encoding="utf-8")
+            assert "TRIAL_SPECS" not in text, f"Hardcoded TRIAL_SPECS forbidden in {py_file.name}"
+            assert "cycles_a" not in text, f"Hardcoded cycles_a forbidden in {py_file.name}"
+            assert "metrics_a" not in text, f"Hardcoded metrics_a forbidden in {py_file.name}"
+
+
+def test_missing_human_rater_files_prevents_inclusion(repo_root, tmp_path):
+    """Proves that missing rater_A.json or rater_B.json prevents inclusion in official cohort."""
+    from tools.import_human_annotations import process_sample
+
+    dummy_asset = {
+        "sample_id": "GT-TEST-NONEXISTENT",
+        "video_path": "data/ground_truth/raw/freestyle/GT-FREE-001.mp4",
+        "stroke": "Freestyle",
+    }
+    res = process_sample("GT-TEST-NONEXISTENT", dummy_asset)
+    assert res["status"] == "AWAITING_HUMAN_ANNOTATION"
+    assert any("Missing human rater files" in err for err in res["errors"])
+
+
+def test_unfilled_or_blank_template_rejected(repo_root, tmp_path):
+    """Proves that unedited blank rater template sheets with null values are rejected."""
+    from tools.import_human_annotations import is_blank_or_incomplete
+
+    blank_template_path = repo_root / "data" / "ground_truth" / "templates" / "rater_annotation_template.json"
+    assert blank_template_path.exists()
+    with open(blank_template_path, "r", encoding="utf-8") as f:
+        blank_data = json.load(f)
+
+    assert is_blank_or_incomplete(blank_data) is True
+
+
+def test_only_externally_supplied_annotation_files_can_become_ground_truth(repo_root, tmp_path):
+    """
+    Proves that only complete, externally supplied human rater files passing all QC,
+    blinding, provenance, and byte-hash checks can become INCLUDED Ground Truth.
+    """
+    manifest_file = tmp_path / "test_manifest.json"
+    with open(manifest_file, "w", encoding="utf-8") as f:
+        json.dump({
+            "manifest_version": "1.0.0", "manifest_id": "M-EXT", "created_at": "2026-09-06T12:00:00Z",
+            "cohort_name": "Test External", "protocol_version": "1.0.0", "description": "Test",
+            "is_synthetic_manifest": False, "records": []
+        }, f)
+
+    real_video = tmp_path / "real_video.mp4"
+    real_video.write_bytes(b"EXTERNALLY_VERIFIED_HUMAN_TRIAL_BYTES")
+    actual_hash = compute_file_sha256(real_video)
+
+    rater_a_data = {
+        "sample_id": "GT-FREE-VALID-HUMAN",
+        "annotator_id": "HUMAN-EXPERT-01",
+        "video_filename": "real_video.mp4",
+        "video_sha256": actual_hash,
+        "video_fps": 30.0,
+        "video_duration": 10.0,
+        "frame_count": 300,
+        "stroke_type": "Freestyle",
+        "participant_id": "PARTICIPANT-099",
+        "session_id": "SESSION-099",
+        "video_id": "VIDEO-099",
+        "source_type": "HIGH_SPEED_OPTICAL_DUAL_RATER",
+        "annotation_version": "1.0.0",
+        "exclusion_status": "INCLUDED",
+        "annotation_timestamp": "2026-09-06T12:00:00Z",
+        "cycle_annotations": [
+            {"cycle_index": 1, "start_frame": 10, "end_frame": 50, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 2, "start_frame": 50, "end_frame": 90, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+            {"cycle_index": 3, "start_frame": 90, "end_frame": 130, "duration_ms": 1333.3, "stroke_rate_spm": 45.0},
+        ],
+        "metric_annotations": {
+            "stroke_rate_spm": {"value": 45.0, "unit": "spm", "source_modality": "HUMAN_VIDEO_ANNOTATION"},
+            "mean_elbow_angle_deg": {"value": 135.0, "unit": "deg", "angle_dimension": "2D_PLANAR", "source_modality": "HUMAN_VIDEO_ANNOTATION"},
+        }
+    }
+
+    rater_b_data = copy.deepcopy(rater_a_data)
+    rater_b_data["annotator_id"] = "HUMAN-EXPERT-02"
+    rater_b_data["annotation_timestamp"] = "2026-09-06T12:15:00Z"
+    # Small natural human divergence within tolerance
+    rater_b_data["cycle_annotations"][0]["start_frame"] = 11
+    rater_b_data["metric_annotations"]["mean_elbow_angle_deg"]["value"] = 136.0
+
+    qc_engine = GroundTruthQCEngine(repo_root=tmp_path)
+    ok_qc, consensus_gt, qc_errs = qc_engine.process_and_save_trial_qc(
+        sample_id="GT-FREE-VALID-HUMAN",
+        rater_a_data=rater_a_data,
+        rater_b_data=rater_b_data,
+        save_to_annotations=False,
+    )
+    assert ok_qc is True
+    assert len(qc_errs) == 0
+
+    ann_file = tmp_path / "final_gt.json"
+    with open(ann_file, "w", encoding="utf-8") as f:
+        json.dump(consensus_gt, f)
+
+    ingestion = GroundTruthIngestionService(repo_root=repo_root)
+    ok_ingest, rec, ing_errs = ingestion.register_trial(
+        manifest_path=manifest_file,
+        video_path=real_video,
+        annotation_path=ann_file,
+        split="VALIDATION_OFFICIAL",
+        save=True,
+    )
+    assert ok_ingest is True, f"Ingestion errors: {ing_errs}"
+    assert rec.inclusion_status == InclusionStatus.INCLUDED.value
+    assert rec.video_sha256 == actual_hash
+

@@ -112,20 +112,30 @@ def test_missing_token(sample_analysis_result):
     assert len(feedback.metric_interpretations) > 0
 
 
-# 3. Provider unavailable / HTTP 503 / Network Error
+# 3. Provider unavailable / HTTP 5xx / Network Error
 def test_provider_unavailable(sample_analysis_result):
     provider = HuggingFaceProvider(model_name="Qwen/Qwen2.5-1.5B-Instruct", token="mock_hf_token")
     payload = AICoachPayloadBuilder.build(sample_analysis_result)
 
     with patch("requests.post") as mock_post:
-        # Simulate HTTP 503 Service Unavailable / Model Loading
+        # Simulate HTTP 503 Service Unavailable
         mock_resp = MagicMock()
         mock_resp.status_code = 503
         mock_post.return_value = mock_resp
 
         feedback = provider.generate_interpretation(payload)
         assert feedback.status == "fallback"
-        assert "loading or temporarily unavailable" in feedback.error_message
+        assert "temporarily unavailable" in feedback.error_message
+
+    with patch("requests.post") as mock_post:
+        # Simulate HTTP 500 Internal Server Error
+        mock_resp = MagicMock()
+        mock_resp.status_code = 500
+        mock_post.return_value = mock_resp
+
+        feedback = provider.generate_interpretation(payload)
+        assert feedback.status == "fallback"
+        assert "500" in feedback.error_message
 
     with patch("requests.post", side_effect=requests.exceptions.ConnectionError("Connection refused")):
         feedback = provider.generate_interpretation(payload)
@@ -152,8 +162,10 @@ def test_malformed_model_response(sample_analysis_result):
     with patch("requests.post") as mock_post:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
-        # Return invalid JSON string
-        mock_resp.json.return_value = [{"generated_text": "This is free text without any JSON structure."}]
+        # Return OpenAI shape with invalid JSON string
+        mock_resp.json.return_value = {
+            "choices": [{"message": {"role": "assistant", "content": "This is free text without any JSON structure."}}]
+        }
         mock_post.return_value = mock_resp
 
         feedback = provider.generate_interpretation(payload)
@@ -161,7 +173,7 @@ def test_malformed_model_response(sample_analysis_result):
         assert "Malformed" in feedback.error_message
 
 
-# 6. Valid structured response
+# 6. Valid structured response via router chat completions
 def test_valid_structured_response(sample_analysis_result):
     provider = HuggingFaceProvider(model_name="Qwen/Qwen2.5-1.5B-Instruct", token="mock_hf_token")
     payload = AICoachPayloadBuilder.build(sample_analysis_result)
@@ -192,7 +204,17 @@ def test_valid_structured_response(sample_analysis_result):
     with patch("requests.post") as mock_post:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
-        mock_resp.json.return_value = [{"generated_text": f"```json\n{json.dumps(valid_json_response)}\n```"}]
+        # Return standard OpenAI-compatible choices response
+        mock_resp.json.return_value = {
+            "choices": [
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": json.dumps(valid_json_response)
+                    }
+                }
+            ]
+        }
         mock_post.return_value = mock_resp
 
         feedback = provider.generate_interpretation(payload)
@@ -204,6 +226,63 @@ def test_valid_structured_response(sample_analysis_result):
         assert feedback.metric_interpretations[0].metric == "stroke_rate"
         assert feedback.metric_interpretations[0].evidence_level == "measured"
         assert feedback.disclaimer == DEFAULT_AI_COACH_DISCLAIMER
+
+        # Verify call arguments
+        mock_post.assert_called_once()
+        call_args, call_kwargs = mock_post.call_args
+        assert call_args[0] == HuggingFaceProvider.DEFAULT_ROUTER_URL
+        body = call_kwargs["json"]
+        assert body["model"] == "Qwen/Qwen2.5-1.5B-Instruct"
+        assert len(body["messages"]) == 2
+        assert body["messages"][0]["role"] == "system"
+        assert body["messages"][1]["role"] == "user"
+        assert body["response_format"] == {"type": "json_object"}
+        assert call_kwargs["headers"]["Authorization"] == "Bearer mock_hf_token"
+
+
+# 6b. HTTP 401 & 403 authentication failures
+def test_http_401_and_403_auth_failure(sample_analysis_result):
+    provider = HuggingFaceProvider(model_name="Qwen/Qwen2.5-1.5B-Instruct", token="invalid_token")
+    payload = AICoachPayloadBuilder.build(sample_analysis_result)
+
+    with patch("requests.post") as mock_post:
+        mock_resp = MagicMock()
+        mock_resp.status_code = 401
+        mock_post.return_value = mock_resp
+
+        feedback = provider.generate_interpretation(payload)
+        assert feedback.status == "fallback"
+        assert "Authentication failed" in feedback.error_message
+
+
+# 6c. HTTP 404 model unavailable
+def test_http_404_model_unavailable(sample_analysis_result):
+    provider = HuggingFaceProvider(model_name="NonExistent/Model-99B", token="mock_hf_token")
+    payload = AICoachPayloadBuilder.build(sample_analysis_result)
+
+    with patch("requests.post") as mock_post:
+        mock_resp = MagicMock()
+        mock_resp.status_code = 404
+        mock_post.return_value = mock_resp
+
+        feedback = provider.generate_interpretation(payload)
+        assert feedback.status == "fallback"
+        assert "currently unavailable" in feedback.error_message
+
+
+# 6d. HTTP 429 rate limit
+def test_http_429_rate_limit(sample_analysis_result):
+    provider = HuggingFaceProvider(model_name="Qwen/Qwen2.5-1.5B-Instruct", token="mock_hf_token")
+    payload = AICoachPayloadBuilder.build(sample_analysis_result)
+
+    with patch("requests.post") as mock_post:
+        mock_resp = MagicMock()
+        mock_resp.status_code = 429
+        mock_post.return_value = mock_resp
+
+        feedback = provider.generate_interpretation(payload)
+        assert feedback.status == "fallback"
+        assert "rate limit reached" in feedback.error_message
 
 
 # 7. Prompt contains supplied metrics

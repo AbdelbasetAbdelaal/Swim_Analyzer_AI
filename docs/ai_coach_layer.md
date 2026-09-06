@@ -4,7 +4,7 @@
 **Effective Date:** 2026-09-06  
 **Status:** **EXPERIMENTAL BETA**  
 **Scientific Validation Status:** **NOT_VALIDATED — INSUFFICIENT GROUND TRUTH**  
-**Preferred Model:** `Qwen/Qwen2.5-1.5B-Instruct` (via Hugging Face Serverless / Inference API)
+**Preferred Model:** `Qwen/Qwen2.5-1.5B-Instruct` (via Hugging Face Inference Providers Router: `https://router.huggingface.co/v1/chat/completions`)
 
 ---
 
@@ -87,7 +87,7 @@ The AI Coach layer is configured strictly via environment variables (or `.env` f
 | `SWIM_ANALYZER_HF_MODEL` | `Qwen/Qwen2.5-1.5B-Instruct` | Valid HF model ID | Target instruction model on Hugging Face. |
 | `SWIM_ANALYZER_HF_TOKEN` | `""` | User Token (`hf_...`) | Read token for Hugging Face Inference API. Never commit. |
 | `SWIM_ANALYZER_HF_TIMEOUT_SECONDS`| `20.0` | Positive float ($\ge 5.0$) | HTTP timeout for inference requests. |
-| `SWIM_ANALYZER_HF_API_URL` | `""` | Valid URL | Optional custom endpoint or Hugging Face Space route. |
+| `SWIM_ANALYZER_HF_API_URL` | `https://router.huggingface.co/v1/chat/completions` | Valid URL | Hugging Face Inference Providers router endpoint or custom endpoint. |
 
 ---
 
@@ -200,10 +200,11 @@ To ensure zero downtime, the provider architecture implements graceful degradati
 1. **Disabled in config:** Returns clean `status="disabled"` without network call.
 2. **Missing token:** Logs info, immediately yields rule-based fallback.
 3. **HTTP 401/403 (Invalid Token):** Trapped cleanly; logs warning without leaking token.
-4. **HTTP 429 (Rate Limit):** Yields fallback with rate-limit notice.
-5. **HTTP 503 (Model Loading):** Yields fallback explaining temporary model loading.
-6. **Network Timeout / Connection Error:** Times out after `timeout_seconds`, yields fallback.
-7. **Malformed JSON / Schema Mismatch:** Trapped by `AICoachResponseParser`, yields safe fallback.
+4. **HTTP 404 (Model Unavailable):** Trapped cleanly; yields fallback explaining model is unavailable.
+5. **HTTP 429 (Rate Limit):** Yields fallback with rate-limit notice.
+6. **HTTP 5xx (Provider Server Error):** Trapped cleanly; yields fallback explaining temporary provider error.
+7. **Network Timeout / Connection Error:** Times out after `timeout_seconds`, yields fallback.
+8. **Malformed JSON / Schema Mismatch:** Trapped by `AICoachResponseParser`, yields safe fallback.
 
 ---
 

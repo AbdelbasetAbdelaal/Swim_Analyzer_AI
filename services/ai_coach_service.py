@@ -377,9 +377,12 @@ class MockAICoachProvider(AICoachProvider):
 class HuggingFaceProvider(AICoachProvider):
     """
     Hugging Face Inference Provider.
-    Queries Hugging Face Serverless / Inference API using lightweight HTTP requests.
+    Queries the current Hugging Face Inference Providers router interface
+    (https://router.huggingface.co/v1/chat/completions) using OpenAI-compatible chat messages.
     Supports Qwen/Qwen2.5-1.5B-Instruct and compatible instruction models.
     """
+
+    DEFAULT_ROUTER_URL = "https://router.huggingface.co/v1/chat/completions"
 
     def __init__(
         self,
@@ -391,11 +394,10 @@ class HuggingFaceProvider(AICoachProvider):
         self.model_name = model_name
         self.token = token.strip() if token else ""
         self.timeout_seconds = max(5.0, float(timeout_seconds))
-        # Support custom API URL or standard HF router / model inference endpoint
         if api_url and api_url.strip():
             self.api_url = api_url.strip()
         else:
-            self.api_url = f"https://api-inference.huggingface.co/models/{self.model_name}"
+            self.api_url = self.DEFAULT_ROUTER_URL
 
     def _build_user_message(self, payload: AICoachInputPayload) -> str:
         """Constructs the user message string containing structured JSON input."""
@@ -407,7 +409,7 @@ class HuggingFaceProvider(AICoachProvider):
         )
 
     def generate_interpretation(self, payload: AICoachInputPayload) -> AICoachFeedback:
-        """Executes the request against Hugging Face with robust failure handling."""
+        """Executes the chat completions request against Hugging Face Inference Providers with robust failure handling."""
         if not self.token:
             logger.info("Hugging Face token not configured. Falling back to deterministic rule-based interpretation.")
             return generate_safe_fallback(payload, "Hugging Face token is missing or not configured.", provider_name="huggingface")
@@ -419,19 +421,20 @@ class HuggingFaceProvider(AICoachProvider):
 
         user_content = self._build_user_message(payload)
 
-        # Standard Hugging Face text generation / chat payload
-        # For instruction-tuned models on api-inference
+        # Current Hugging Face Inference Providers OpenAI-compatible chat completions payload
         request_body = {
-            "inputs": f"<|im_start|>system\n{AI_COACH_SYSTEM_PROMPT}<|im_end|>\n<|im_start|>user\n{user_content}<|im_end|>\n<|im_start|>assistant\n",
-            "parameters": {
-                "max_new_tokens": 1024,
-                "temperature": 0.2,
-                "return_full_text": False,
-            },
+            "model": self.model_name,
+            "messages": [
+                {"role": "system", "content": AI_COACH_SYSTEM_PROMPT},
+                {"role": "user", "content": user_content},
+            ],
+            "temperature": 0.2,
+            "max_tokens": 1024,
+            "response_format": {"type": "json_object"},
         }
 
         try:
-            logger.info(f"Sending coaching interpretation request to Hugging Face model: {self.model_name}")
+            logger.info(f"Sending coaching interpretation request to Hugging Face Inference Provider: {self.model_name} via {self.api_url}")
             response = requests.post(
                 self.api_url,
                 headers=headers,
@@ -443,26 +446,45 @@ class HuggingFaceProvider(AICoachProvider):
             if response.status_code == 401 or response.status_code == 403:
                 logger.warning("Hugging Face authentication failed (invalid or expired token).")
                 return generate_safe_fallback(payload, "Authentication failed (invalid Hugging Face token).", provider_name="huggingface")
+            elif response.status_code == 404:
+                logger.warning(f"Hugging Face model '{self.model_name}' or endpoint not found (HTTP 404).")
+                return generate_safe_fallback(payload, f"Configured model '{self.model_name}' is currently unavailable on Hugging Face Inference Providers.", provider_name="huggingface")
             elif response.status_code == 429:
                 logger.warning("Hugging Face API rate limit reached.")
                 return generate_safe_fallback(payload, "Hugging Face rate limit reached.", provider_name="huggingface")
-            elif response.status_code == 503:
-                logger.warning("Hugging Face model is loading or temporarily unavailable.")
-                return generate_safe_fallback(payload, "Hugging Face model is loading or temporarily unavailable.", provider_name="huggingface")
+            elif 500 <= response.status_code < 600:
+                logger.warning(f"Hugging Face inference provider temporarily unavailable (HTTP {response.status_code}).")
+                return generate_safe_fallback(payload, f"Hugging Face inference provider temporarily unavailable (HTTP {response.status_code}).", provider_name="huggingface")
             elif response.status_code != 200:
                 logger.warning(f"Hugging Face API returned HTTP status {response.status_code}.")
                 return generate_safe_fallback(payload, f"Hugging Face API error (HTTP {response.status_code}).", provider_name="huggingface")
 
             resp_json = response.json()
+
+            # Handle provider-level error payload inside 200 response if any
+            if isinstance(resp_json, dict) and "error" in resp_json:
+                err = resp_json.get("error")
+                err_msg = err.get("message", str(err)) if isinstance(err, dict) else str(err)
+                logger.warning(f"Hugging Face provider returned error: {err_msg}")
+                return generate_safe_fallback(payload, f"Provider error: {err_msg}", provider_name="huggingface")
+
             raw_text = ""
-            if isinstance(resp_json, list) and len(resp_json) > 0 and isinstance(resp_json[0], dict):
-                raw_text = resp_json[0].get("generated_text", "")
-            elif isinstance(resp_json, dict):
-                # Chat completions format
+            if isinstance(resp_json, dict):
+                # Standard OpenAI chat completions format
                 if "choices" in resp_json and len(resp_json["choices"]) > 0:
-                    raw_text = resp_json["choices"][0].get("message", {}).get("content", "")
-                else:
+                    choice = resp_json["choices"][0]
+                    if isinstance(choice, dict):
+                        msg = choice.get("message", {})
+                        if isinstance(msg, dict):
+                            raw_text = msg.get("content", "")
+                        elif isinstance(msg, str):
+                            raw_text = msg
+                        elif "text" in choice:
+                            raw_text = choice.get("text", "")
+                elif "generated_text" in resp_json:
                     raw_text = resp_json.get("generated_text", "")
+            elif isinstance(resp_json, list) and len(resp_json) > 0 and isinstance(resp_json[0], dict):
+                raw_text = resp_json[0].get("generated_text", "")
 
             # Parse and validate structured output
             try:
